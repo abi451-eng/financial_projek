@@ -1,0 +1,2164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Daily Report Tool</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+            padding-top: 70px;
+            min-height: 100vh;
+        }
+
+        /* Sticky Header */
+        .sticky-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #1a5f7a 0%, #0d3d52 100%);
+            color: white;
+            padding: 15px 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .sticky-header h1 {
+            font-size: 20px;
+            margin: 0;
+            flex: 1;
+        }
+
+        .sticky-header .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .config-toggle-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .config-toggle-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Collapsible Config */
+        .config-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: max-height 0.4s ease, margin 0.3s ease;
+            max-height: 2000px; /* FIX: was 600px - too small for mobile 1-column layout */
+        }
+
+        .config-section.collapsed {
+            max-height: 0;
+            margin-bottom: 0;
+        }
+
+        .config-header {
+            background: linear-gradient(135deg, #e8f4f8 0%, #f0f7fb 100%);
+            padding: 20px;
+            border-bottom: 2px solid #1a5f7a;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .config-header h2 {
+            font-size: 18px;
+            color: #1a5f7a;
+            margin: 0;
+        }
+
+        .config-header .toggle-icon {
+            font-size: 20px;
+            transition: transform 0.3s;
+        }
+
+        .config-section.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .config-content {
+            padding: 25px;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .config-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .config-group label {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .config-group input,
+        .config-group select {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .config-group input:focus,
+        .config-group select:focus {
+            outline: none;
+            border-color: #1a5f7a;
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
+            background: #f8fbfc;
+        }
+
+        .config-rates {
+            background: #f0f4f7;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .config-rates p {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .rate-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .save-config-btn {
+            background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .save-config-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+
+        .month-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .month-selector label {
+            font-weight: 600;
+            color: #1a5f7a;
+        }
+
+        .month-selector select {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .form-section h2 {
+            font-size: 22px;
+            color: #1a5f7a;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #1a5f7a;
+            padding-bottom: 12px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 7px;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 11px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1a5f7a;
+            box-shadow: 0 0 0 3px rgba(26, 95, 122, 0.1);
+            background: #f8fbfc;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 25px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #e8f4f8 0%, #f0f7fb 100%);
+            padding: 18px;
+            border-radius: 8px;
+            border-left: 5px solid #1a5f7a;
+            box-shadow: 0 2px 8px rgba(26, 95, 122, 0.1);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1a5f7a;
+            font-family: 'Courier New', monospace;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1a5f7a 0%, #0d3d52 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(26, 95, 122, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            color: white;
+        }
+
+        .data-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .data-section h2 {
+            font-size: 22px;
+            color: #1a5f7a;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #1a5f7a;
+            padding-bottom: 12px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, #1a5f7a 0%, #0d3d52 100%);
+            color: white;
+        }
+
+        .data-table th {
+            padding: 14px;
+            text-align: left;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .currency {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #1a5f7a;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-buttons button {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .success-banner {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-left: 5px solid #28a745;
+            color: #155724;
+            padding: 18px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .success-banner.show {
+            display: block;
+        }
+
+        .dashboard-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-section h2 {
+            font-size: 22px;
+            color: #1a5f7a;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #1a5f7a;
+            padding-bottom: 12px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, #f0f4f7 0%, #e8f0f5 100%);
+            padding: 16px;
+            border-radius: 8px;
+            border-top: 4px solid #1a5f7a;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            min-width: 0; /* penting untuk text-overflow */
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        .kpi-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1a5f7a;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .kpi-trend {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 30px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .trend-alert {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-left: 4px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .trend-alert.success {
+            background: #d4edda;
+            border-color: #28a745;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .export-btn {
+            padding: 15px;
+            border: 2px solid #1a5f7a;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-align: center;
+            color: #1a5f7a;
+        }
+
+        .export-btn:hover {
+            background: #1a5f7a;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 95, 122, 0.3);
+        }
+
+        .export-desc {
+            font-size: 12px;
+            margin-top: 8px;
+            color: #666;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .sticky-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 12px;
+            }
+
+            .sticky-header h1 {
+                font-size: 16px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* KPI CARDS - MOBILE FIX */
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin-bottom: 16px;
+            }
+
+            .kpi-card {
+                padding: 12px 10px;
+                border-top-width: 3px;
+                border-radius: 6px;
+            }
+
+            .kpi-label {
+                font-size: 9px;
+                margin-bottom: 6px;
+                letter-spacing: 0;
+            }
+
+            .kpi-value {
+                font-size: 13px;
+                margin-bottom: 4px;
+                font-family: 'Courier New', monospace;
+            }
+
+            .kpi-trend {
+                font-size: 11px;
+            }
+
+            .chart-container {
+                height: 260px;
+                padding: 12px;
+            }
+
+            .data-table {
+                font-size: 11px;
+            }
+
+            .data-table th, .data-table td {
+                padding: 8px;
+            }
+
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .preview-section {
+            background: #f9f9f9;
+            padding: 24px;
+            border-radius: 8px;
+            margin: 25px 0;
+            border: 2px solid #ddd;
+            display: none;
+        }
+
+        .preview-section.show {
+            display: block;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            background: white;
+            border: 1px solid #ddd;
+        }
+
+        .preview-table tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .preview-table td {
+            padding: 14px;
+        }
+
+        .preview-table td:first-child {
+            font-weight: 700;
+            color: #1a5f7a;
+            width: 40%;
+            background: #f0f4f7;
+        }
+
+        /* ===== PDF VIEWER MODAL ===== */
+        .pdf-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            flex-direction: column;
+        }
+        .pdf-modal-overlay.show { display: flex; }
+
+        .pdf-modal-header {
+            background: linear-gradient(135deg, #1a5f7a 0%, #0d3d52 100%);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+        .pdf-modal-title { font-size: 15px; font-weight: 700; flex: 1; }
+        .pdf-modal-actions { display: flex; gap: 10px; align-items: center; }
+
+        .pdf-btn {
+            padding: 8px 16px; border: none; border-radius: 6px;
+            cursor: pointer; font-weight: 700; font-size: 13px;
+            transition: all 0.2s;
+        }
+        .pdf-btn-print { background: #27ae60; color: white; }
+        .pdf-btn-print:hover { background: #1e8449; transform: translateY(-1px); }
+        .pdf-btn-download { background: #2196F3; color: white; }
+        .pdf-btn-download:hover { background: #1976D2; transform: translateY(-1px); }
+        .pdf-btn-close { background: rgba(255,255,255,0.2); color: white; font-size: 18px; padding: 6px 14px; }
+        .pdf-btn-close:hover { background: rgba(255,255,255,0.35); }
+
+        .pdf-modal-body { flex: 1; overflow: hidden; position: relative; }
+        .pdf-iframe { width: 100%; height: 100%; border: none; display: block; background: #525659; }
+
+        @media (max-width: 768px) {
+            .pdf-modal-header { padding: 10px 14px; }
+            .pdf-modal-title { font-size: 13px; }
+            .pdf-btn { padding: 7px 12px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sticky Header -->
+    <div class="sticky-header">
+        <h1>📊 Financial Daily Report</h1>
+        <div class="controls">
+            <button class="config-toggle-btn" id="configToggleBtn" onclick="toggleConfig()">
+                ⚙️ KONFIGURASI
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Success Banner -->
+        <div id="successBanner" class="success-banner"></div>
+
+        <!-- Collapsible Config Section -->
+        <div class="config-section collapsed" id="configSection">
+            <div class="config-header" onclick="toggleConfig()">
+                <h2>⚙️ KONFIGURASI SISTEM</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+
+            <div class="config-content">
+                <div class="config-grid">
+                    <div class="config-group">
+                        <label>Nama Bisnis/Warung *</label>
+                        <input type="text" id="companyName" placeholder="Nama Bisnis/Warung">
+                    </div>
+
+                    <div class="config-group">
+                        <label>Alamat/Lokasi *</label>
+                        <input type="text" id="ppnTitle" placeholder="Alamat/Lokasi">
+                    </div>
+
+                    <div class="config-group">
+                        <label>Kabupaten/Kota *</label>
+                        <input type="text" id="location" placeholder="Kabupaten/Kota">
+                    </div>
+
+                    <div class="config-group">
+                        <label>Nama Atasan *</label>
+                        <input type="text" id="atasanName" placeholder="Nama Atasan">
+                    </div>
+                </div>
+
+                <div class="config-rates">
+                    <p><strong>⚠️ Flexible Tax & Commission Rates</strong></p>
+                    <div class="rate-inputs">
+                        <div class="config-group">
+                            <label>Tarif PPN (%)</label>
+                            <input type="number" id="ppnRate" value="10" min="0" max="100" step="0.1">
+                        </div>
+                        <div class="config-group">
+                            <label>Tarif Royalti (%)</label>
+                            <input type="number" id="royaltiRate" value="3" min="0" max="100" step="0.1">
+                        </div>
+                        <div class="config-group">
+                            <label>Tarif PPN pada Royalti (%)</label>
+                            <input type="number" id="ppnOnRoyaltiRate" value="11" min="0" max="100" step="0.1">
+                        </div>
+                    </div>
+                </div>
+
+                <button class="save-config-btn" onclick="saveConfig()">💾 Simpan Konfigurasi</button>
+            </div>
+        </div>
+
+        <!-- Month Selector -->
+        <div class="month-selector">
+            <label>📅 Pilih Bulan:</label>
+            <select id="monthSelect" onchange="updateUI()">
+                <option value="1">Januari</option>
+                <option value="2">Februari</option>
+                <option value="3">Maret</option>
+                <option value="4">April</option>
+                <option value="5">Mei</option>
+                <option value="6">Juni</option>
+                <option value="7">Juli</option>
+                <option value="8">Agustus</option>
+                <option value="9">September</option>
+                <option value="10">Oktober</option>
+                <option value="11">November</option>
+                <option value="12">Desember</option>
+            </select>
+
+            <label>📆 Pilih Tahun:</label>
+            <select id="yearSelect" onchange="updateUI()">
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025" selected>2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+                <option value="2035">2035</option>
+            </select>
+        </div>
+
+        <!-- Form Section -->
+        <div class="form-section">
+            <h2 id="formTitle">📝 Input Data Harian</h2>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Hari/Tanggal *</label>
+                    <select id="daySelect"></select>
+                </div>
+
+                <div class="form-group">
+                    <label>Total Penjualan *</label>
+                    <input type="number" id="totalPenjualan" placeholder="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Saldo Akhir/Tunai *</label>
+                    <input type="number" id="tunai" placeholder="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>QRIS</label>
+                    <input type="number" id="qris" placeholder="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>EDC</label>
+                    <input type="number" id="edc" placeholder="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Transfer</label>
+                    <input type="number" id="transfer" placeholder="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>GoJek</label>
+                    <input type="number" id="gojek" placeholder="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Grab</label>
+                    <input type="number" id="grab" placeholder="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Pesanan</label>
+                    <input type="number" id="pesanan" placeholder="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Belanja Pagi</label>
+                    <input type="number" id="belanjaPagi" placeholder="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Belanja Sore</label>
+                    <input type="number" id="belanjaSore" placeholder="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Daging</label>
+                    <input type="number" id="daging" placeholder="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Dan Lain-Lain</label>
+                    <input type="number" id="dll" placeholder="0" min="0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Keterangan</label>
+                <textarea id="keterangan" placeholder="Catatan tambahan..." rows="3"></textarea>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-label">💰 Total Pengeluaran (Auto)</div>
+                    <div class="stat-value" id="totalPengeluaranDisplay">Rp 0</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">📊 Saldo (Auto)</div>
+                    <div class="stat-value" id="saldoDisplay">Rp 0</div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="showPreview()">👁️ Preview Data</button>
+                <button class="btn btn-secondary" onclick="resetForm()" id="resetBtn" style="display:none;">🔄 Reset</button>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="preview-section" id="previewSection">
+            <h2>✓ Preview Data</h2>
+            <table class="preview-table">
+                <tr>
+                    <td><strong>Tanggal</strong></td>
+                    <td id="previewDay">-</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Penjualan</strong></td>
+                    <td id="previewTotalPenjualan">-</td>
+                </tr>
+                <tr>
+                    <td><strong>Tunai</strong></td>
+                    <td id="previewTunai">-</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Pengeluaran</strong></td>
+                    <td id="previewTotalPengeluaran">-</td>
+                </tr>
+                <tr>
+                    <td><strong>Saldo</strong></td>
+                    <td id="previewSaldo">-</td>
+                </tr>
+                <tr>
+                    <td><strong>Keterangan</strong></td>
+                    <td id="previewKeterangan">-</td>
+                </tr>
+            </table>
+
+            <div class="button-group">
+                <button class="btn btn-success" onclick="saveData()">✓ Simpan Data</button>
+                <button class="btn btn-secondary" onclick="hidePreview()">✕ Batal</button>
+            </div>
+        </div>
+
+        <!-- Data Table Section -->
+        <div id="dataSection" style="display:none;" class="data-section">
+            <h2 id="dataTableTitle">📋 Data Bulan</h2>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Hari</th>
+                            <th>Total Penjualan</th>
+                            <th>Tunai</th>
+                            <th>Total Pengeluaran</th>
+                            <th>Saldo</th>
+                            <th>Keterangan</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Financial Dashboard Section -->
+        <div id="dashboardSection" style="display:none;" class="dashboard-section">
+            <h2>📊 FINANCIAL DASHBOARD</h2>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">💰 Total Revenue</div>
+                    <div class="kpi-value" id="kpiRevenue">Rp 0</div>
+                    <div class="kpi-trend" id="kpiRevenueTrend">-</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-label">📊 Total Expense</div>
+                    <div class="kpi-value" id="kpiExpense">Rp 0</div>
+                    <div class="kpi-trend" id="kpiExpenseTrend">-</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-label">💎 Net Profit</div>
+                    <div class="kpi-value" id="kpiProfit">Rp 0</div>
+                    <div class="kpi-trend" id="kpiProfitTrend">-</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-label">📈 Profit Margin</div>
+                    <div class="kpi-value" id="kpiMargin">0%</div>
+                    <div class="kpi-trend" id="kpiMarginStatus">-</div>
+                </div>
+            </div>
+
+            <div id="trendAlert" style="display:none;"></div>
+
+            <div class="chart-container">
+                <canvas id="financialChart"></canvas>
+            </div>
+
+            <div id="trendInfo" style="display:none; background: #f0f4f7; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                <strong>📈 Trend Analysis:</strong>
+                <p id="trendText" style="margin-top: 10px;"></p>
+            </div>
+        </div>
+
+        <!-- PPN Table Section -->
+        <div id="ppnSection" style="display:none;" class="data-section">
+            <h2>💰 LAPORAN PPN HARIAN</h2>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Pendapatan (Rp)</th>
+                            <th>PPN (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ppnTableBody">
+                    </tbody>
+                </table>
+            </div>
+            <p style="margin-top: 15px; font-size: 12px; color: #999;">
+                <strong>Keterangan:</strong> Tarif PPN = <span id="ppnRateDisplay">10</span>%
+            </p>
+        </div>
+
+        <!-- Royalti & PPN Summary Section -->
+        <div id="royaltiSection" style="display:none;" class="data-section">
+            <h2>👑 ROYALTI & PPN BULANAN</h2>
+            
+            <table class="data-table" style="width: auto; margin: 20px auto;">
+                <tbody>
+                    <tr>
+                        <td style="padding: 15px 25px; font-weight: 700; color: #1a5f7a; background: #f0f4f7;">TOTAL PENJUALAN</td>
+                        <td style="padding: 15px 25px; text-align: right; font-family: 'Courier New', monospace; font-weight: 600; color: #1a5f7a;" id="totalPenjualanRoyalti">Rp 0</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 15px 25px; font-weight: 700; color: #1a5f7a; background: #f0f4f7;">ROYALTI <span id="royaltiRateDisplay">3</span>%</td>
+                        <td style="padding: 15px 25px; text-align: right; font-family: 'Courier New', monospace; font-weight: 600; color: #1a5f7a;" id="royaltiAmount">Rp 0</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 15px 25px; font-weight: 700; color: #1a5f7a; background: #f0f4f7;">PPN <span id="ppnOnRoyaltiDisplay">11</span>%</td>
+                        <td style="padding: 15px 25px; text-align: right; font-family: 'Courier New', monospace; font-weight: 600; color: #1a5f7a;" id="ppnOnRoyaltiAmount">Rp 0</td>
+                    </tr>
+                    <tr style="border-top: 2px solid #1a5f7a; border-bottom: 2px solid #1a5f7a;">
+                        <td style="padding: 15px 25px; font-weight: 800; color: #1a5f7a; background: #e8f4f8;">TOTAL ROYALTI & PPN</td>
+                        <td style="padding: 15px 25px; text-align: right; font-family: 'Courier New', monospace; font-weight: 800; color: #1a5f7a; background: #e8f4f8;" id="totalRoyaltiPpn">Rp 0</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding: 12px 25px; font-size: 12px; color: #999; font-style: italic;">(Transfer ke Cakman Malang)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Export Options -->
+        <div id="exportSection" style="display:none;" class="data-section">
+            <h2>📥 PILIHAN EXPORT</h2>
+            
+            <div class="export-options">
+                <button class="export-btn" onclick="exportGrafikDashboard()">
+                    📊 Export Grafik & Dashboard
+                    <div class="export-desc">Excel format (.xlsx)</div>
+                </button>
+
+                <button class="export-btn" onclick="exportTabelData()">
+                    📋 Export Tabel Data
+                    <div class="export-desc">Excel format (.xlsx)</div>
+                </button>
+
+                <button class="export-btn" onclick="exportPPNPDF()">
+                    📄 Export PPN Laporan
+                    <div class="export-desc">PDF format (Print-ready 300 DPI)</div>
+                </button>
+
+                <button class="export-btn" onclick="exportRoyaltiPDF()">
+                    📄 Export Royalti & PPN
+                    <div class="export-desc">PDF format (Print-ready 300 DPI)</div>
+                </button>
+            </div>
+
+            <div style="background: #e3f2fd; border-left: 4px solid #1a5f7a; padding: 15px; border-radius: 6px; margin-top: 20px; font-size: 13px;">
+                <strong>💡 Export Tips:</strong>
+                <p style="margin-top: 8px;">
+                    <strong>Excel:</strong> Untuk presentasi & analisis di Excel<br>
+                    <strong>PDF:</strong> Untuk dokumen resmi & langsung kirim ke atasan (print-ready)
+                </p>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="data-section">
+            <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <div style="font-size: 18px; margin-bottom: 8px; font-weight: 600;">Belum ada data</div>
+                <div style="font-size: 13px; color: #bbb;">Mulai dengan menginput data harian di form di atas</div>
+            </div>
+        </div>
+    </div>
+
+
+        <!-- PDF Viewer Modal -->
+        <div class="pdf-modal-overlay" id="pdfModal">
+            <div class="pdf-modal-header">
+                <span class="pdf-modal-title" id="pdfModalTitle">📄 Preview Laporan</span>
+                <div class="pdf-modal-actions">
+                    <button class="pdf-btn pdf-btn-print" onclick="printPDF()">🖨️ Print</button>
+                    <button class="pdf-btn pdf-btn-download" onclick="downloadPDF()">⬇️ Download PDF</button>
+                    <button class="pdf-btn pdf-btn-close" onclick="closePDFModal()">✕</button>
+                </div>
+            </div>
+            <div class="pdf-modal-body">
+                <iframe class="pdf-iframe" id="pdfIframe"></iframe>
+            </div>
+        </div>
+
+    <script>
+
+        // ===== PDF MODAL FUNCTIONS =====
+        let currentPdfBlob = null;
+        let currentPdfUrl = null;
+
+        function openPDFModal(blob, title) {
+            currentPdfBlob = blob;
+            if (currentPdfUrl) URL.revokeObjectURL(currentPdfUrl);
+            currentPdfUrl = URL.createObjectURL(blob);
+
+            document.getElementById('pdfModalTitle').textContent = '📄 ' + title;
+            document.getElementById('pdfIframe').src = currentPdfUrl;
+            document.getElementById('pdfModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePDFModal() {
+            document.getElementById('pdfModal').classList.remove('show');
+            document.getElementById('pdfIframe').src = '';
+            document.body.style.overflow = '';
+            if (currentPdfUrl) {
+                setTimeout(() => URL.revokeObjectURL(currentPdfUrl), 1000);
+                currentPdfUrl = null;
+            }
+        }
+
+        function printPDF() {
+            const iframe = document.getElementById('pdfIframe');
+            try {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            } catch(e) {
+                window.open(currentPdfUrl, '_blank');
+            }
+        }
+
+        function downloadPDF() {
+            if (!currentPdfBlob) return;
+            const title = document.getElementById('pdfModalTitle').textContent.replace('📄 ', '');
+            const link = document.createElement('a');
+            link.href = currentPdfUrl;
+            link.download = title.replace(/\s+/g, '_') + '.pdf';
+            link.click();
+        }
+
+        // Close modal saat klik overlay (background)
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('pdfModal').addEventListener('click', function(e) {
+                if (e.target === this) closePDFModal();
+            });
+        });
+
+        // Close modal dengan tombol ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closePDFModal();
+        });
+
+        let appData = JSON.parse(localStorage.getItem('financialData')) || {};
+        let configSettings = JSON.parse(localStorage.getItem('financialConfig')) || {
+            companyName: 'WARUNG BAKSO KOTA',
+            ppnTitle: 'LAPORAN PPN HARIAN',
+            location: 'Jayapura',
+            atasanName: 'Joko Purcahyono',
+            ppnRate: 10,
+            royaltiRate: 3,
+            ppnOnRoyaltiRate: 11
+        };
+
+        let currentEditDay = null;
+        let financialChart = null;
+        let configExpanded = false;
+
+        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+        // Tanggal hari ini (global reference)
+        const todayDate  = new Date();
+        const todayDay   = todayDate.getDate();
+        const todayMonth = todayDate.getMonth() + 1;
+        const todayYear  = todayDate.getFullYear();
+
+        function init() {
+            loadConfig();
+            document.getElementById('monthSelect').value = todayMonth;
+            document.getElementById('yearSelect').value  = todayYear;
+            updateUI();
+            attachEventListeners();
+        }
+
+        function loadConfig() {
+            // Hanya set value jika ada data di localStorage
+            if (configSettings.companyName) document.getElementById('companyName').value = configSettings.companyName;
+            if (configSettings.ppnTitle)    document.getElementById('ppnTitle').value    = configSettings.ppnTitle;
+            if (configSettings.location)    document.getElementById('location').value    = configSettings.location;
+            if (configSettings.atasanName)  document.getElementById('atasanName').value  = configSettings.atasanName;
+            document.getElementById('ppnRate').value          = configSettings.ppnRate;
+            document.getElementById('royaltiRate').value      = configSettings.royaltiRate;
+            document.getElementById('ppnOnRoyaltiRate').value = configSettings.ppnOnRoyaltiRate;
+        }
+
+        function saveConfig() {
+            configSettings = {
+                companyName:      document.getElementById('companyName').value,
+                ppnTitle:         document.getElementById('ppnTitle').value,
+                location:         document.getElementById('location').value,
+                atasanName:       document.getElementById('atasanName').value,
+                ppnRate:          parseFloat(document.getElementById('ppnRate').value) || 10,
+                royaltiRate:      parseFloat(document.getElementById('royaltiRate').value) || 3,
+                ppnOnRoyaltiRate: parseFloat(document.getElementById('ppnOnRoyaltiRate').value) || 11
+            };
+
+            localStorage.setItem('financialConfig', JSON.stringify(configSettings));
+            showSuccessMessage('✓ Konfigurasi berhasil disimpan');
+            updateDashboard();
+            updatePPNTable();
+            updateRoyaltiTable();
+        }
+
+        function toggleConfig() {
+            const section = document.getElementById('configSection');
+            configExpanded = !configExpanded;
+            
+            if (configExpanded) {
+                section.classList.remove('collapsed');
+            } else {
+                section.classList.add('collapsed');
+            }
+        }
+
+        function attachEventListeners() {
+            document.getElementById('monthSelect').addEventListener('change', updateUI);
+            document.getElementById('yearSelect').addEventListener('change', updateUI);
+            document.getElementById('daySelect').addEventListener('change', updateCalculations);
+            
+            const numInputs = ['totalPenjualan', 'tunai', 'qris', 'edc', 'transfer', 'gojek', 'grab', 'pesanan', 'belanjaPagi', 'belanjaSore', 'daging', 'dll'];
+            numInputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', updateCalculations);
+            });
+        }
+
+        function updateUI() {
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const monthName = months[month - 1];
+
+            document.getElementById('dataTableTitle').textContent = `📋 Data Bulan ${monthName} ${year}`;
+            document.getElementById('formTitle').textContent = currentEditDay ? `✏️ Edit Data Tanggal ${currentEditDay}` : '📝 Input Data Harian';
+
+            const daysInMonth = new Date(year, month, 0).getDate();
+            const daySelect = document.getElementById('daySelect');
+            const prevDay = parseInt(daySelect.value) || 0; // simpan pilihan sebelumnya
+            daySelect.innerHTML = '';
+
+            // Tentukan hari yang akan dipilih otomatis
+            const isCurrentMonth = (month === todayMonth && year === todayYear);
+            let defaultDay = isCurrentMonth ? todayDay : 1;
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                // Tambah label "(Hari ini)" jika hari ini di bulan/tahun yang sama
+                option.textContent = (isCurrentMonth && i === todayDay)
+                    ? `${i}  ← Hari ini`
+                    : i;
+                daySelect.appendChild(option);
+            }
+
+            // Set nilai: jika ada pilihan sebelumnya (edit mode) pakai itu,
+            // kalau tidak pakai defaultDay (hari ini / 1)
+            daySelect.value = (currentEditDay && prevDay) ? prevDay : defaultDay;
+
+            loadDataTable();
+            updateDashboard();
+            updatePPNTable();
+            updateRoyaltiTable();
+            updateCalculations();
+        }
+
+        function updateCalculations() {
+            const belanjaPagi = parseFloat(document.getElementById('belanjaPagi').value) || 0;
+            const belanjaSore = parseFloat(document.getElementById('belanjaSore').value) || 0;
+            const daging = parseFloat(document.getElementById('daging').value) || 0;
+            const dll = parseFloat(document.getElementById('dll').value) || 0;
+
+            const totalPengeluaran = belanjaPagi + belanjaSore + daging + dll;
+
+            const totalPenjualan = parseFloat(document.getElementById('totalPenjualan').value) || 0;
+            const pesanan = parseFloat(document.getElementById('pesanan').value) || 0;
+
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const key = `${year}-${month}`;
+
+            let prevSaldo = 0;
+            const dataForMonth = appData[key] || [];
+            if (dataForMonth.length > 0) {
+                prevSaldo = dataForMonth[dataForMonth.length - 1].saldo;
+            }
+
+            const saldo = prevSaldo + totalPenjualan + pesanan - totalPengeluaran;
+
+            document.getElementById('totalPengeluaranDisplay').textContent = `Rp ${totalPengeluaran.toLocaleString('id-ID')}`;
+            document.getElementById('saldoDisplay').textContent = `Rp ${saldo.toLocaleString('id-ID')}`;
+        }
+
+        function showPreview() {
+            const day = document.getElementById('daySelect').value;
+            const totalPenjualan = parseFloat(document.getElementById('totalPenjualan').value) || 0;
+            const tunai = parseFloat(document.getElementById('tunai').value) || 0;
+            const belanjaPagi = parseFloat(document.getElementById('belanjaPagi').value) || 0;
+            const belanjaSore = parseFloat(document.getElementById('belanjaSore').value) || 0;
+            const daging = parseFloat(document.getElementById('daging').value) || 0;
+            const dll = parseFloat(document.getElementById('dll').value) || 0;
+            const keterangan = document.getElementById('keterangan').value;
+
+            if (!totalPenjualan || !tunai) {
+                alert('Mohon lengkapi Total Penjualan dan Tunai');
+                return;
+            }
+
+            const totalPengeluaran = belanjaPagi + belanjaSore + daging + dll;
+
+            document.getElementById('previewDay').textContent = day;
+            document.getElementById('previewTotalPenjualan').textContent = `Rp ${totalPenjualan.toLocaleString('id-ID')}`;
+            document.getElementById('previewTunai').textContent = `Rp ${tunai.toLocaleString('id-ID')}`;
+            document.getElementById('previewTotalPengeluaran').textContent = `Rp ${totalPengeluaran.toLocaleString('id-ID')}`;
+            document.getElementById('previewSaldo').textContent = document.getElementById('saldoDisplay').textContent;
+            document.getElementById('previewKeterangan').textContent = keterangan || '-';
+
+            document.getElementById('previewSection').classList.add('show');
+        }
+
+        function hidePreview() {
+            document.getElementById('previewSection').classList.remove('show');
+        }
+
+        function saveData() {
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const key = `${year}-${month}`;
+
+            const day = parseInt(document.getElementById('daySelect').value);
+            const totalPenjualan = parseFloat(document.getElementById('totalPenjualan').value) || 0;
+            const tunai = parseFloat(document.getElementById('tunai').value) || 0;
+            const qris = parseFloat(document.getElementById('qris').value) || 0;
+            const edc = parseFloat(document.getElementById('edc').value) || 0;
+            const transfer = parseFloat(document.getElementById('transfer').value) || 0;
+            const gojek = parseFloat(document.getElementById('gojek').value) || 0;
+            const grab = parseFloat(document.getElementById('grab').value) || 0;
+            const pesanan = parseFloat(document.getElementById('pesanan').value) || 0;
+            const belanjaPagi = parseFloat(document.getElementById('belanjaPagi').value) || 0;
+            const belanjaSore = parseFloat(document.getElementById('belanjaSore').value) || 0;
+            const daging = parseFloat(document.getElementById('daging').value) || 0;
+            const dll = parseFloat(document.getElementById('dll').value) || 0;
+            const keterangan = document.getElementById('keterangan').value;
+
+            const totalPengeluaran = belanjaPagi + belanjaSore + daging + dll;
+
+            if (!appData[key]) {
+                appData[key] = [];
+            }
+
+            const existingIndex = appData[key].findIndex(item => item.day === day);
+            if (existingIndex >= 0) {
+                appData[key][existingIndex] = {
+                    day, totalPenjualan, tunai, qris, edc, transfer, gojek, grab, pesanan,
+                    totalPengeluaran, belanjaPagi, belanjaSore, daging, dll, keterangan, saldo: 0
+                };
+            } else {
+                appData[key].push({
+                    day, totalPenjualan, tunai, qris, edc, transfer, gojek, grab, pesanan,
+                    totalPengeluaran, belanjaPagi, belanjaSore, daging, dll, keterangan, saldo: 0
+                });
+            }
+
+            appData[key].sort((a, b) => a.day - b.day);
+
+            let runningBalance = 0;
+            appData[key].forEach((item) => {
+                runningBalance += item.totalPenjualan + item.pesanan - item.totalPengeluaran;
+                item.saldo = runningBalance;
+            });
+
+            localStorage.setItem('financialData', JSON.stringify(appData));
+
+            showSuccessMessage(`✓ Data tanggal ${day} berhasil disimpan`);
+            hidePreview();
+            resetForm();
+            loadDataTable();
+            updateDashboard();
+            updatePPNTable();
+            updateRoyaltiTable();
+        }
+
+        function showSuccessMessage(message) {
+            const banner = document.getElementById('successBanner');
+            banner.textContent = message;
+            banner.classList.add('show');
+            setTimeout(() => banner.classList.remove('show'), 4000);
+        }
+
+        function resetForm() {
+            document.getElementById('daySelect').value = 1;
+            document.getElementById('totalPenjualan').value = '';
+            document.getElementById('tunai').value = '';
+            document.getElementById('qris').value = '';
+            document.getElementById('edc').value = '';
+            document.getElementById('transfer').value = '';
+            document.getElementById('gojek').value = '';
+            document.getElementById('grab').value = '';
+            document.getElementById('pesanan').value = '';
+            document.getElementById('belanjaPagi').value = '';
+            document.getElementById('belanjaSore').value = '';
+            document.getElementById('daging').value = '';
+            document.getElementById('dll').value = '';
+            document.getElementById('keterangan').value = '';
+            currentEditDay = null;
+            updateCalculations();
+        }
+
+        function editData(day) {
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const key = `${year}-${month}`;
+
+            const item = appData[key]?.find(x => x.day === day);
+            if (!item) return;
+
+            document.getElementById('daySelect').value = item.day;
+            document.getElementById('totalPenjualan').value = item.totalPenjualan;
+            document.getElementById('tunai').value = item.tunai;
+            document.getElementById('qris').value = item.qris;
+            document.getElementById('edc').value = item.edc;
+            document.getElementById('transfer').value = item.transfer;
+            document.getElementById('gojek').value = item.gojek;
+            document.getElementById('grab').value = item.grab;
+            document.getElementById('pesanan').value = item.pesanan;
+            document.getElementById('belanjaPagi').value = item.belanjaPagi;
+            document.getElementById('belanjaSore').value = item.belanjaSore;
+            document.getElementById('daging').value = item.daging;
+            document.getElementById('dll').value = item.dll;
+            document.getElementById('keterangan').value = item.keterangan;
+
+            currentEditDay = day;
+            updateUI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            updateCalculations();
+        }
+
+        function deleteData(day) {
+            if (!confirm(`Apakah Anda yakin ingin menghapus data tanggal ${day}?`)) return;
+
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const key = `${year}-${month}`;
+
+            appData[key] = appData[key].filter(item => item.day !== day);
+            localStorage.setItem('financialData', JSON.stringify(appData));
+
+            showSuccessMessage(`✓ Data tanggal ${day} berhasil dihapus`);
+            loadDataTable();
+            updateDashboard();
+            updatePPNTable();
+            updateRoyaltiTable();
+        }
+
+        function loadDataTable() {
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const key = `${year}-${month}`;
+
+            const data = appData[key] || [];
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                document.getElementById('dataSection').style.display = 'none';
+                document.getElementById('dashboardSection').style.display = 'none';
+                document.getElementById('ppnSection').style.display = 'none';
+                document.getElementById('royaltiSection').style.display = 'none';
+                document.getElementById('exportSection').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('dataSection').style.display = 'block';
+            document.getElementById('dashboardSection').style.display = 'block';
+            document.getElementById('ppnSection').style.display = 'block';
+            document.getElementById('royaltiSection').style.display = 'block';
+            document.getElementById('exportSection').style.display = 'block';
+            document.getElementById('emptyState').style.display = 'none';
+
+            data.forEach(item => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${item.day}</td>
+                    <td class="currency">Rp ${item.totalPenjualan.toLocaleString('id-ID')}</td>
+                    <td class="currency">Rp ${item.tunai.toLocaleString('id-ID')}</td>
+                    <td class="currency">Rp ${item.totalPengeluaran.toLocaleString('id-ID')}</td>
+                    <td class="currency"><strong>Rp ${item.saldo.toLocaleString('id-ID')}</strong></td>
+                    <td>${item.keterangan || '-'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" onclick="editData(${item.day})">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteData(${item.day})">Delete</button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        function calculateMetrics() {
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const key = `${year}-${month}`;
+            const data = appData[key] || [];
+
+            if (data.length === 0) {
+                return {
+                    revenue: 0,
+                    expense: 0,
+                    profit: 0,
+                    margin: 0,
+                    daysWithData: 0
+                };
+            }
+
+            const revenue = data.reduce((sum, item) => sum + item.totalPenjualan, 0);
+            const expense = data.reduce((sum, item) => sum + item.totalPengeluaran, 0);
+            const profit = data[data.length - 1].saldo || (revenue - expense);
+            const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
+
+            return {
+                revenue,
+                expense,
+                profit,
+                margin,
+                daysWithData: data.length
+            };
+        }
+
+        // Format angka compact untuk KPI cards
+        function formatKPI(num) {
+            if (num >= 1000000000) {
+                return 'Rp ' + (num / 1000000000).toFixed(1) + ' M';
+            } else if (num >= 1000000) {
+                return 'Rp ' + (num / 1000000).toFixed(1) + ' Jt';
+            } else if (num >= 1000) {
+                return 'Rp ' + (num / 1000).toFixed(0) + ' Rb';
+            }
+            return 'Rp ' + num.toLocaleString('id-ID');
+        }
+
+        // Deteksi mobile (layar <= 768px)
+        function isMobile() {
+            return window.innerWidth <= 768;
+        }
+
+        function updateDashboard() {
+            const metrics = calculateMetrics();
+
+            if (metrics.daysWithData === 0) {
+                return;
+            }
+
+            // Gunakan format compact di mobile agar tidak terpotong
+            const fmt = isMobile() ? formatKPI : (n) => 'Rp ' + n.toLocaleString('id-ID');
+            document.getElementById('kpiRevenue').textContent = fmt(metrics.revenue);
+            document.getElementById('kpiExpense').textContent = fmt(metrics.expense);
+            document.getElementById('kpiProfit').textContent  = fmt(metrics.profit);
+            document.getElementById('kpiMargin').textContent  = `${metrics.margin.toFixed(1)}%`;
+
+            const marginStatus = metrics.margin > 40 ? '✓ Excellent' : metrics.margin > 20 ? '✓ Good' : metrics.margin > 10 ? '⚠️ Caution' : '🔴 Low Margin!';
+            document.getElementById('kpiMarginStatus').innerHTML = marginStatus;
+
+            updateChart();
+            updateTrendAlert(metrics);
+        }
+
+        function updateChart() {
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const monthName = months[month - 1];
+            const key = `${year}-${month}`;
+            const data = appData[key] || [];
+
+            if (data.length === 0) return;
+
+            const chartData = {
+                labels: data.map(d => `Hari ${d.day}`),
+                datasets: [
+                    {
+                        label: 'Revenue',
+                        data: data.map(d => d.totalPenjualan),
+                        borderColor: '#2196F3',
+                        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                        type: 'bar',
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Expense',
+                        data: data.map(d => d.totalPengeluaran),
+                        borderColor: '#F44336',
+                        backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                        type: 'bar',
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Profit',
+                        data: data.map(d => d.saldo),
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        type: 'line',
+                        yAxisID: 'y1',
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#4CAF50'
+                    }
+                ]
+            };
+
+            const ctx = document.getElementById('financialChart').getContext('2d');
+            if (financialChart) {
+                financialChart.destroy();
+            }
+
+            financialChart = new Chart(ctx, {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Rupiah (Rp)',
+                                font: { weight: 'bold' }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Saldo (Rp)',
+                                font: { weight: 'bold' }
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: { size: 13, weight: 'bold' },
+                                padding: 15
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: `Monthly Financial Performance - ${monthName} ${year}`,
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateTrendAlert(metrics) {
+            const alertDiv = document.getElementById('trendAlert');
+            const trendInfo = document.getElementById('trendInfo');
+
+            if (metrics.margin < 10) {
+                alertDiv.className = 'trend-alert';
+                alertDiv.innerHTML = `⚠️ <strong>LOW PROFIT MARGIN!</strong> Margin hanya ${metrics.margin.toFixed(1)}% dari revenue. Cek expense control!`;
+                alertDiv.style.display = 'block';
+            } else if (metrics.margin < 20) {
+                alertDiv.className = 'trend-alert';
+                alertDiv.innerHTML = `⚠️ <strong>CAUTION:</strong> Margin ${metrics.margin.toFixed(1)}%. Monitor expense lebih ketat.`;
+                alertDiv.style.display = 'block';
+            } else {
+                alertDiv.className = 'trend-alert success';
+                alertDiv.innerHTML = `✓ <strong>HEALTHY:</strong> Margin ${metrics.margin.toFixed(1)}% - Profit sedang good performance!`;
+                alertDiv.style.display = 'block';
+            }
+
+            const daysWithData = metrics.daysWithData;
+            const daysInMonth = new Date(parseInt(document.getElementById('yearSelect').value), parseInt(document.getElementById('monthSelect').value), 0).getDate();
+            const percentComplete = (daysWithData / daysInMonth * 100).toFixed(0);
+
+            trendInfo.innerHTML = `<strong>📊 Trend Analysis:</strong><p style="margin-top: 10px;">Data Progress: ${daysWithData}/${daysInMonth} hari (${percentComplete}% complete) | Revenue: Rp ${metrics.revenue.toLocaleString('id-ID')} | Profit Margin: ${metrics.margin.toFixed(1)}%</p>`;
+            trendInfo.style.display = 'block';
+        }
+
+        function updatePPNTable() {
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const key = `${year}-${month}`;
+            const data = appData[key] || [];
+
+            const tbody = document.getElementById('ppnTableBody');
+            tbody.innerHTML = '';
+
+            let totalPendapatan = 0;
+            let totalPPN = 0;
+
+            data.forEach(item => {
+                const ppnAmount = item.totalPenjualan * (configSettings.ppnRate / 100);
+                totalPendapatan += item.totalPenjualan;
+                totalPPN += ppnAmount;
+
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${item.day}</td>
+                    <td class="currency">Rp ${item.totalPenjualan.toLocaleString('id-ID')}</td>
+                    <td class="currency">Rp ${ppnAmount.toLocaleString('id-ID')}</td>
+                `;
+            });
+
+            // Add JUMLAH row
+            const jumlahRow = tbody.insertRow();
+            jumlahRow.style.background = '#f0f4f7';
+            jumlahRow.innerHTML = `
+                <td style="font-weight: 700; color: #1a5f7a;">JUMLAH</td>
+                <td class="currency" style="font-weight: 700; color: #1a5f7a;">Rp ${totalPendapatan.toLocaleString('id-ID')}</td>
+                <td class="currency" style="font-weight: 700; color: #1a5f7a;">Rp ${totalPPN.toLocaleString('id-ID')}</td>
+            `;
+
+            document.getElementById('ppnRateDisplay').textContent = configSettings.ppnRate;
+        }
+
+        function updateRoyaltiTable() {
+            const metrics = calculateMetrics();
+
+            const royaltiAmount = metrics.revenue * (configSettings.royaltiRate / 100);
+            const ppnOnRoyalti = royaltiAmount * (configSettings.ppnOnRoyaltiRate / 100);
+            const totalRoyaltiPpn = royaltiAmount + ppnOnRoyalti;
+
+            document.getElementById('totalPenjualanRoyalti').textContent = `Rp ${metrics.revenue.toLocaleString('id-ID')}`;
+            document.getElementById('royaltiAmount').textContent = `Rp ${royaltiAmount.toLocaleString('id-ID')}`;
+            document.getElementById('ppnOnRoyaltiAmount').textContent = `Rp ${ppnOnRoyalti.toLocaleString('id-ID')}`;
+            document.getElementById('totalRoyaltiPpn').textContent = `Rp ${totalRoyaltiPpn.toLocaleString('id-ID')}`;
+
+            document.getElementById('royaltiRateDisplay').textContent = configSettings.royaltiRate;
+            document.getElementById('ppnOnRoyaltiDisplay').textContent = configSettings.ppnOnRoyaltiRate;
+        }
+
+        function exportGrafikDashboard() {
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const monthName = months[month - 1];
+            const metrics = calculateMetrics();
+
+            const wb = XLSX.utils.book_new();
+
+            const dashboardData = [
+                ['FINANCIAL DASHBOARD', '', '', ''],
+                [monthName + ' ' + year, '', '', ''],
+                ['', '', '', ''],
+                ['KPI SUMMARY', '', '', ''],
+                ['Metric', 'Value', 'Status', 'Notes'],
+                ['Revenue', metrics.revenue, 'Data', 'Total Pemasukan'],
+                ['Expense', metrics.expense, 'Data', 'Total Pengeluaran'],
+                ['Net Profit', metrics.profit, 'Data', 'Hasil Bersih'],
+                ['Profit Margin', metrics.margin.toFixed(2) + '%', metrics.margin > 40 ? 'Excellent' : 'Good', 'Efisiensi'],
+                ['', '', '', ''],
+            ];
+
+            const ws1 = XLSX.utils.aoa_to_sheet(dashboardData);
+            ws1['!cols'] = [{wch: 20}, {wch: 20}, {wch: 20}, {wch: 20}];
+
+            // Format currency
+            Object.keys(ws1).forEach(cell => {
+                if (cell.match(/^A[0-9]/)) return;
+                if (cell === '!cols' || cell === '!rows') return;
+                if (ws1[cell]?.v && typeof ws1[cell].v === 'number' && cell.match(/^B/)) {
+                    ws1[cell].z = '#,##0';
+                }
+            });
+
+            XLSX.utils.book_append_sheet(wb, ws1, "Dashboard");
+
+            const fileName = `Laporan_Grafik_${monthName}_${year}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            showSuccessMessage(`✓ Grafik & Dashboard berhasil di-export!`);
+        }
+
+        function exportTabelData() {
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const monthName = months[month - 1];
+            const key = `${year}-${month}`;
+            const data = appData[key] || [];
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            if (data.length === 0) {
+                alert('Tidak ada data untuk di-export');
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+
+            const wsData = [
+                ['LAPORAN KEUANGAN BULANAN'],
+                [monthName + ' ' + year],
+                [''],
+                ['', 'TOTAL PENJUALAN', 'TUNAI', 'QRIS', 'EDC', 'TRANSFER', 'GOJEK', 'GRAB', 'PESANAN', 'TOTAL PENGELUARAN', 'BELANJA PAGI', 'BELANJA SORE', 'DAGING', 'DLL', 'KETERANGAN', 'SALDO']
+            ];
+
+            const dataStartRow = 5;
+            const dataEndRow = 4 + data.length;
+
+            data.forEach((item, index) => {
+                const rowNum = dataStartRow + index;
+                wsData.push([
+                    item.day,
+                    item.totalPenjualan,
+                    item.tunai,
+                    item.qris,
+                    item.edc,
+                    item.transfer,
+                    item.gojek,
+                    item.grab,
+                    item.pesanan,
+                    item.totalPengeluaran,
+                    item.belanjaPagi,
+                    item.belanjaSore,
+                    item.daging,
+                    item.dll,
+                    item.keterangan,
+                    item.saldo
+                ]);
+            });
+
+            wsData.push(['TOTAL', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+            const totalRow = dataEndRow + 1;
+            wsData.push(['TAX/SERVICE CHARGE (10%)', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+            const taxRow = totalRow + 1;
+            wsData.push(['GRAND TOTAL', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            ws['!cols'] = Array(16).fill({wch: 16});
+
+            // Format as currency (Rp)
+            for (let i = dataStartRow; i <= dataEndRow + 2; i++) {
+                for (let j = 1; j < 16; j++) {
+                    const cellRef = XLSX.utils.encode_cell({r: i-1, c: j});
+                    if (ws[cellRef]) {
+                        ws[cellRef].z = '#,##0';
+                    }
+                }
+            }
+
+            XLSX.utils.book_append_sheet(wb, ws, "Data Harian");
+
+            const fileName = `Laporan_${monthName}_${year}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            showSuccessMessage(`✓ Tabel Data berhasil di-export!`);
+        }
+
+        function exportPPNPDF() {
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const monthName = months[month - 1];
+            const key = `${year}-${month}`;
+            const data = appData[key] || [];
+
+            if (data.length === 0) {
+                alert('Tidak ada data untuk di-export');
+                return;
+            }
+
+            try {
+                // Create PDF with proper margins
+                const jsPDF = window.jspdf.jsPDF;
+                const doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const margin = 3;
+                const contentWidth = pageWidth - (margin * 2);
+                
+                let yPosition = margin + 3;
+
+                // Title 1 - Nama Bisnis
+                doc.setFont('Arial', 'bold');
+                doc.setFontSize(13);
+                doc.text(configSettings.companyName, pageWidth / 2, yPosition, { align: 'center' });
+                yPosition += 7;
+
+                // Title 2 - Custom Title (PPN Report)
+                doc.setFontSize(11);
+                doc.text(configSettings.ppnTitle, pageWidth / 2, yPosition, { align: 'center' });
+                yPosition += 6;
+
+                // Subtitle - Month/Year
+                doc.setFontSize(10);
+                doc.setFont('Arial', 'normal');
+                doc.text(`BULAN ${monthName.toUpperCase()} ${year}`, pageWidth / 2, yPosition, { align: 'center' });
+                yPosition += 8;
+
+                // Calculate table layout with smaller, more compact columns
+                const tableWidth = 140;
+                const tableStartX = (pageWidth - tableWidth) / 2;
+                const col1Width = 35;   // TANGGAL
+                const col2Width = 55;   // PENDAPATAN (Rp)
+                const col3Width = 50;   // PPN (Rp)
+                const rowHeight = 6.5;  // Compact row height
+
+                // Table header
+                doc.setDrawColor(0);
+                doc.setLineWidth(0.4);
+                doc.setFillColor(180, 180, 180);
+                
+                // Header row
+                doc.rect(tableStartX, yPosition, col1Width, rowHeight, 'FD');
+                doc.rect(tableStartX + col1Width, yPosition, col2Width, rowHeight, 'FD');
+                doc.rect(tableStartX + col1Width + col2Width, yPosition, col3Width, rowHeight, 'FD');
+
+                doc.setFont('Arial', 'bold');
+                doc.setFontSize(8);
+                doc.text('TANGGAL', tableStartX + (col1Width / 2), yPosition + 4.5, { align: 'center' });
+                doc.text('PENDAPATAN (Rp)', tableStartX + col1Width + (col2Width / 2), yPosition + 4.5, { align: 'center' });
+                doc.text('PPN (Rp)', tableStartX + col1Width + col2Width + (col3Width / 2), yPosition + 4.5, { align: 'center' });
+                yPosition += rowHeight;
+
+                // Table data rows
+                doc.setFont('Arial', 'normal');
+                doc.setFontSize(7.5);
+                let totalPendapatan = 0;
+                let totalPPN = 0;
+
+                data.forEach(item => {
+                    const ppnAmount = item.totalPenjualan * (configSettings.ppnRate / 100);
+                    totalPendapatan += item.totalPenjualan;
+                    totalPPN += ppnAmount;
+
+                    // Draw row borders
+                    doc.setLineWidth(0.3);
+                    doc.rect(tableStartX, yPosition, col1Width, rowHeight);
+                    doc.rect(tableStartX + col1Width, yPosition, col2Width, rowHeight);
+                    doc.rect(tableStartX + col1Width + col2Width, yPosition, col3Width, rowHeight);
+
+                    // Row data
+                    doc.text(item.day.toString(), tableStartX + (col1Width / 2), yPosition + 4.5, { align: 'center' });
+                    doc.text(item.totalPenjualan.toLocaleString('id-ID'), tableStartX + col1Width + col2Width - 2, yPosition + 4.5, { align: 'right' });
+                    doc.text(ppnAmount.toLocaleString('id-ID'), tableStartX + col1Width + col2Width + col3Width - 2, yPosition + 4.5, { align: 'right' });
+
+                    yPosition += rowHeight;
+                });
+
+                // Total row
+                doc.setFont('Arial', 'bold');
+                doc.setFillColor(200, 200, 200);
+                doc.setLineWidth(0.4);
+                doc.rect(tableStartX, yPosition, col1Width, rowHeight, 'FD');
+                doc.rect(tableStartX + col1Width, yPosition, col2Width, rowHeight, 'FD');
+                doc.rect(tableStartX + col1Width + col2Width, yPosition, col3Width, rowHeight, 'FD');
+
+                doc.setFontSize(8);
+                doc.text('JUMLAH', tableStartX + (col1Width / 2), yPosition + 4.5, { align: 'center' });
+                doc.text(totalPendapatan.toLocaleString('id-ID'), tableStartX + col1Width + col2Width - 2, yPosition + 4.5, { align: 'right' });
+                doc.text(totalPPN.toLocaleString('id-ID'), tableStartX + col1Width + col2Width + col3Width - 2, yPosition + 4.5, { align: 'right' });
+
+                // Signature area - positioned dynamically AFTER table - RIGHT ALIGNED
+                yPosition += rowHeight + 8;
+
+                // Signature section - positioned to the RIGHT
+                doc.setFont('Arial', 'normal');
+                doc.setFontSize(9);
+                const signatureRightMargin = margin + 10;
+                
+                doc.text(`${configSettings.location}, ${monthName.toUpperCase()} ${year}`, pageWidth - signatureRightMargin, yPosition, { align: 'right' });
+                yPosition += 16;
+
+                doc.text(configSettings.atasanName, pageWidth - signatureRightMargin, yPosition, { align: 'right' });
+
+                // Open PDF in new tab
+                const pdfBlob = doc.output('blob');
+                const pdfUrl = URL.createObjectURL(pdfBlob);
+                window.open(pdfUrl, '_blank');
+                setTimeout(() => URL.revokeObjectURL(pdfUrl), 300000);
+                showSuccessMessage('✓ PDF terbuka di tab baru! Gunakan tombol Print/Download di browser.');
+            } catch (error) {
+                console.error('PDF Export Error:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function exportRoyaltiPDF() {
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const monthName = months[month - 1];
+            const metrics = calculateMetrics();
+
+            const royaltiAmount = metrics.revenue * (configSettings.royaltiRate / 100);
+            const ppnOnRoyalti = royaltiAmount * (configSettings.ppnOnRoyaltiRate / 100);
+            const totalRoyaltiPpn = royaltiAmount + ppnOnRoyalti;
+
+            try {
+                // Create PDF with proper margins
+                const jsPDF = window.jspdf.jsPDF;
+                const doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const margin = 3;
+                
+                let yPosition = margin + 3;
+
+                // Title 1 - Nama Bisnis
+                doc.setFont('Arial', 'bold');
+                doc.setFontSize(13);
+                doc.text(configSettings.companyName, pageWidth / 2, yPosition, { align: 'center' });
+                yPosition += 7;
+
+                // Title 2 - Report Title
+                doc.setFontSize(11);
+                doc.text('ROYALTI & PPN BULANAN', pageWidth / 2, yPosition, { align: 'center' });
+                yPosition += 6;
+
+                // Subtitle - Month/Year
+                doc.setFontSize(10);
+                doc.setFont('Arial', 'normal');
+                doc.text(`BULAN ${monthName.toUpperCase()} ${year}`, pageWidth / 2, yPosition, { align: 'center' });
+                yPosition += 10;
+
+                // Table with proper centering
+                const tableWidth = 130;
+                const tableStartX = (pageWidth - tableWidth) / 2;
+                const labelWidth = 70;
+                const valueWidth = 60;
+                const rowHeight = 7;
+
+                // Row 1: Total Penjualan
+                doc.setFont('Arial', 'normal');
+                doc.setFontSize(9);
+                
+                doc.setDrawColor(0);
+                doc.setLineWidth(0.4);
+                doc.rect(tableStartX, yPosition, labelWidth, rowHeight);
+                doc.rect(tableStartX + labelWidth, yPosition, valueWidth, rowHeight);
+                
+                doc.text('TOTAL PENJUALAN', tableStartX + 2, yPosition + 4.5);
+                doc.text(metrics.revenue.toLocaleString('id-ID'), tableStartX + labelWidth + valueWidth - 2, yPosition + 4.5, { align: 'right' });
+                yPosition += rowHeight;
+
+                // Row 2: Royalti
+                doc.setFont('Arial', 'normal');
+                doc.rect(tableStartX, yPosition, labelWidth, rowHeight);
+                doc.rect(tableStartX + labelWidth, yPosition, valueWidth, rowHeight);
+                
+                doc.text(`ROYALTI ${configSettings.royaltiRate}%`, tableStartX + 2, yPosition + 4.5);
+                doc.text(royaltiAmount.toLocaleString('id-ID'), tableStartX + labelWidth + valueWidth - 2, yPosition + 4.5, { align: 'right' });
+                yPosition += rowHeight;
+
+                // Row 3: PPN on Royalti
+                doc.setFont('Arial', 'normal');
+                doc.rect(tableStartX, yPosition, labelWidth, rowHeight);
+                doc.rect(tableStartX + labelWidth, yPosition, valueWidth, rowHeight);
+                
+                doc.text(`PPN ${configSettings.ppnOnRoyaltiRate}%`, tableStartX + 2, yPosition + 4.5);
+                doc.text(ppnOnRoyalti.toLocaleString('id-ID'), tableStartX + labelWidth + valueWidth - 2, yPosition + 4.5, { align: 'right' });
+                yPosition += rowHeight;
+
+                // Row 4: Total (bold highlight)
+                doc.setFont('Arial', 'bold');
+                doc.setFillColor(200, 200, 200);
+                doc.setLineWidth(0.4);
+                doc.rect(tableStartX, yPosition, labelWidth, rowHeight, 'FD');
+                doc.rect(tableStartX + labelWidth, yPosition, valueWidth, rowHeight, 'FD');
+                
+                doc.setFontSize(9);
+                doc.text('TOTAL ROYALTI & PPN', tableStartX + 2, yPosition + 4.5);
+                doc.text(totalRoyaltiPpn.toLocaleString('id-ID'), tableStartX + labelWidth + valueWidth - 2, yPosition + 4.5, { align: 'right' });
+                yPosition += rowHeight;
+
+                // Note
+                yPosition += 3;
+                doc.setFont('Arial', 'italic');
+                doc.setFontSize(8);
+                doc.text('(Transfer ke Cakman Malang)', tableStartX, yPosition);
+
+                // Signature area - positioned dynamically AFTER table - RIGHT ALIGNED
+                yPosition += 12;
+
+                doc.setFont('Arial', 'normal');
+                doc.setFontSize(9);
+                const signatureRightMargin = margin + 10;
+                
+                doc.text(`${configSettings.location}, ${monthName.toUpperCase()} ${year}`, pageWidth - signatureRightMargin, yPosition, { align: 'right' });
+                yPosition += 16;
+
+                doc.text(configSettings.atasanName, pageWidth - signatureRightMargin, yPosition, { align: 'right' });
+
+                // Open PDF in new tab
+                const pdfBlob2 = doc.output('blob');
+                const pdfUrl2 = URL.createObjectURL(pdfBlob2);
+                window.open(pdfUrl2, '_blank');
+                setTimeout(() => URL.revokeObjectURL(pdfUrl2), 300000);
+                showSuccessMessage('✓ PDF terbuka di tab baru! Gunakan tombol Print/Download di browser.');
+            } catch (error) {
+                console.error('PDF Export Error:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+
+        // Re-render KPI saat resize (desktop ↔ mobile)
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                updateDashboard();
+            }, 200);
+        });
+    </script>
+</body>
+</html>
