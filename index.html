@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Daily Report Tool</title>
+    <title>Financial Daily Report Tool V4.5 Extended</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -712,12 +712,121 @@
             .pdf-modal-title { font-size: 13px; }
             .pdf-btn { padding: 7px 12px; font-size: 12px; }
         }
+
+        /* ===== MONEY INPUT (dengan prefix Rp) ===== */
+        .money-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .money-wrapper .rp-prefix {
+            position: absolute;
+            left: 12px;
+            font-weight: 700;
+            color: #1a5f7a;
+            font-size: 14px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .money-input {
+            padding-left: 38px !important;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-align: right;
+            width: 100%;
+        }
+        .money-input::placeholder {
+            text-align: right;
+            font-weight: 400;
+        }
+
+        /* ===== ROYALTI TABLE ===== */
+        .royalti-table {
+            width: auto;
+            min-width: 280px;
+            margin: 16px auto;
+        }
+        .royalti-label {
+            padding: 13px 20px;
+            font-weight: 700;
+            color: #1a5f7a;
+            background: #f0f4f7;
+            white-space: nowrap;
+        }
+        .royalti-value {
+            padding: 13px 20px;
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #1a5f7a;
+        }
+        .royalti-total-row {
+            border-top: 2px solid #1a5f7a;
+            border-bottom: 2px solid #1a5f7a;
+        }
+        .royalti-total-label { background: #e8f4f8; font-weight: 800; }
+        .royalti-total-value { background: #e8f4f8; font-weight: 800; }
+
+        /* ===== TRANSFER BOX ===== */
+        .transfer-box {
+            margin: 16px auto;
+            max-width: 500px;
+            border: 2px solid #1a5f7a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .transfer-box-header {
+            background: linear-gradient(135deg, #1a5f7a, #0d3d52);
+            color: white;
+            padding: 10px 16px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .transfer-input-row { padding: 14px 16px; background: white; }
+        .transfer-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+            color: #2c3e50;
+        }
+        .transfer-input:focus {
+            outline: none;
+            border-color: #1a5f7a;
+            box-shadow: 0 0 0 3px rgba(26,95,122,0.1);
+        }
+        .transfer-preview {
+            background: #f0f4f7;
+            padding: 10px 16px;
+            font-size: 13px;
+            color: #555;
+            font-style: italic;
+            border-top: 1px solid #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .royalti-table { min-width: 100%; width: 100%; }
+            .royalti-label { padding: 11px 12px; font-size: 13px; }
+            .royalti-value { padding: 11px 12px; font-size: 13px; }
+            .transfer-box { max-width: 100%; margin: 12px 0; }
+            .transfer-input { font-size: 16px; padding: 12px 14px; }
+            .money-input { font-size: 16px; }
+        }
+        @media (max-width: 480px) {
+            .royalti-label { padding: 10px; font-size: 12px; }
+            .royalti-value { padding: 10px; font-size: 12px; }
+            .transfer-input { font-size: 15px; }
+        }
     </style>
 </head>
 <body>
     <!-- Sticky Header -->
     <div class="sticky-header">
-        <h1>📊 Financial Daily Report</h1>
+        <h1>📊 Financial Daily Report V4.5 Extended</h1>
         <div class="controls">
             <button class="config-toggle-btn" id="configToggleBtn" onclick="toggleConfig()">
                 ⚙️ KONFIGURASI
@@ -828,62 +937,62 @@
 
                 <div class="form-group">
                     <label>Total Penjualan *</label>
-                    <input type="number" id="totalPenjualan" placeholder="0" min="0">
+                    <input type="text" inputmode="numeric" id="totalPenjualan" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label>Saldo Akhir/Tunai *</label>
-                    <input type="number" id="tunai" placeholder="0" min="0">
+                    <input type="text" inputmode="numeric" id="tunai" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label>QRIS</label>
-                    <input type="number" id="qris" placeholder="0" min="0">
+                    <input type="text" inputmode="numeric" id="qris" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label>EDC</label>
-                    <input type="number" id="edc" placeholder="0" min="0">
+                    <input type="text" inputmode="numeric" id="edc" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label>Transfer</label>
-                    <input type="number" id="transfer" placeholder="0" min="0">
+                    <input type="text" inputmode="numeric" id="transfer" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label>GoJek</label>
-                    <input type="number" id="gojek" placeholder="0" min="0">
+                    <input type="text" inputmode="numeric" id="gojek" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label>Grab</label>
-                    <input type="number" id="grab" placeholder="0" min="0">
+                    <input type="text" inputmode="numeric" id="grab" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label>Pesanan</label>
-                    <input type="number" id="pesanan" placeholder="0" min="0">
+                    <input type="text" inputmode="numeric" id="pesanan" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label>Belanja Pagi</label>
-                    <input type="number" id="belanjaPagi" placeholder="0" min="0">
+                    <input type="text" inputmode="numeric" id="belanjaPagi" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label>Belanja Sore</label>
-                    <input type="number" id="belanjaSore" placeholder="0" min="0">
+                    <input type="text" inputmode="numeric" id="belanjaSore" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label>Daging</label>
-                    <input type="number" id="daging" placeholder="0" min="0">
+                    <input type="text" inputmode="numeric" id="daging" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label>Dan Lain-Lain</label>
-                    <input type="number" id="dll" placeholder="0" min="0">
+                    <input type="text" inputmode="numeric" id="dll" class="money-input" placeholder="0" autocomplete="off">
                 </div>
             </div>
 
@@ -1222,6 +1331,64 @@
 
         const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
+        // ===== MONEY FORMAT HELPERS =====
+        // Ubah string "1.000.000" → number 1000000
+        function parseNum(str) {
+            if (typeof str === 'number') return str;
+            if (!str) return 0;
+            // Hapus semua karakter selain digit
+            const cleaned = String(str).replace(/[^0-9]/g, '');
+            return cleaned ? parseInt(cleaned, 10) : 0;
+        }
+
+        // Ubah number 1000000 → string "1.000.000"
+        function formatNum(num) {
+            const n = parseNum(num);
+            return n.toLocaleString('id-ID');
+        }
+
+        // Pasang auto-format pada input uang saat user mengetik
+        function attachMoneyFormatters() {
+            const moneyFields = ['totalPenjualan','tunai','qris','edc','transfer','gojek','grab','pesanan','belanjaPagi','belanjaSore','daging','dll'];
+            moneyFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+
+                el.addEventListener('input', function(e) {
+                    const oldValue = e.target.value;
+                    const cursorPos = e.target.selectionStart;
+                    const digitsBeforeCursor = oldValue.slice(0, cursorPos).replace(/[^0-9]/g, '').length;
+
+                    const num = parseNum(oldValue);
+                    const formatted = num === 0 && oldValue.replace(/[^0-9]/g,'') === '' ? '' : num.toLocaleString('id-ID');
+                    e.target.value = formatted;
+
+                    // Posisikan ulang cursor (perkiraan)
+                    let newCursor = 0, digitCount = 0;
+                    for (let i = 0; i < formatted.length; i++) {
+                        if (/[0-9]/.test(formatted[i])) digitCount++;
+                        if (digitCount >= digitsBeforeCursor) { newCursor = i + 1; break; }
+                        newCursor = i + 1;
+                    }
+                    e.target.setSelectionRange(newCursor, newCursor);
+
+                    updateCalculations();
+                });
+
+                // Wrap input dengan prefix "Rp"
+                if (!el.parentElement.classList.contains('money-wrapper')) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'money-wrapper';
+                    el.parentNode.insertBefore(wrapper, el);
+                    const prefix = document.createElement('span');
+                    prefix.className = 'rp-prefix';
+                    prefix.textContent = 'Rp';
+                    wrapper.appendChild(prefix);
+                    wrapper.appendChild(el);
+                }
+            });
+        }
+
         // Tanggal hari ini (global reference)
         const todayDate  = new Date();
         const todayDay   = todayDate.getDate();
@@ -1234,6 +1401,7 @@
             document.getElementById('yearSelect').value  = todayYear;
             updateUI();
             attachEventListeners();
+            attachMoneyFormatters();
         }
 
         function loadConfig() {
@@ -1340,10 +1508,7 @@
             document.getElementById('yearSelect').addEventListener('change', updateUI);
             document.getElementById('daySelect').addEventListener('change', updateCalculations);
             
-            const numInputs = ['totalPenjualan', 'tunai', 'qris', 'edc', 'transfer', 'gojek', 'grab', 'pesanan', 'belanjaPagi', 'belanjaSore', 'daging', 'dll'];
-            numInputs.forEach(id => {
-                document.getElementById(id).addEventListener('input', updateCalculations);
-            });
+            // Listener 'input' untuk format uang dipasang di attachMoneyFormatters()
         }
 
         function updateUI() {
@@ -1385,15 +1550,15 @@
         }
 
         function updateCalculations() {
-            const belanjaPagi = parseFloat(document.getElementById('belanjaPagi').value) || 0;
-            const belanjaSore = parseFloat(document.getElementById('belanjaSore').value) || 0;
-            const daging = parseFloat(document.getElementById('daging').value) || 0;
-            const dll = parseFloat(document.getElementById('dll').value) || 0;
+            const belanjaPagi = parseNum(document.getElementById('belanjaPagi').value);
+            const belanjaSore = parseNum(document.getElementById('belanjaSore').value);
+            const daging = parseNum(document.getElementById('daging').value);
+            const dll = parseNum(document.getElementById('dll').value);
 
             const totalPengeluaran = belanjaPagi + belanjaSore + daging + dll;
 
-            const totalPenjualan = parseFloat(document.getElementById('totalPenjualan').value) || 0;
-            const pesanan = parseFloat(document.getElementById('pesanan').value) || 0;
+            const totalPenjualan = parseNum(document.getElementById('totalPenjualan').value);
+            const pesanan = parseNum(document.getElementById('pesanan').value);
 
             const month = parseInt(document.getElementById('monthSelect').value);
             const year = parseInt(document.getElementById('yearSelect').value);
@@ -1413,12 +1578,12 @@
 
         function showPreview() {
             const day = document.getElementById('daySelect').value;
-            const totalPenjualan = parseFloat(document.getElementById('totalPenjualan').value) || 0;
-            const tunai = parseFloat(document.getElementById('tunai').value) || 0;
-            const belanjaPagi = parseFloat(document.getElementById('belanjaPagi').value) || 0;
-            const belanjaSore = parseFloat(document.getElementById('belanjaSore').value) || 0;
-            const daging = parseFloat(document.getElementById('daging').value) || 0;
-            const dll = parseFloat(document.getElementById('dll').value) || 0;
+            const totalPenjualan = parseNum(document.getElementById('totalPenjualan').value);
+            const tunai = parseNum(document.getElementById('tunai').value);
+            const belanjaPagi = parseNum(document.getElementById('belanjaPagi').value);
+            const belanjaSore = parseNum(document.getElementById('belanjaSore').value);
+            const daging = parseNum(document.getElementById('daging').value);
+            const dll = parseNum(document.getElementById('dll').value);
             const keterangan = document.getElementById('keterangan').value;
 
             if (!totalPenjualan || !tunai) {
@@ -1448,18 +1613,18 @@
             const key = `${year}-${month}`;
 
             const day = parseInt(document.getElementById('daySelect').value);
-            const totalPenjualan = parseFloat(document.getElementById('totalPenjualan').value) || 0;
-            const tunai = parseFloat(document.getElementById('tunai').value) || 0;
-            const qris = parseFloat(document.getElementById('qris').value) || 0;
-            const edc = parseFloat(document.getElementById('edc').value) || 0;
-            const transfer = parseFloat(document.getElementById('transfer').value) || 0;
-            const gojek = parseFloat(document.getElementById('gojek').value) || 0;
-            const grab = parseFloat(document.getElementById('grab').value) || 0;
-            const pesanan = parseFloat(document.getElementById('pesanan').value) || 0;
-            const belanjaPagi = parseFloat(document.getElementById('belanjaPagi').value) || 0;
-            const belanjaSore = parseFloat(document.getElementById('belanjaSore').value) || 0;
-            const daging = parseFloat(document.getElementById('daging').value) || 0;
-            const dll = parseFloat(document.getElementById('dll').value) || 0;
+            const totalPenjualan = parseNum(document.getElementById('totalPenjualan').value);
+            const tunai = parseNum(document.getElementById('tunai').value);
+            const qris = parseNum(document.getElementById('qris').value);
+            const edc = parseNum(document.getElementById('edc').value);
+            const transfer = parseNum(document.getElementById('transfer').value);
+            const gojek = parseNum(document.getElementById('gojek').value);
+            const grab = parseNum(document.getElementById('grab').value);
+            const pesanan = parseNum(document.getElementById('pesanan').value);
+            const belanjaPagi = parseNum(document.getElementById('belanjaPagi').value);
+            const belanjaSore = parseNum(document.getElementById('belanjaSore').value);
+            const daging = parseNum(document.getElementById('daging').value);
+            const dll = parseNum(document.getElementById('dll').value);
             const keterangan = document.getElementById('keterangan').value;
 
             const totalPengeluaran = belanjaPagi + belanjaSore + daging + dll;
@@ -1535,18 +1700,18 @@
             if (!item) return;
 
             document.getElementById('daySelect').value = item.day;
-            document.getElementById('totalPenjualan').value = item.totalPenjualan;
-            document.getElementById('tunai').value = item.tunai;
-            document.getElementById('qris').value = item.qris;
-            document.getElementById('edc').value = item.edc;
-            document.getElementById('transfer').value = item.transfer;
-            document.getElementById('gojek').value = item.gojek;
-            document.getElementById('grab').value = item.grab;
-            document.getElementById('pesanan').value = item.pesanan;
-            document.getElementById('belanjaPagi').value = item.belanjaPagi;
-            document.getElementById('belanjaSore').value = item.belanjaSore;
-            document.getElementById('daging').value = item.daging;
-            document.getElementById('dll').value = item.dll;
+            document.getElementById('totalPenjualan').value = formatNum(item.totalPenjualan);
+            document.getElementById('tunai').value = formatNum(item.tunai);
+            document.getElementById('qris').value = formatNum(item.qris);
+            document.getElementById('edc').value = formatNum(item.edc);
+            document.getElementById('transfer').value = formatNum(item.transfer);
+            document.getElementById('gojek').value = formatNum(item.gojek);
+            document.getElementById('grab').value = formatNum(item.grab);
+            document.getElementById('pesanan').value = formatNum(item.pesanan);
+            document.getElementById('belanjaPagi').value = formatNum(item.belanjaPagi);
+            document.getElementById('belanjaSore').value = formatNum(item.belanjaSore);
+            document.getElementById('daging').value = formatNum(item.daging);
+            document.getElementById('dll').value = formatNum(item.dll);
             document.getElementById('keterangan').value = item.keterangan;
 
             currentEditDay = day;
