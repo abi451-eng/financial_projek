@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Daily Report Tool</title>
+    <title>Financial Daily Report Tool V4.5 Extended</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -717,7 +717,7 @@
 <body>
     <!-- Sticky Header -->
     <div class="sticky-header">
-        <h1>📊 Financial Daily Report</h1>
+        <h1>📊 Financial Daily Report V4.5 Extended</h1>
         <div class="controls">
             <button class="config-toggle-btn" id="configToggleBtn" onclick="toggleConfig()">
                 ⚙️ KONFIGURASI
@@ -1034,30 +1034,48 @@
         <!-- Royalti & PPN Summary Section -->
         <div id="royaltiSection" style="display:none;" class="data-section">
             <h2>👑 ROYALTI & PPN BULANAN</h2>
-            
-            <table class="data-table" style="width: auto; margin: 20px auto;">
-                <tbody>
-                    <tr>
-                        <td style="padding: 15px 25px; font-weight: 700; color: #1a5f7a; background: #f0f4f7;">TOTAL PENJUALAN</td>
-                        <td style="padding: 15px 25px; text-align: right; font-family: 'Courier New', monospace; font-weight: 600; color: #1a5f7a;" id="totalPenjualanRoyalti">Rp 0</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 15px 25px; font-weight: 700; color: #1a5f7a; background: #f0f4f7;">ROYALTI <span id="royaltiRateDisplay">3</span>%</td>
-                        <td style="padding: 15px 25px; text-align: right; font-family: 'Courier New', monospace; font-weight: 600; color: #1a5f7a;" id="royaltiAmount">Rp 0</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 15px 25px; font-weight: 700; color: #1a5f7a; background: #f0f4f7;">PPN <span id="ppnOnRoyaltiDisplay">11</span>%</td>
-                        <td style="padding: 15px 25px; text-align: right; font-family: 'Courier New', monospace; font-weight: 600; color: #1a5f7a;" id="ppnOnRoyaltiAmount">Rp 0</td>
-                    </tr>
-                    <tr style="border-top: 2px solid #1a5f7a; border-bottom: 2px solid #1a5f7a;">
-                        <td style="padding: 15px 25px; font-weight: 800; color: #1a5f7a; background: #e8f4f8;">TOTAL ROYALTI & PPN</td>
-                        <td style="padding: 15px 25px; text-align: right; font-family: 'Courier New', monospace; font-weight: 800; color: #1a5f7a; background: #e8f4f8;" id="totalRoyaltiPpn">Rp 0</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="padding: 12px 25px; font-size: 12px; color: #999; font-style: italic;">(Transfer ke Cakman Malang)</td>
-                    </tr>
-                </tbody>
-            </table>
+
+            <div style="overflow-x: auto;">
+                <table class="data-table royalti-table">
+                    <tbody>
+                        <tr>
+                            <td class="royalti-label">TOTAL PENJUALAN</td>
+                            <td class="royalti-value" id="totalPenjualanRoyalti">Rp 0</td>
+                        </tr>
+                        <tr>
+                            <td class="royalti-label">ROYALTI <span id="royaltiRateDisplay">3</span>%</td>
+                            <td class="royalti-value" id="royaltiAmount">Rp 0</td>
+                        </tr>
+                        <tr>
+                            <td class="royalti-label">PPN <span id="ppnOnRoyaltiDisplay">11</span>%</td>
+                            <td class="royalti-value" id="ppnOnRoyaltiAmount">Rp 0</td>
+                        </tr>
+                        <tr class="royalti-total-row">
+                            <td class="royalti-label royalti-total-label">TOTAL ROYALTI & PPN</td>
+                            <td class="royalti-value royalti-total-value" id="totalRoyaltiPpn">Rp 0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Transfer Name - CUSTOM (tidak fixed) -->
+            <div class="transfer-box">
+                <div class="transfer-box-header">
+                    <span>💸 Transfer ke:</span>
+                </div>
+                <div class="transfer-input-row">
+                    <input
+                        type="text"
+                        id="namaTransfer"
+                        class="transfer-input"
+                        placeholder="Contoh: Cakman Malang, Bank BCA, dll..."
+                        oninput="saveTransferName()"
+                    >
+                </div>
+                <div class="transfer-preview" id="transferPreview" style="display:none;">
+                    <span id="transferPreviewText"></span>
+                </div>
+            </div>
         </div>
 
         <!-- Export Options -->
@@ -1187,6 +1205,7 @@
             ppnTitle:         _saved.ppnTitle         || '',
             location:         _saved.location         || '',
             atasanName:       _saved.atasanName       || '',
+            namaTransfer:     _saved.namaTransfer     || '',
             ppnRate:          _saved.ppnRate          || 10,
             royaltiRate:      _saved.royaltiRate      || 3,
             ppnOnRoyaltiRate: _saved.ppnOnRoyaltiRate || 11
@@ -1234,6 +1253,7 @@
                 ppnTitle:         document.getElementById('ppnTitle').value,
                 location:         document.getElementById('location').value,
                 atasanName:       document.getElementById('atasanName').value,
+                namaTransfer:     document.getElementById('namaTransfer').value,
                 ppnRate:          parseFloat(document.getElementById('ppnRate').value) || 10,
                 royaltiRate:      parseFloat(document.getElementById('royaltiRate').value) || 3,
                 ppnOnRoyaltiRate: parseFloat(document.getElementById('ppnOnRoyaltiRate').value) || 11
@@ -1244,6 +1264,38 @@
             updateDashboard();
             updatePPNTable();
             updateRoyaltiTable();
+        }
+
+        // Simpan nama transfer langsung saat user mengetik
+        function saveTransferName() {
+            const val = document.getElementById('namaTransfer').value;
+            configSettings.namaTransfer = val;
+            localStorage.setItem('financialConfig', JSON.stringify(configSettings));
+
+            // Tampilkan preview
+            const preview = document.getElementById('transferPreview');
+            const previewText = document.getElementById('transferPreviewText');
+            if (val.trim()) {
+                previewText.textContent = `(Transfer ke ${val})`;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        // Load nama transfer ke field
+        function loadTransferName() {
+            const input = document.getElementById('namaTransfer');
+            if (input && configSettings.namaTransfer) {
+                input.value = configSettings.namaTransfer;
+                // Trigger preview
+                const preview = document.getElementById('transferPreview');
+                const previewText = document.getElementById('transferPreviewText');
+                if (configSettings.namaTransfer.trim()) {
+                    previewText.textContent = `(Transfer ke ${configSettings.namaTransfer})`;
+                    preview.style.display = 'block';
+                }
+            }
         }
 
         function showConfigWarning() {
@@ -1844,6 +1896,8 @@
         }
 
         function updateRoyaltiTable() {
+            // Load nama transfer ke input field
+            loadTransferName();
             const metrics = calculateMetrics();
 
             const royaltiAmount = metrics.revenue * (configSettings.royaltiRate / 100);
@@ -2213,7 +2267,10 @@
                 yPosition += 3;
                 doc.setFont('Arial', 'italic');
                 doc.setFontSize(8);
-                doc.text('(Transfer ke Cakman Malang)', tableStartX, yPosition);
+                const namaTransferPdf = configSettings.namaTransfer
+                    ? `(Transfer ke ${configSettings.namaTransfer})`
+                    : '(Transfer ke -)';
+                doc.text(namaTransferPdf, tableStartX, yPosition);
 
                 // Signature area - positioned dynamically AFTER table - RIGHT ALIGNED
                 yPosition += 12;
