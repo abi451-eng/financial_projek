@@ -980,11 +980,6 @@
     <div class="sticky-header">
         <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
         <h1>📊 Financial Daily Report</h1>
-        <div class="controls">
-            <button class="config-toggle-btn" id="configToggleBtn" onclick="toggleConfig()">
-                ⚙️ KONFIGURASI
-            </button>
-        </div>
     </div>
 
     <!-- Sidebar Navigation -->
@@ -1061,7 +1056,10 @@
             </div>
         </div>
 
-        <!-- Month Selector -->
+        <!-- ===== VIEW: INPUT ===== -->
+        <div class="view-panel active" id="view-input">
+
+        <!-- Month Selector (hanya tampil di menu Input) -->
         <div class="month-selector">
             <label>📆 Pilih Tanggal:</label>
             <select id="daySelect"></select>
@@ -1099,8 +1097,6 @@
             </select>
         </div>
 
-        <!-- ===== VIEW: INPUT ===== -->
-        <div class="view-panel active" id="view-input">
         <!-- Form Section -->
         <div class="form-section">
             <h2 id="formTitle">📝 Input Data Harian</h2>
