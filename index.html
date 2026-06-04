@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Financial Daily Report Tool</title>
+    <title>Financial Daily</title>
 
     <!-- PWA -->
     <link rel="manifest" href="./manifest.json">
@@ -1235,6 +1235,20 @@
         .switch input:checked + .switch-slider { background: #1a5f7a; }
         .switch input:checked + .switch-slider::before { transform: translateX(22px); }
 
+        .lang-select {
+            padding: 9px 14px;
+            border: 2px solid #1a5f7a;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a5f7a;
+            background: white;
+            cursor: pointer;
+            font-family: inherit;
+            flex-shrink: 0;
+        }
+        body.dark .lang-select { background: #26333b; color: #6fc0e0; border-color: #3a4b55; }
+
         /* ============================================================
            DARK MODE
            ============================================================ */
@@ -1361,19 +1375,19 @@
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <span class="sidebar-title">📋 Menu</span>
+            <span class="sidebar-title">📋 <span data-i18n="menu_title">Menu</span></span>
             <button class="sidebar-close" onclick="closeSidebar()" aria-label="Tutup">✕</button>
         </div>
         <ul class="sidebar-menu">
-            <li><button class="sidebar-item active" data-view="input"     onclick="showView('input', this)">📝 <span>Input Data</span></button></li>
-            <li><button class="sidebar-item"        data-view="dashboard" onclick="showView('dashboard', this)">📊 <span>Dashboard</span></button></li>
-            <li><button class="sidebar-item"        data-view="pajak"     onclick="showView('pajak', this)">💰 <span>Laporan Pajak</span></button></li>
-            <li><button class="sidebar-item"        data-view="export"    onclick="showView('export', this)">📥 <span>Export</span></button></li>
+            <li><button class="sidebar-item active" data-view="input"     onclick="showView('input', this)">📝 <span data-i18n="nav_input">Input Data</span></button></li>
+            <li><button class="sidebar-item"        data-view="dashboard" onclick="showView('dashboard', this)">📊 <span data-i18n="nav_dashboard">Dashboard</span></button></li>
+            <li><button class="sidebar-item"        data-view="pajak"     onclick="showView('pajak', this)">💰 <span data-i18n="nav_pajak">Laporan Pajak</span></button></li>
+            <li><button class="sidebar-item"        data-view="export"    onclick="showView('export', this)">📥 <span data-i18n="nav_export">Export</span></button></li>
         </ul>
         <div class="sidebar-footer">
-            <button class="sidebar-item" id="installAppBtn" onclick="installApp()" style="display:none; color:#27ae60;">⬇️ <span>Install Aplikasi</span></button>
-            <button class="sidebar-item" data-view="setting" onclick="showView('setting', this)">🎛️ <span>Setting</span></button>
-            <button class="sidebar-item" onclick="toggleConfig(); closeSidebar();">⚙️ <span>Konfigurasi</span></button>
+            <button class="sidebar-item" id="installAppBtn" onclick="installApp()" style="display:none; color:#27ae60;">⬇️ <span data-i18n="nav_install">Install Aplikasi</span></button>
+            <button class="sidebar-item" data-view="setting" onclick="showView('setting', this)">🎛️ <span data-i18n="nav_setting">Setting</span></button>
+            <button class="sidebar-item" onclick="toggleConfig(); closeSidebar();">⚙️ <span data-i18n="nav_config">Konfigurasi</span></button>
         </div>
     </nav>
 
@@ -1384,30 +1398,30 @@
         <!-- Collapsible Config Section -->
         <div class="config-section collapsed" id="configSection">
             <div class="config-header" onclick="toggleConfig()">
-                <h2>⚙️ KONFIGURASI SISTEM</h2>
+                <h2 data-i18n="cfg_title">⚙️ KONFIGURASI SISTEM</h2>
                 <span class="toggle-icon">▼</span>
             </div>
 
             <div class="config-content">
                 <div class="config-grid">
                     <div class="config-group">
-                        <label>Nama Bisnis/Warung *</label>
-                        <input type="text" id="companyName" placeholder="Nama Bisnis/Warung">
+                        <label data-i18n="cfg_business">Nama Bisnis/Warung *</label>
+                        <input type="text" id="companyName" placeholder="Nama Bisnis/Warung" data-i18n-ph="cfg_business_ph">
                     </div>
 
                     <div class="config-group">
-                        <label>Alamat/Lokasi *</label>
-                        <input type="text" id="ppnTitle" placeholder="Alamat/Lokasi">
+                        <label data-i18n="cfg_address">Alamat/Lokasi *</label>
+                        <input type="text" id="ppnTitle" placeholder="Alamat/Lokasi" data-i18n-ph="cfg_address_ph">
                     </div>
 
                     <div class="config-group">
-                        <label>Kabupaten/Kota *</label>
-                        <input type="text" id="location" placeholder="Kabupaten/Kota">
+                        <label data-i18n="cfg_city">Kabupaten/Kota *</label>
+                        <input type="text" id="location" placeholder="Kabupaten/Kota" data-i18n-ph="cfg_city_ph">
                     </div>
 
                     <div class="config-group">
-                        <label>Nama Atasan *</label>
-                        <input type="text" id="atasanName" placeholder="Nama Atasan">
+                        <label data-i18n="cfg_boss">Nama Atasan *</label>
+                        <input type="text" id="atasanName" placeholder="Nama Atasan" data-i18n-ph="cfg_boss_ph">
                     </div>
                 </div>
 
@@ -1415,21 +1429,21 @@
                     <p><strong>⚠️ Flexible Tax & Commission Rates</strong></p>
                     <div class="rate-inputs">
                         <div class="config-group">
-                            <label>Tarif PPN (%)</label>
+                            <label data-i18n="cfg_ppn_rate">Tarif PPN (%)</label>
                             <input type="number" id="ppnRate" value="10" min="0" max="100" step="0.1">
                         </div>
                         <div class="config-group">
-                            <label>Tarif Royalti (%)</label>
+                            <label data-i18n="cfg_royalti_rate">Tarif Royalti (%)</label>
                             <input type="number" id="royaltiRate" value="3" min="0" max="100" step="0.1">
                         </div>
                         <div class="config-group">
-                            <label>Tarif PPN pada Royalti (%)</label>
+                            <label data-i18n="cfg_ppn_royalti_rate">Tarif PPN pada Royalti (%)</label>
                             <input type="number" id="ppnOnRoyaltiRate" value="11" min="0" max="100" step="0.1">
                         </div>
                     </div>
                 </div>
 
-                <button class="save-config-btn" onclick="saveConfig()">💾 Simpan Konfigurasi</button>
+                <button class="save-config-btn" onclick="saveConfig()" data-i18n="cfg_save">💾 Simpan Konfigurasi</button>
             </div>
         </div>
 
@@ -1438,7 +1452,7 @@
 
         <!-- Month Selector (hanya tampil di menu Input) -->
         <div class="month-selector">
-            <label style="white-space:nowrap;">📆 Tanggal Laporan:</label>
+            <label style="white-space:nowrap;" data-i18n="date_label">📆 Tanggal Laporan:</label>
 
             <div class="date-picker-wrap">
                 <button type="button" class="date-trigger" id="dateTrigger" onclick="toggleCalendar(event)">
@@ -1458,10 +1472,10 @@
                         <button type="button" class="cal-nav-btn" onclick="calChangeMonth(1)" title="Bulan berikutnya">›</button>
                     </div>
                     <div class="cal-weekdays">
-                        <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
+                        <span data-i18n="wd0">Min</span><span data-i18n="wd1">Sen</span><span data-i18n="wd2">Sel</span><span data-i18n="wd3">Rab</span><span data-i18n="wd4">Kam</span><span data-i18n="wd5">Jum</span><span data-i18n="wd6">Sab</span>
                     </div>
                     <div class="cal-days" id="calDays"></div>
-                    <button type="button" class="cal-today-btn" onclick="calGoToday()">● Hari Ini</button>
+                    <button type="button" class="cal-today-btn" onclick="calGoToday()" data-i18n="cal_today">● Hari Ini</button>
                 </div>
             </div>
 
@@ -1503,122 +1517,122 @@
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label>Total Penjualan *</label>
+                    <label data-i18n="lbl_total_sales">Total Penjualan *</label>
                     <input type="text" inputmode="numeric" id="totalPenjualan" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label>Saldo Akhir/Tunai *</label>
+                    <label data-i18n="lbl_cash">Saldo Akhir/Tunai *</label>
                     <input type="text" inputmode="numeric" id="tunai" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label>QRIS</label>
+                    <label data-i18n="lbl_qris">QRIS</label>
                     <input type="text" inputmode="numeric" id="qris" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label>EDC</label>
+                    <label data-i18n="lbl_edc">EDC</label>
                     <input type="text" inputmode="numeric" id="edc" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label>Transfer</label>
+                    <label data-i18n="lbl_transfer">Transfer</label>
                     <input type="text" inputmode="numeric" id="transfer" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label>GoJek</label>
+                    <label data-i18n="lbl_gojek">GoJek</label>
                     <input type="text" inputmode="numeric" id="gojek" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label>Grab</label>
+                    <label data-i18n="lbl_grab">Grab</label>
                     <input type="text" inputmode="numeric" id="grab" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label>Pesanan</label>
+                    <label data-i18n="lbl_pesanan">Pesanan</label>
                     <input type="text" inputmode="numeric" id="pesanan" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label>Belanja Pagi</label>
+                    <label data-i18n="lbl_belanja_pagi">Belanja Pagi</label>
                     <input type="text" inputmode="numeric" id="belanjaPagi" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label>Belanja Sore</label>
+                    <label data-i18n="lbl_belanja_sore">Belanja Sore</label>
                     <input type="text" inputmode="numeric" id="belanjaSore" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label>Daging</label>
+                    <label data-i18n="lbl_daging">Daging</label>
                     <input type="text" inputmode="numeric" id="daging" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label>Dan Lain-Lain</label>
+                    <label data-i18n="lbl_dll">Dan Lain-Lain</label>
                     <input type="text" inputmode="numeric" id="dll" class="money-input" placeholder="0" autocomplete="off">
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Keterangan</label>
-                <textarea id="keterangan" placeholder="Catatan tambahan..." rows="3"></textarea>
+                <label data-i18n="lbl_keterangan">Keterangan</label>
+                <textarea id="keterangan" placeholder="Catatan tambahan..." data-i18n-ph="ph_keterangan" rows="3"></textarea>
             </div>
 
             <div class="stats-row">
                 <div class="stat-card">
-                    <div class="stat-label">💰 Total Pengeluaran (Auto)</div>
+                    <div class="stat-label" data-i18n="stat_total_expense">💰 Total Pengeluaran (Auto)</div>
                     <div class="stat-value" id="totalPengeluaranDisplay">Rp 0</div>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-label">📊 Saldo (Auto)</div>
+                    <div class="stat-label" data-i18n="stat_saldo">📊 Saldo (Auto)</div>
                     <div class="stat-value" id="saldoDisplay">Rp 0</div>
                 </div>
             </div>
 
             <div class="button-group">
-                <button class="btn btn-primary" onclick="showPreview()">👁️ Preview Data</button>
-                <button class="btn btn-secondary" onclick="resetForm()" id="resetBtn" style="display:none;">🔄 Reset</button>
+                <button class="btn btn-primary" onclick="showPreview()" data-i18n="btn_preview">👁️ Preview Data</button>
+                <button class="btn btn-secondary" onclick="resetForm()" id="resetBtn" style="display:none;" data-i18n="btn_reset">🔄 Reset</button>
             </div>
         </div>
 
         <!-- Preview Section -->
         <div class="preview-section" id="previewSection">
-            <h2>✓ Preview Data</h2>
+            <h2 data-i18n="prev_title">✓ Preview Data</h2>
             <table class="preview-table">
                 <tr>
-                    <td><strong>Tanggal</strong></td>
+                    <td><strong data-i18n="prev_tanggal">Tanggal</strong></td>
                     <td id="previewDay">-</td>
                 </tr>
                 <tr>
-                    <td><strong>Total Penjualan</strong></td>
+                    <td><strong data-i18n="prev_total_sales">Total Penjualan</strong></td>
                     <td id="previewTotalPenjualan">-</td>
                 </tr>
                 <tr>
-                    <td><strong>Tunai</strong></td>
+                    <td><strong data-i18n="prev_cash">Tunai</strong></td>
                     <td id="previewTunai">-</td>
                 </tr>
                 <tr>
-                    <td><strong>Total Pengeluaran</strong></td>
+                    <td><strong data-i18n="prev_expense">Total Pengeluaran</strong></td>
                     <td id="previewTotalPengeluaran">-</td>
                 </tr>
                 <tr>
-                    <td><strong>Saldo</strong></td>
+                    <td><strong data-i18n="prev_saldo">Saldo</strong></td>
                     <td id="previewSaldo">-</td>
                 </tr>
                 <tr>
-                    <td><strong>Keterangan</strong></td>
+                    <td><strong data-i18n="prev_notes">Keterangan</strong></td>
                     <td id="previewKeterangan">-</td>
                 </tr>
             </table>
 
             <div class="button-group">
-                <button class="btn btn-success" onclick="saveData()">✓ Simpan Data</button>
-                <button class="btn btn-secondary" onclick="hidePreview()">✕ Batal</button>
+                <button class="btn btn-success" onclick="saveData()" data-i18n="btn_save_data">✓ Simpan Data</button>
+                <button class="btn btn-secondary" onclick="hidePreview()" data-i18n="btn_cancel">✕ Batal</button>
             </div>
         </div>
 
@@ -1629,13 +1643,13 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th class="col-center">Hari</th>
-                            <th class="col-right">Total Penjualan</th>
-                            <th class="col-right">Tunai</th>
-                            <th class="col-right">Total Pengeluaran</th>
-                            <th class="col-right">Saldo</th>
-                            <th class="col-left">Keterangan</th>
-                            <th class="col-center">Action</th>
+                            <th class="col-center" data-i18n="th_hari">Hari</th>
+                            <th class="col-right" data-i18n="th_total_sales">Total Penjualan</th>
+                            <th class="col-right" data-i18n="th_cash">Tunai</th>
+                            <th class="col-right" data-i18n="th_expense">Total Pengeluaran</th>
+                            <th class="col-right" data-i18n="th_saldo">Saldo</th>
+                            <th class="col-left" data-i18n="th_notes">Keterangan</th>
+                            <th class="col-center" data-i18n="th_action">Action</th>
                         </tr>
                     </thead>
                     <tbody id="dataTableBody">
@@ -1647,8 +1661,8 @@
         <!-- Empty state untuk Input view -->
         <div id="emptyInput" class="view-empty" style="display:none;">
             <div class="view-empty-icon">📋</div>
-            <div style="font-size: 17px; margin-bottom: 6px; font-weight: 600;">Belum ada data bulan ini</div>
-            <div style="font-size: 13px; color: #bbb;">Isi form di atas untuk mulai mencatat</div>
+            <div style="font-size: 17px; margin-bottom: 6px; font-weight: 600;" data-i18n="empty_input_1">Belum ada data bulan ini</div>
+            <div style="font-size: 13px; color: #bbb;" data-i18n="empty_input_2">Isi form di atas untuk mulai mencatat</div>
         </div>
         </div><!-- /view-input -->
 
@@ -1656,29 +1670,29 @@
         <div class="view-panel" id="view-dashboard">
         <!-- Financial Dashboard Section -->
         <div id="dashboardSection" style="display:none;" class="dashboard-section">
-            <h2>📊 FINANCIAL DASHBOARD</h2>
+            <h2 data-i18n="dash_title">📊 FINANCIAL DASHBOARD</h2>
 
             <div class="kpi-grid">
                 <div class="kpi-card">
-                    <div class="kpi-label">💰 Total Revenue</div>
+                    <div class="kpi-label" data-i18n="kpi_revenue">💰 Total Revenue</div>
                     <div class="kpi-value" id="kpiRevenue">Rp 0</div>
                     <div class="kpi-trend" id="kpiRevenueTrend">-</div>
                 </div>
 
                 <div class="kpi-card">
-                    <div class="kpi-label">📊 Total Expense</div>
+                    <div class="kpi-label" data-i18n="kpi_expense">📊 Total Expense</div>
                     <div class="kpi-value" id="kpiExpense">Rp 0</div>
                     <div class="kpi-trend" id="kpiExpenseTrend">-</div>
                 </div>
 
                 <div class="kpi-card">
-                    <div class="kpi-label">💎 Net Profit</div>
+                    <div class="kpi-label" data-i18n="kpi_profit">💎 Net Profit</div>
                     <div class="kpi-value" id="kpiProfit">Rp 0</div>
                     <div class="kpi-trend" id="kpiProfitTrend">-</div>
                 </div>
 
                 <div class="kpi-card">
-                    <div class="kpi-label">📈 Profit Margin</div>
+                    <div class="kpi-label" data-i18n="kpi_margin">📈 Profit Margin</div>
                     <div class="kpi-value" id="kpiMargin">0%</div>
                     <div class="kpi-trend" id="kpiMarginStatus">-</div>
                 </div>
@@ -1688,8 +1702,8 @@
 
             <!-- Toggle Harian / Bulanan -->
             <div class="chart-toggle">
-                <button type="button" class="chart-toggle-btn active" id="toggleHarian" onclick="setChartMode('harian')">📅 Harian</button>
-                <button type="button" class="chart-toggle-btn" id="toggleBulanan" onclick="setChartMode('bulanan')">🗓️ Bulanan</button>
+                <button type="button" class="chart-toggle-btn active" id="toggleHarian" onclick="setChartMode('harian')" data-i18n="toggle_harian">📅 Harian</button>
+                <button type="button" class="chart-toggle-btn" id="toggleBulanan" onclick="setChartMode('bulanan')" data-i18n="toggle_bulanan">🗓️ Bulanan</button>
             </div>
 
             <div class="chart-container">
@@ -1705,8 +1719,8 @@
         <!-- Empty state untuk Dashboard view -->
         <div id="emptyDashboard" class="view-empty" style="display:none;">
             <div class="view-empty-icon">📊</div>
-            <div style="font-size: 17px; margin-bottom: 6px; font-weight: 600;">Dashboard masih kosong</div>
-            <div style="font-size: 13px; color: #bbb;">Input data dulu di menu Input Data</div>
+            <div style="font-size: 17px; margin-bottom: 6px; font-weight: 600;" data-i18n="empty_dash_1">Dashboard masih kosong</div>
+            <div style="font-size: 13px; color: #bbb;" data-i18n="empty_hint">Input data dulu di menu Input Data</div>
         </div>
         </div><!-- /view-dashboard -->
 
@@ -1714,14 +1728,14 @@
         <div class="view-panel" id="view-pajak">
         <!-- PPN Table Section -->
         <div id="ppnSection" style="display:none;" class="data-section">
-            <h2>💰 LAPORAN PPN HARIAN</h2>
+            <h2 data-i18n="ppn_title">💰 LAPORAN PPN HARIAN</h2>
             <div style="overflow-x: auto;">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th class="col-center">Tanggal</th>
-                            <th class="col-right">Pendapatan (Rp)</th>
-                            <th class="col-right">PPN (Rp)</th>
+                            <th class="col-center" data-i18n="ppn_th_date">Tanggal</th>
+                            <th class="col-right" data-i18n="ppn_th_income">Pendapatan (Rp)</th>
+                            <th class="col-right" data-i18n="ppn_th_ppn">PPN (Rp)</th>
                         </tr>
                     </thead>
                     <tbody id="ppnTableBody">
@@ -1729,31 +1743,31 @@
                 </table>
             </div>
             <p style="margin-top: 15px; font-size: 12px; color: #999;">
-                <strong>Keterangan:</strong> Tarif PPN = <span id="ppnRateDisplay">10</span>%
+                <strong data-i18n="ppn_note_label">Keterangan:</strong> <span data-i18n="ppn_note_rate">Tarif PPN =</span> <span id="ppnRateDisplay">10</span>%
             </p>
         </div>
 
         <!-- Royalti & PPN Summary Section -->
         <div id="royaltiSection" style="display:none;" class="data-section">
-            <h2>👑 ROYALTI & PPN BULANAN</h2>
+            <h2 data-i18n="royalti_title">👑 ROYALTI & PPN BULANAN</h2>
 
             <div style="overflow-x: auto;">
                 <table class="data-table royalti-table">
                     <tbody>
                         <tr>
-                            <td class="royalti-label">TOTAL PENJUALAN</td>
+                            <td class="royalti-label" data-i18n="roy_total_sales">TOTAL PENJUALAN</td>
                             <td class="royalti-value" id="totalPenjualanRoyalti">Rp 0</td>
                         </tr>
                         <tr>
-                            <td class="royalti-label">ROYALTI <span id="royaltiRateDisplay">3</span>%</td>
+                            <td class="royalti-label"><span data-i18n="roy_royalti">ROYALTI</span> <span id="royaltiRateDisplay">3</span>%</td>
                             <td class="royalti-value" id="royaltiAmount">Rp 0</td>
                         </tr>
                         <tr>
-                            <td class="royalti-label">PPN <span id="ppnOnRoyaltiDisplay">11</span>%</td>
+                            <td class="royalti-label"><span data-i18n="roy_ppn">PPN</span> <span id="ppnOnRoyaltiDisplay">11</span>%</td>
                             <td class="royalti-value" id="ppnOnRoyaltiAmount">Rp 0</td>
                         </tr>
                         <tr class="royalti-total-row">
-                            <td class="royalti-label royalti-total-label">TOTAL ROYALTI & PPN</td>
+                            <td class="royalti-label royalti-total-label" data-i18n="roy_total">TOTAL ROYALTI & PPN</td>
                             <td class="royalti-value royalti-total-value" id="totalRoyaltiPpn">Rp 0</td>
                         </tr>
                     </tbody>
@@ -1763,14 +1777,14 @@
             <!-- Transfer Name - CUSTOM (tidak fixed) -->
             <div class="transfer-box">
                 <div class="transfer-box-header">
-                    <span>💸 Transfer ke:</span>
+                    <span data-i18n="transfer_to">💸 Transfer ke:</span>
                 </div>
                 <div class="transfer-input-row">
                     <input
                         type="text"
                         id="namaTransfer"
                         class="transfer-input"
-                        placeholder="Contoh: Cakman Malang, Bank BCA, dll..."
+                        placeholder="Contoh: Cakman Malang, Bank BCA, dll..." data-i18n-ph="ph_transfer"
                         oninput="saveTransferName()"
                     >
                 </div>
@@ -1783,8 +1797,8 @@
         <!-- Empty state untuk Pajak view -->
         <div id="emptyPajak" class="view-empty" style="display:none;">
             <div class="view-empty-icon">💰</div>
-            <div style="font-size: 17px; margin-bottom: 6px; font-weight: 600;">Belum ada data pajak</div>
-            <div style="font-size: 13px; color: #bbb;">Input data dulu di menu Input Data</div>
+            <div style="font-size: 17px; margin-bottom: 6px; font-weight: 600;" data-i18n="empty_pajak_1">Belum ada data pajak</div>
+            <div style="font-size: 13px; color: #bbb;" data-i18n="empty_hint">Input data dulu di menu Input Data</div>
         </div>
         </div><!-- /view-pajak -->
 
@@ -1792,27 +1806,27 @@
         <div class="view-panel" id="view-export">
         <!-- Export Options -->
         <div id="exportSection" style="display:none;" class="data-section">
-            <h2>📥 PILIHAN EXPORT</h2>
+            <h2 data-i18n="export_title">📥 PILIHAN EXPORT</h2>
             
             <div class="export-options">
                 <button class="export-btn" onclick="exportTabelData()">
-                    📋 Export Tabel Tahunan
-                    <div class="export-desc">Excel (.xlsx) — 1 file, per bulan jadi sheet</div>
+                    <span data-i18n="btn_export_excel">📋 Export Tabel Tahunan</span>
+                    <div class="export-desc" data-i18n="desc_export_excel">Excel (.xlsx) — 1 file, per bulan jadi sheet</div>
                 </button>
 
                 <button class="export-btn" onclick="exportPPNPDF()">
-                    📄 Export PPN Laporan
-                    <div class="export-desc">PDF — laporan bulanan</div>
+                    <span data-i18n="btn_export_ppn">📄 Export PPN Laporan</span>
+                    <div class="export-desc" data-i18n="desc_export_pdf1">PDF — laporan bulanan</div>
                 </button>
 
                 <button class="export-btn" onclick="exportRoyaltiPDF()">
-                    📄 Export Royalti & PPN
-                    <div class="export-desc">PDF — laporan bulanan</div>
+                    <span data-i18n="btn_export_royalti">📄 Export Royalti & PPN</span>
+                    <div class="export-desc" data-i18n="desc_export_pdf2">PDF — laporan bulanan</div>
                 </button>
             </div>
 
             <div style="background: #e3f2fd; border-left: 4px solid #1a5f7a; padding: 15px; border-radius: 6px; margin-top: 20px; font-size: 13px;">
-                <strong>💡 Export Tips:</strong>
+                <strong data-i18n="export_tips_label">💡 Export Tips:</strong>
                 <p style="margin-top: 8px;">
                     <strong>Tabel Tahunan (Excel):</strong> 1 file berisi semua bulan yang sudah diisi (tiap bulan = 1 sheet). Bisa dibuka di Excel atau Google Sheets.<br>
                     <strong>PDF:</strong> Laporan bulanan untuk dikirim ke atasan (PPN & Royalti).
@@ -1823,22 +1837,22 @@
         <!-- Empty state untuk Export view -->
         <div id="emptyExport" class="view-empty" style="display:none;">
             <div class="view-empty-icon">📥</div>
-            <div style="font-size: 17px; margin-bottom: 6px; font-weight: 600;">Belum ada laporan untuk di-export</div>
-            <div style="font-size: 13px; color: #bbb;">Input data dulu di menu Input Data — atau restore dari backup di bawah</div>
+            <div style="font-size: 17px; margin-bottom: 6px; font-weight: 600;" data-i18n="empty_export_1">Belum ada laporan untuk di-export</div>
+            <div style="font-size: 13px; color: #bbb;" data-i18n="empty_export_2">Input data dulu di menu Input Data — atau restore dari backup di bawah</div>
         </div>
 
         <!-- Backup & Restore (SELALU tampil) -->
         <div class="data-section" style="margin-top: 20px;">
-            <h2>💾 BACKUP & RESTORE DATA</h2>
+            <h2 data-i18n="backup_title">💾 BACKUP & RESTORE DATA</h2>
             <div class="export-options">
                 <button class="export-btn" onclick="exportBackupJSON()">
-                    ⬇️ Backup Data (.json)
-                    <div class="export-desc">Simpan semua data ke 1 file</div>
+                    <span data-i18n="btn_backup">⬇️ Backup Data (.json)</span>
+                    <div class="export-desc" data-i18n="desc_backup">Simpan semua data ke 1 file</div>
                 </button>
 
                 <button class="export-btn" onclick="document.getElementById('restoreFileInput').click()">
-                    ⬆️ Restore Data (.json)
-                    <div class="export-desc">Muat data dari file backup</div>
+                    <span data-i18n="btn_restore">⬆️ Restore Data (.json)</span>
+                    <div class="export-desc" data-i18n="desc_restore">Muat data dari file backup</div>
                 </button>
             </div>
 
@@ -1857,12 +1871,24 @@
         <!-- ===== VIEW: SETTING ===== -->
         <div class="view-panel" id="view-setting">
             <div class="data-section">
-                <h2>🎛️ PENGATURAN</h2>
+                <h2 data-i18n="setting_title">🎛️ PENGATURAN</h2>
 
                 <div class="setting-row">
                     <div class="setting-info">
-                        <div class="setting-title">🌙 Mode Gelap</div>
-                        <div class="setting-desc">Mengikuti pengaturan perangkat secara otomatis. Bisa juga diatur manual di sini.</div>
+                        <div class="setting-title" data-i18n="setting_lang_title">🌐 Bahasa</div>
+                        <div class="setting-desc" data-i18n="setting_lang_desc">Pilih bahasa tampilan aplikasi.</div>
+                    </div>
+                    <select id="langSelect" class="lang-select" onchange="onLangChange()">
+                        <option value="default" data-i18n="lang_default">Default (Campuran)</option>
+                        <option value="id" data-i18n="lang_id">Indonesia</option>
+                        <option value="en" data-i18n="lang_en">English</option>
+                    </select>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-title" data-i18n="setting_dark_title">🌙 Mode Gelap</div>
+                        <div class="setting-desc" data-i18n="setting_dark_desc">Mengikuti pengaturan perangkat secara otomatis. Bisa juga diatur manual di sini.</div>
                     </div>
                     <label class="switch">
                         <input type="checkbox" id="darkModeToggle" onchange="onDarkToggle()">
@@ -1871,7 +1897,7 @@
                 </div>
 
                 <div style="text-align:center; padding:24px 12px; color:#aaa; font-size:13px;">
-                    ⚙️ Opsi pengaturan lain akan ditambahkan di update berikutnya.
+                    <span data-i18n="setting_more">⚙️ Opsi pengaturan lain akan ditambahkan di update berikutnya.</span>
                 </div>
             </div>
         </div><!-- /view-setting -->
@@ -1883,8 +1909,8 @@
             <div class="pdf-modal-header">
                 <span class="pdf-modal-title" id="pdfModalTitle">📄 Preview Laporan</span>
                 <div class="pdf-modal-actions">
-                    <button class="pdf-btn pdf-btn-print" onclick="printPDF()">🖨️ Print</button>
-                    <button class="pdf-btn pdf-btn-download" onclick="downloadPDF()">⬇️ Download PDF</button>
+                    <button class="pdf-btn pdf-btn-print" onclick="printPDF()" data-i18n="pdf_print">🖨️ Print</button>
+                    <button class="pdf-btn pdf-btn-download" onclick="downloadPDF()" data-i18n="pdf_download">⬇️ Download PDF</button>
                     <button class="pdf-btn pdf-btn-close" onclick="closePDFModal()">✕</button>
                 </div>
             </div>
@@ -1895,8 +1921,8 @@
 
     <!-- Banner Update PWA -->
     <div class="update-banner" id="updateBanner">
-        <span>🔄 Versi baru tersedia</span>
-        <button onclick="applyUpdate()">Update</button>
+        <span data-i18n="update_text">🔄 Versi baru tersedia</span>
+        <button onclick="applyUpdate()" data-i18n="update_btn">Update</button>
     </div>
 
     <script>
@@ -2088,7 +2114,7 @@
         }
 
         function renderCalendar() {
-            document.getElementById('calMonthLabel').textContent = months[calViewMonth - 1];
+            document.getElementById('calMonthLabel').textContent = dispMonth(calViewMonth - 1);
             document.getElementById('calYearLabel').textContent  = calViewYear;
 
             const daysInMonth = new Date(calViewYear, calViewMonth, 0).getDate();
@@ -2154,10 +2180,11 @@
             const m = parseInt(document.getElementById('monthSelect').value);
             const y = parseInt(document.getElementById('yearSelect').value);
             const dateObj = new Date(y, m - 1, d);
-            const dayName = dayNamesID[dateObj.getDay()];
+            const dayName = dispDayName(dateObj.getDay());
             const isToday = (d === todayDay && m === todayMonth && y === todayYear);
+            const todayLabel = (currentLang === 'en') ? '  •  Today' : '  •  Hari ini';
             document.getElementById('dateDisplay').textContent =
-                `${dayName}, ${d} ${months[m - 1]} ${y}` + (isToday ? '  •  Hari ini' : '');
+                `${dayName}, ${d} ${dispMonth(m - 1)} ${y}` + (isToday ? todayLabel : '');
         }
 
         // Tutup kalender saat klik di luar
@@ -2171,6 +2198,166 @@
         const todayMonth = todayDate.getMonth() + 1;
         const todayYear  = todayDate.getFullYear();
 
+        // ============================================================
+        //  SISTEM BAHASA (i18n)
+        //  Mode: 'default' (campuran asli), 'id' (Indonesia), 'en' (English)
+        //  Dokumen PDF/Excel SELALU Bahasa Indonesia (tidak ikut).
+        // ============================================================
+        let currentLang = localStorage.getItem('appLang') || 'default';
+
+        // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
+        const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        function dispMonth(i) {  // i = index 0-11
+            return (currentLang === 'en') ? monthsEN[i] : months[i];
+        }
+        // Nama hari untuk TAMPILAN
+        const dayNamesEN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        function dispDayName(d) {
+            return (currentLang === 'en') ? dayNamesEN[d] : dayNamesID[d];
+        }
+
+        const I18N = {
+            en: {
+                menu_title:'Menu', nav_input:'Data Entry', nav_dashboard:'Dashboard', nav_pajak:'Tax Report',
+                nav_export:'Export', nav_install:'Install App', nav_setting:'Settings', nav_config:'Configuration',
+                cfg_title:'⚙️ SYSTEM CONFIGURATION', cfg_business:'Business Name *', cfg_business_ph:'Business Name',
+                cfg_address:'Address/Location *', cfg_address_ph:'Address/Location', cfg_city:'City/Regency *', cfg_city_ph:'City/Regency',
+                cfg_boss:'Supervisor Name *', cfg_boss_ph:'Supervisor Name', cfg_ppn_rate:'VAT Rate (%)',
+                cfg_royalti_rate:'Royalty Rate (%)', cfg_ppn_royalti_rate:'VAT on Royalty Rate (%)', cfg_save:'💾 Save Configuration',
+                date_label:'📆 Report Date:', wd0:'Sun', wd1:'Mon', wd2:'Tue', wd3:'Wed', wd4:'Thu', wd5:'Fri', wd6:'Sat', cal_today:'● Today',
+                lbl_total_sales:'Total Sales *', lbl_cash:'Ending Balance/Cash *', lbl_qris:'QRIS', lbl_edc:'EDC',
+                lbl_transfer:'Transfer', lbl_gojek:'GoJek', lbl_grab:'Grab', lbl_pesanan:'Orders',
+                lbl_belanja_pagi:'Morning Shopping', lbl_belanja_sore:'Evening Shopping', lbl_daging:'Meat', lbl_dll:'Others',
+                lbl_keterangan:'Notes', ph_keterangan:'Additional notes...', stat_total_expense:'💰 Total Expense (Auto)',
+                stat_saldo:'📊 Balance (Auto)', btn_preview:'👁️ Preview Data', btn_reset:'🔄 Reset',
+                prev_title:'✓ Preview Data', prev_tanggal:'Date', prev_total_sales:'Total Sales', prev_cash:'Cash',
+                prev_expense:'Total Expense', prev_saldo:'Balance', prev_notes:'Notes', btn_save_data:'✓ Save Data', btn_cancel:'✕ Cancel',
+                th_hari:'Day', th_total_sales:'Total Sales', th_cash:'Cash', th_expense:'Total Expense', th_saldo:'Balance',
+                th_notes:'Notes', th_action:'Action',
+                empty_input_1:'No data for this month yet', empty_input_2:'Fill the form above to start recording',
+                empty_dash_1:'Dashboard is empty', empty_hint:'Enter data first in the Data Entry menu',
+                empty_pajak_1:'No tax data yet', empty_export_1:'No report to export yet',
+                empty_export_2:'Enter data first — or restore from backup below',
+                dash_title:'📊 FINANCIAL DASHBOARD', kpi_revenue:'💰 Total Revenue', kpi_expense:'📊 Total Expense',
+                kpi_profit:'💎 Net Profit', kpi_margin:'📈 Profit Margin', toggle_harian:'📅 Daily', toggle_bulanan:'🗓️ Monthly',
+                ppn_title:'💰 DAILY VAT REPORT', ppn_th_date:'Date', ppn_th_income:'Income (Rp)', ppn_th_ppn:'VAT (Rp)',
+                ppn_note_label:'Note:', ppn_note_rate:'VAT Rate =',
+                royalti_title:'👑 MONTHLY ROYALTY & VAT', roy_total_sales:'TOTAL SALES', roy_royalti:'ROYALTY', roy_ppn:'VAT',
+                roy_total:'TOTAL ROYALTY & VAT', transfer_to:'💸 Transfer to:', ph_transfer:'e.g. Cakman Malang, BCA Bank, etc...',
+                export_title:'📥 EXPORT OPTIONS', btn_export_excel:'📋 Export Annual Table',
+                desc_export_excel:'Excel (.xlsx) — 1 file, each month a sheet', btn_export_ppn:'📄 Export VAT Report',
+                desc_export_pdf1:'PDF — monthly report', btn_export_royalti:'📄 Export Royalty & VAT', desc_export_pdf2:'PDF — monthly report',
+                export_tips_label:'💡 Export Tips:', backup_title:'💾 BACKUP & RESTORE DATA', btn_backup:'⬇️ Backup Data (.json)',
+                desc_backup:'Save all data to 1 file', btn_restore:'⬆️ Restore Data (.json)', desc_restore:'Load data from backup file',
+                setting_title:'🎛️ SETTINGS', setting_lang_title:'🌐 Language', setting_lang_desc:'Choose the app display language.',
+                setting_dark_title:'🌙 Dark Mode', setting_dark_desc:'Follows device settings automatically. Can also be set manually here.',
+                setting_more:'⚙️ More settings will be added in future updates.',
+                lang_default:'Default (Mixed)', lang_id:'Indonesian', lang_en:'English',
+                pdf_print:'🖨️ Print', pdf_download:'⬇️ Download PDF', update_text:'🔄 New version available', update_btn:'Update',
+                dt_title:'Data of', form_title:'Daily Data Entry', form_edit:'Edit Data for Day',
+                chart_year:'Year', chart_monthly:'Monthly Performance', chart_daily:'Daily Performance',
+                chart_revenue:'Revenue', chart_expense:'Expense', chart_profit:'Profit'
+            },
+            id: {
+                menu_title:'Menu', nav_input:'Input Data', nav_dashboard:'Dasbor', nav_pajak:'Laporan Pajak',
+                nav_export:'Ekspor', nav_install:'Pasang Aplikasi', nav_setting:'Pengaturan', nav_config:'Konfigurasi',
+                cfg_title:'⚙️ KONFIGURASI SISTEM', cfg_business:'Nama Bisnis/Warung *', cfg_business_ph:'Nama Bisnis/Warung',
+                cfg_address:'Alamat/Lokasi *', cfg_address_ph:'Alamat/Lokasi', cfg_city:'Kabupaten/Kota *', cfg_city_ph:'Kabupaten/Kota',
+                cfg_boss:'Nama Atasan *', cfg_boss_ph:'Nama Atasan', cfg_ppn_rate:'Tarif PPN (%)',
+                cfg_royalti_rate:'Tarif Royalti (%)', cfg_ppn_royalti_rate:'Tarif PPN pada Royalti (%)', cfg_save:'💾 Simpan Konfigurasi',
+                date_label:'📆 Tanggal Laporan:', wd0:'Min', wd1:'Sen', wd2:'Sel', wd3:'Rab', wd4:'Kam', wd5:'Jum', wd6:'Sab', cal_today:'● Hari Ini',
+                lbl_total_sales:'Total Penjualan *', lbl_cash:'Saldo Akhir/Tunai *', lbl_qris:'QRIS', lbl_edc:'EDC',
+                lbl_transfer:'Transfer', lbl_gojek:'GoJek', lbl_grab:'Grab', lbl_pesanan:'Pesanan',
+                lbl_belanja_pagi:'Belanja Pagi', lbl_belanja_sore:'Belanja Sore', lbl_daging:'Daging', lbl_dll:'Dan Lain-Lain',
+                lbl_keterangan:'Keterangan', ph_keterangan:'Catatan tambahan...', stat_total_expense:'💰 Total Pengeluaran (Auto)',
+                stat_saldo:'📊 Saldo (Auto)', btn_preview:'👁️ Pratinjau Data', btn_reset:'🔄 Atur Ulang',
+                prev_title:'✓ Pratinjau Data', prev_tanggal:'Tanggal', prev_total_sales:'Total Penjualan', prev_cash:'Tunai',
+                prev_expense:'Total Pengeluaran', prev_saldo:'Saldo', prev_notes:'Keterangan', btn_save_data:'✓ Simpan Data', btn_cancel:'✕ Batal',
+                th_hari:'Hari', th_total_sales:'Total Penjualan', th_cash:'Tunai', th_expense:'Total Pengeluaran', th_saldo:'Saldo',
+                th_notes:'Keterangan', th_action:'Aksi',
+                empty_input_1:'Belum ada data bulan ini', empty_input_2:'Isi formulir di atas untuk mulai mencatat',
+                empty_dash_1:'Dasbor masih kosong', empty_hint:'Input data dulu di menu Input Data',
+                empty_pajak_1:'Belum ada data pajak', empty_export_1:'Belum ada laporan untuk diekspor',
+                empty_export_2:'Input data dulu di menu Input Data — atau pulihkan dari cadangan di bawah',
+                dash_title:'📊 DASBOR KEUANGAN', kpi_revenue:'💰 Total Pemasukan', kpi_expense:'📊 Total Pengeluaran',
+                kpi_profit:'💎 Laba Bersih', kpi_margin:'📈 Margin Laba', toggle_harian:'📅 Harian', toggle_bulanan:'🗓️ Bulanan',
+                ppn_title:'💰 LAPORAN PPN HARIAN', ppn_th_date:'Tanggal', ppn_th_income:'Pendapatan (Rp)', ppn_th_ppn:'PPN (Rp)',
+                ppn_note_label:'Keterangan:', ppn_note_rate:'Tarif PPN =',
+                royalti_title:'👑 ROYALTI & PPN BULANAN', roy_total_sales:'TOTAL PENJUALAN', roy_royalti:'ROYALTI', roy_ppn:'PPN',
+                roy_total:'TOTAL ROYALTI & PPN', transfer_to:'💸 Transfer ke:', ph_transfer:'Contoh: Cakman Malang, Bank BCA, dll...',
+                export_title:'📥 PILIHAN EKSPOR', btn_export_excel:'📋 Ekspor Tabel Tahunan',
+                desc_export_excel:'Excel (.xlsx) — 1 berkas, tiap bulan jadi sheet', btn_export_ppn:'📄 Ekspor Laporan PPN',
+                desc_export_pdf1:'PDF — laporan bulanan', btn_export_royalti:'📄 Ekspor Royalti & PPN', desc_export_pdf2:'PDF — laporan bulanan',
+                export_tips_label:'💡 Tips Ekspor:', backup_title:'💾 CADANGAN & PEMULIHAN DATA', btn_backup:'⬇️ Cadangkan Data (.json)',
+                desc_backup:'Simpan semua data ke 1 berkas', btn_restore:'⬆️ Pulihkan Data (.json)', desc_restore:'Muat data dari berkas cadangan',
+                setting_title:'🎛️ PENGATURAN', setting_lang_title:'🌐 Bahasa', setting_lang_desc:'Pilih bahasa tampilan aplikasi.',
+                setting_dark_title:'🌙 Mode Gelap', setting_dark_desc:'Mengikuti pengaturan perangkat secara otomatis. Bisa juga diatur manual di sini.',
+                setting_more:'⚙️ Opsi pengaturan lain akan ditambahkan di pembaruan berikutnya.',
+                lang_default:'Default (Campuran)', lang_id:'Indonesia', lang_en:'English',
+                pdf_print:'🖨️ Cetak', pdf_download:'⬇️ Unduh PDF', update_text:'🔄 Versi baru tersedia', update_btn:'Perbarui',
+                dt_title:'Data Bulan', form_title:'Input Data Harian', form_edit:'Edit Data Tanggal',
+                chart_year:'Tahun', chart_monthly:'Performa Bulanan', chart_daily:'Performa Harian',
+                chart_revenue:'Pemasukan', chart_expense:'Pengeluaran', chart_profit:'Laba'
+            }
+        };
+
+        // Simpan teks asli (untuk mode 'default') sekali saat load
+        let i18nDefaultsCaptured = false;
+        function captureI18nDefaults() {
+            if (i18nDefaultsCaptured) return;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                el.dataset.i18nOrig = el.textContent;
+            });
+            document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+                el.dataset.i18nPhOrig = el.getAttribute('placeholder') || '';
+            });
+            i18nDefaultsCaptured = true;
+        }
+
+        // t(): ambil terjemahan satu key untuk teks dinamis di JS
+        function t(key, fallback) {
+            if (currentLang === 'en' && I18N.en[key] !== undefined) return I18N.en[key];
+            if (currentLang === 'id' && I18N.id[key] !== undefined) return I18N.id[key];
+            return fallback !== undefined ? fallback : key;
+        }
+
+        function applyLanguage(lang) {
+            currentLang = lang;
+            captureI18nDefaults();
+            const dict = (lang === 'en') ? I18N.en : (lang === 'id') ? I18N.id : null;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (!dict) { el.textContent = el.dataset.i18nOrig; }
+                else if (dict[key] !== undefined) { el.textContent = dict[key]; }
+            });
+            document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+                const key = el.dataset.i18nPh;
+                if (!dict) { el.setAttribute('placeholder', el.dataset.i18nPhOrig); }
+                else if (dict[key] !== undefined) { el.setAttribute('placeholder', dict[key]); }
+            });
+
+            // Set HTML lang attribute
+            document.documentElement.lang = (lang === 'en') ? 'en' : 'id';
+
+            // Refresh elemen dinamis (judul tabel, tanggal, kalender, grafik)
+            if (typeof updateUI === 'function') {
+                try { updateUI(); } catch (e) {}
+            }
+        }
+
+        function onLangChange() {
+            const lang = document.getElementById('langSelect').value;
+            localStorage.setItem('appLang', lang);
+            applyLanguage(lang);
+        }
+
+        function initLanguage() {
+            const sel = document.getElementById('langSelect');
+            if (sel) sel.value = currentLang;
+            applyLanguage(currentLang);
+        }
+
         function init() {
             loadConfig();
             document.getElementById('monthSelect').value = todayMonth;
@@ -2182,6 +2369,7 @@
             attachEventListeners();
             attachMoneyFormatters();
             initDarkMode();
+            initLanguage();
         }
 
         function loadConfig() {
@@ -2296,8 +2484,8 @@
             const year = parseInt(document.getElementById('yearSelect').value);
             const monthName = months[month - 1];
 
-            document.getElementById('dataTableTitle').textContent = `📋 Data Bulan ${monthName} ${year}`;
-            document.getElementById('formTitle').textContent = currentEditDay ? `✏️ Edit Data Tanggal ${currentEditDay}` : '📝 Input Data Harian';
+            document.getElementById('dataTableTitle').textContent = `📋 ${t('dt_title','Data Bulan')} ${dispMonth(month - 1)} ${year}`;
+            document.getElementById('formTitle').textContent = currentEditDay ? `✏️ ${t('form_edit','Edit Data Tanggal')} ${currentEditDay}` : `📝 ${t('form_title','Input Data Harian')}`;
 
             const daysInMonth = new Date(year, month, 0).getDate();
             const daySelect = document.getElementById('daySelect');
@@ -2711,7 +2899,7 @@
                 const revenue = data.reduce((s, i) => s + i.totalPenjualan, 0);
                 const expense = data.reduce((s, i) => s + i.totalPengeluaran, 0);
                 const profit  = data[data.length - 1].saldo; // saldo akhir bulan
-                result.push({ month: m, name: months[m - 1], revenue, expense, profit });
+                result.push({ month: m, name: dispMonth(m - 1), revenue, expense, profit });
             }
             return result;
         }
@@ -2762,13 +2950,13 @@
                 revenueData = agg.map(a => a.revenue);
                 expenseData = agg.map(a => a.expense);
                 profitData  = agg.map(a => a.profit);
-                chartTitle  = mobile ? `Tahun ${year}` : `Performa Bulanan — Tahun ${year}`;
+                chartTitle  = mobile ? `${t('chart_year','Tahun')} ${year}` : `${t('chart_monthly','Performa Bulanan')} — ${t('chart_year','Tahun')} ${year}`;
             } else {
                 labels      = data.map(d => mobile ? `${d.day}` : `Hari ${d.day}`);
                 revenueData = data.map(d => d.totalPenjualan);
                 expenseData = data.map(d => d.totalPengeluaran);
                 profitData  = data.map(d => d.saldo);
-                chartTitle  = mobile ? `${monthName} ${year}` : `Performa Harian — ${monthName} ${year}`;
+                chartTitle  = mobile ? `${dispMonth(month - 1)} ${year}` : `${t('chart_daily','Performa Harian')} — ${dispMonth(month - 1)} ${year}`;
             }
 
             financialChart = new Chart(ctx, {
@@ -2777,7 +2965,7 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Revenue',
+                            label: t('chart_revenue','Revenue'),
                             data: revenueData,
                             backgroundColor: gradRevenue,
                             borderColor: 'rgba(25,118,210,1)',
@@ -2791,7 +2979,7 @@
                             order: 2
                         },
                         {
-                            label: 'Expense',
+                            label: t('chart_expense','Expense'),
                             data: expenseData,
                             backgroundColor: gradExpense,
                             borderColor: 'rgba(211,47,47,1)',
@@ -2805,7 +2993,7 @@
                             order: 3
                         },
                         {
-                            label: 'Profit',
+                            label: t('chart_profit','Profit'),
                             data: profitData,
                             borderColor: '#2e7d32',
                             backgroundColor: gradProfit,
