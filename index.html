@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Daily Report Tool V4.5 Extended</title>
+    <title>Financial Daily Report Tool</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -1160,7 +1160,7 @@
     <!-- Sticky Header -->
     <div class="sticky-header">
         <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
-        <h1>📊 Financial Daily Report V4.5 Extended</h1>
+        <h1>📊 Financial Daily Report</h1>
     </div>
 
     <!-- Sidebar Navigation -->
@@ -3026,7 +3026,7 @@
                 const margin = 3;
                 const contentWidth = pageWidth - (margin * 2);
                 
-                let yPosition = margin + 3;
+                let yPosition = margin + 10; // margin atas lebih lega (13mm)
 
                 // Title 1 - Nama Bisnis
                 doc.setFont('Arial', 'bold');
@@ -3162,7 +3162,7 @@
                 const pageHeight = doc.internal.pageSize.getHeight();
                 const margin = 3;
                 
-                let yPosition = margin + 3;
+                let yPosition = margin + 10; // margin atas lebih lega (13mm)
 
                 // Title 1 - Nama Bisnis
                 doc.setFont('Arial', 'bold');
