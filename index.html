@@ -680,6 +680,11 @@
             color: white;
         }
 
+        .btn-copy {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+
         .data-section {
             background: white;
             padding: 30px;
@@ -1596,6 +1601,7 @@
 
             <div class="button-group">
                 <button class="btn btn-primary" onclick="showPreview()" data-i18n="btn_preview">👁️ Preview Data</button>
+                <button class="btn btn-copy" onclick="copyLastEntry()" data-i18n="btn_copy_last">📋 Salin Data Terakhir</button>
                 <button class="btn btn-secondary" onclick="resetForm()" id="resetBtn" style="display:none;" data-i18n="btn_reset">🔄 Reset</button>
             </div>
         </div>
@@ -2229,7 +2235,7 @@
                 lbl_transfer:'Transfer', lbl_gojek:'GoJek', lbl_grab:'Grab', lbl_pesanan:'Orders',
                 lbl_belanja_pagi:'Morning Shopping', lbl_belanja_sore:'Evening Shopping', lbl_daging:'Meat', lbl_dll:'Others',
                 lbl_keterangan:'Notes', ph_keterangan:'Additional notes...', stat_total_expense:'💰 Total Expense (Auto)',
-                stat_saldo:'📊 Balance (Auto)', btn_preview:'👁️ Preview Data', btn_reset:'🔄 Reset',
+                stat_saldo:'📊 Balance (Auto)', btn_preview:'👁️ Preview Data', btn_reset:'🔄 Reset', btn_copy_last:'📋 Copy Last Entry', copy_none:'No previous data to copy yet.',
                 prev_title:'✓ Preview Data', prev_tanggal:'Date', prev_total_sales:'Total Sales', prev_cash:'Cash',
                 prev_expense:'Total Expense', prev_saldo:'Balance', prev_notes:'Notes', btn_save_data:'✓ Save Data', btn_cancel:'✕ Cancel',
                 th_hari:'Day', th_total_sales:'Total Sales', th_cash:'Cash', th_expense:'Total Expense', th_saldo:'Balance',
@@ -2270,7 +2276,7 @@
                 lbl_transfer:'Transfer', lbl_gojek:'GoJek', lbl_grab:'Grab', lbl_pesanan:'Pesanan',
                 lbl_belanja_pagi:'Belanja Pagi', lbl_belanja_sore:'Belanja Sore', lbl_daging:'Daging', lbl_dll:'Dan Lain-Lain',
                 lbl_keterangan:'Keterangan', ph_keterangan:'Catatan tambahan...', stat_total_expense:'💰 Total Pengeluaran (Auto)',
-                stat_saldo:'📊 Saldo (Auto)', btn_preview:'👁️ Pratinjau Data', btn_reset:'🔄 Atur Ulang',
+                stat_saldo:'📊 Saldo (Auto)', btn_preview:'👁️ Pratinjau Data', btn_reset:'🔄 Atur Ulang', btn_copy_last:'📋 Salin Data Terakhir', copy_none:'Belum ada data sebelumnya untuk disalin.',
                 prev_title:'✓ Pratinjau Data', prev_tanggal:'Tanggal', prev_total_sales:'Total Penjualan', prev_cash:'Tunai',
                 prev_expense:'Total Pengeluaran', prev_saldo:'Saldo', prev_notes:'Keterangan', btn_save_data:'✓ Simpan Data', btn_cancel:'✕ Batal',
                 th_hari:'Hari', th_total_sales:'Total Penjualan', th_cash:'Tunai', th_expense:'Total Pengeluaran', th_saldo:'Saldo',
@@ -2722,6 +2728,70 @@
             document.getElementById('keterangan').value = '';
             currentEditDay = null;
             updateCalculations();
+        }
+
+        // Cari entri terakhir yang ADA datanya SEBELUM tanggal terpilih (mundur lintas bulan/tahun)
+        function findLastEntryBefore(day, month, year) {
+            // 1) Cek hari-hari sebelumnya di bulan & tahun yang sama
+            const sameKey = `${year}-${month}`;
+            if (appData[sameKey] && appData[sameKey].length) {
+                const earlier = appData[sameKey].filter(e => e.day < day);
+                if (earlier.length) {
+                    earlier.sort((a, b) => b.day - a.day);
+                    return { entry: earlier[0], day: earlier[0].day, month, year };
+                }
+            }
+            // 2) Mundur ke bulan-bulan sebelumnya (maksimal 24 bulan ke belakang)
+            let m = month, y = year;
+            for (let i = 0; i < 24; i++) {
+                m--;
+                if (m < 1) { m = 12; y--; }
+                const key = `${y}-${m}`;
+                if (appData[key] && appData[key].length) {
+                    const sorted = [...appData[key]].sort((a, b) => b.day - a.day);
+                    return { entry: sorted[0], day: sorted[0].day, month: m, year: y };
+                }
+            }
+            return null;
+        }
+
+        function copyLastEntry() {
+            const day   = parseInt(document.getElementById('daySelect').value) || todayDay;
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year  = parseInt(document.getElementById('yearSelect').value);
+
+            const found = findLastEntryBefore(day, month, year);
+            if (!found) {
+                showSuccessMessage(t('copy_none', 'Belum ada data sebelumnya untuk disalin.'));
+                return;
+            }
+
+            const e = found.entry;
+            // Isi hanya field bernilai > 0 (yang 0 dibiarkan kosong agar bersih).
+            // Keterangan TIDAK disalin (catatan biasanya khusus per hari).
+            function setField(id, val) {
+                document.getElementById(id).value = (val && val !== 0) ? formatNum(val) : '';
+            }
+            setField('totalPenjualan', e.totalPenjualan);
+            setField('tunai', e.tunai);
+            setField('qris', e.qris);
+            setField('edc', e.edc);
+            setField('transfer', e.transfer);
+            setField('gojek', e.gojek);
+            setField('grab', e.grab);
+            setField('pesanan', e.pesanan);
+            setField('belanjaPagi', e.belanjaPagi);
+            setField('belanjaSore', e.belanjaSore);
+            setField('daging', e.daging);
+            setField('dll', e.dll);
+
+            updateCalculations();
+
+            const fromLabel = `${found.day} ${dispMonth(found.month - 1)} ${found.year}`;
+            const msg = (currentLang === 'en')
+                ? `✓ Copied from ${fromLabel}. Edit what changed, then Preview.`
+                : `✓ Disalin dari ${fromLabel}. Edit yang berubah, lalu Preview.`;
+            showSuccessMessage(msg);
         }
 
         function editData(day) {
