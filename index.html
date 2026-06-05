@@ -680,9 +680,43 @@
             color: white;
         }
 
-        .btn-copy {
-            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-            color: white;
+        /* Label dengan ikon salin per-field */
+        .lbl-with-copy {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+        .copy-field-btn {
+            background: #fff3e0;
+            border: 1px solid #f0c896;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            line-height: 1;
+            padding: 3px 7px;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+        .copy-field-btn:hover { background: #ffe0b2; transform: scale(1.08); }
+        .copy-field-btn:active { transform: scale(0.95); }
+        body.dark .copy-field-btn { background: #3a3320; border-color: #6b5a30; }
+        body.dark .copy-field-btn:hover { background: #4a4228; }
+
+        /* Efek sorot saat field disalin */
+        .field-copied {
+            animation: fieldFlash 0.7s ease;
+        }
+        @keyframes fieldFlash {
+            0%   { background: #fff3cd; box-shadow: 0 0 0 3px rgba(243,156,18,0.4); }
+            100% { background: white; box-shadow: none; }
+        }
+        body.dark .field-copied {
+            animation: fieldFlashDark 0.7s ease;
+        }
+        @keyframes fieldFlashDark {
+            0%   { background: #4a4228; box-shadow: 0 0 0 3px rgba(243,156,18,0.4); }
+            100% { background: #26333b; box-shadow: none; }
         }
 
         .data-section {
@@ -1522,62 +1556,62 @@
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label data-i18n="lbl_total_sales">Total Penjualan *</label>
+                    <label class="lbl-with-copy"><span data-i18n="lbl_total_sales">Total Penjualan *</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('totalPenjualan')" title="Salin nilai terakhir">📋</button></label>
                     <input type="text" inputmode="numeric" id="totalPenjualan" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="lbl_cash">Saldo Akhir/Tunai *</label>
+                    <label class="lbl-with-copy"><span data-i18n="lbl_cash">Saldo Akhir/Tunai *</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('tunai')" title="Salin nilai terakhir">📋</button></label>
                     <input type="text" inputmode="numeric" id="tunai" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="lbl_qris">QRIS</label>
+                    <label class="lbl-with-copy"><span data-i18n="lbl_qris">QRIS</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('qris')" title="Salin nilai terakhir">📋</button></label>
                     <input type="text" inputmode="numeric" id="qris" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="lbl_edc">EDC</label>
+                    <label class="lbl-with-copy"><span data-i18n="lbl_edc">EDC</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('edc')" title="Salin nilai terakhir">📋</button></label>
                     <input type="text" inputmode="numeric" id="edc" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="lbl_transfer">Transfer</label>
+                    <label class="lbl-with-copy"><span data-i18n="lbl_transfer">Transfer</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('transfer')" title="Salin nilai terakhir">📋</button></label>
                     <input type="text" inputmode="numeric" id="transfer" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="lbl_gojek">GoJek</label>
+                    <label class="lbl-with-copy"><span data-i18n="lbl_gojek">GoJek</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('gojek')" title="Salin nilai terakhir">📋</button></label>
                     <input type="text" inputmode="numeric" id="gojek" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="lbl_grab">Grab</label>
+                    <label class="lbl-with-copy"><span data-i18n="lbl_grab">Grab</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('grab')" title="Salin nilai terakhir">📋</button></label>
                     <input type="text" inputmode="numeric" id="grab" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="lbl_pesanan">Pesanan</label>
+                    <label class="lbl-with-copy"><span data-i18n="lbl_pesanan">Pesanan</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('pesanan')" title="Salin nilai terakhir">📋</button></label>
                     <input type="text" inputmode="numeric" id="pesanan" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="lbl_belanja_pagi">Belanja Pagi</label>
+                    <label class="lbl-with-copy"><span data-i18n="lbl_belanja_pagi">Belanja Pagi</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('belanjaPagi')" title="Salin nilai terakhir">📋</button></label>
                     <input type="text" inputmode="numeric" id="belanjaPagi" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="lbl_belanja_sore">Belanja Sore</label>
+                    <label class="lbl-with-copy"><span data-i18n="lbl_belanja_sore">Belanja Sore</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('belanjaSore')" title="Salin nilai terakhir">📋</button></label>
                     <input type="text" inputmode="numeric" id="belanjaSore" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="lbl_daging">Daging</label>
+                    <label class="lbl-with-copy"><span data-i18n="lbl_daging">Daging</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('daging')" title="Salin nilai terakhir">📋</button></label>
                     <input type="text" inputmode="numeric" id="daging" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="lbl_dll">Dan Lain-Lain</label>
+                    <label class="lbl-with-copy"><span data-i18n="lbl_dll">Dan Lain-Lain</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('dll')" title="Salin nilai terakhir">📋</button></label>
                     <input type="text" inputmode="numeric" id="dll" class="money-input" placeholder="0" autocomplete="off">
                 </div>
             </div>
@@ -1601,7 +1635,6 @@
 
             <div class="button-group">
                 <button class="btn btn-primary" onclick="showPreview()" data-i18n="btn_preview">👁️ Preview Data</button>
-                <button class="btn btn-copy" onclick="copyLastEntry()" data-i18n="btn_copy_last">📋 Salin Data Terakhir</button>
                 <button class="btn btn-secondary" onclick="resetForm()" id="resetBtn" style="display:none;" data-i18n="btn_reset">🔄 Reset</button>
             </div>
         </div>
@@ -2235,7 +2268,7 @@
                 lbl_transfer:'Transfer', lbl_gojek:'GoJek', lbl_grab:'Grab', lbl_pesanan:'Orders',
                 lbl_belanja_pagi:'Morning Shopping', lbl_belanja_sore:'Evening Shopping', lbl_daging:'Meat', lbl_dll:'Others',
                 lbl_keterangan:'Notes', ph_keterangan:'Additional notes...', stat_total_expense:'💰 Total Expense (Auto)',
-                stat_saldo:'📊 Balance (Auto)', btn_preview:'👁️ Preview Data', btn_reset:'🔄 Reset', btn_copy_last:'📋 Copy Last Entry', copy_none:'No previous data to copy yet.',
+                stat_saldo:'📊 Balance (Auto)', btn_preview:'👁️ Preview Data', btn_reset:'🔄 Reset', copy_none:'No previous data to copy yet.',
                 prev_title:'✓ Preview Data', prev_tanggal:'Date', prev_total_sales:'Total Sales', prev_cash:'Cash',
                 prev_expense:'Total Expense', prev_saldo:'Balance', prev_notes:'Notes', btn_save_data:'✓ Save Data', btn_cancel:'✕ Cancel',
                 th_hari:'Day', th_total_sales:'Total Sales', th_cash:'Cash', th_expense:'Total Expense', th_saldo:'Balance',
@@ -2276,7 +2309,7 @@
                 lbl_transfer:'Transfer', lbl_gojek:'GoJek', lbl_grab:'Grab', lbl_pesanan:'Pesanan',
                 lbl_belanja_pagi:'Belanja Pagi', lbl_belanja_sore:'Belanja Sore', lbl_daging:'Daging', lbl_dll:'Dan Lain-Lain',
                 lbl_keterangan:'Keterangan', ph_keterangan:'Catatan tambahan...', stat_total_expense:'💰 Total Pengeluaran (Auto)',
-                stat_saldo:'📊 Saldo (Auto)', btn_preview:'👁️ Pratinjau Data', btn_reset:'🔄 Atur Ulang', btn_copy_last:'📋 Salin Data Terakhir', copy_none:'Belum ada data sebelumnya untuk disalin.',
+                stat_saldo:'📊 Saldo (Auto)', btn_preview:'👁️ Pratinjau Data', btn_reset:'🔄 Atur Ulang', copy_none:'Belum ada data sebelumnya untuk disalin.',
                 prev_title:'✓ Pratinjau Data', prev_tanggal:'Tanggal', prev_total_sales:'Total Penjualan', prev_cash:'Tunai',
                 prev_expense:'Total Pengeluaran', prev_saldo:'Saldo', prev_notes:'Keterangan', btn_save_data:'✓ Simpan Data', btn_cancel:'✕ Batal',
                 th_hari:'Hari', th_total_sales:'Total Penjualan', th_cash:'Tunai', th_expense:'Total Pengeluaran', th_saldo:'Saldo',
@@ -2755,7 +2788,7 @@
             return null;
         }
 
-        function copyLastEntry() {
+        function copyFieldLast(fieldId) {
             const day   = parseInt(document.getElementById('daySelect').value) || todayDay;
             const month = parseInt(document.getElementById('monthSelect').value);
             const year  = parseInt(document.getElementById('yearSelect').value);
@@ -2766,31 +2799,19 @@
                 return;
             }
 
-            const e = found.entry;
-            // Isi hanya field bernilai > 0 (yang 0 dibiarkan kosong agar bersih).
-            // Keterangan TIDAK disalin (catatan biasanya khusus per hari).
-            function setField(id, val) {
-                document.getElementById(id).value = (val && val !== 0) ? formatNum(val) : '';
-            }
-            setField('totalPenjualan', e.totalPenjualan);
-            setField('tunai', e.tunai);
-            setField('qris', e.qris);
-            setField('edc', e.edc);
-            setField('transfer', e.transfer);
-            setField('gojek', e.gojek);
-            setField('grab', e.grab);
-            setField('pesanan', e.pesanan);
-            setField('belanjaPagi', e.belanjaPagi);
-            setField('belanjaSore', e.belanjaSore);
-            setField('daging', e.daging);
-            setField('dll', e.dll);
-
+            const val = found.entry[fieldId];
+            const inputEl = document.getElementById(fieldId);
+            inputEl.value = (val && val !== 0) ? formatNum(val) : '';
             updateCalculations();
+
+            // Sorot field sebentar sebagai feedback
+            inputEl.classList.add('field-copied');
+            setTimeout(() => inputEl.classList.remove('field-copied'), 700);
 
             const fromLabel = `${found.day} ${dispMonth(found.month - 1)} ${found.year}`;
             const msg = (currentLang === 'en')
-                ? `✓ Copied from ${fromLabel}. Edit what changed, then Preview.`
-                : `✓ Disalin dari ${fromLabel}. Edit yang berubah, lalu Preview.`;
+                ? `✓ Copied from ${fromLabel}`
+                : `✓ Disalin dari ${fromLabel}`;
             showSuccessMessage(msg);
         }
 
