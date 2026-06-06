@@ -1401,6 +1401,40 @@
         body.dark .config-header { background: #22303a; border-bottom-color: #5fb0d0; }
         body.dark .config-header h2 { color: #6fc0e0; }
 
+        /* ===== VERSI APP ===== */
+        .app-version {
+            text-align: center;
+            font-size: 12px;
+            color: #b0b8bd;
+            padding: 14px 0 4px;
+            border-top: 1px solid #eee;
+            margin-top: 8px;
+        }
+        body.dark .app-version { color: #667; border-top-color: #32434d; }
+
+        /* ===== PERBANDINGAN BULAN ===== */        .month-compare {
+            background: #f7f9fb;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            border: 1px solid #e8ecef;
+        }
+        .mc-title { font-size: 13px; font-weight: 700; color: #7f8c8d; margin-bottom: 10px; }
+        .mc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .mc-item { text-align: center; }
+        .mc-label { font-size: 12px; color: #95a5a6; margin-bottom: 4px; font-weight: 600; }
+        .mc-change { font-size: 16px; font-weight: 800; }
+        .mc-change.up   { color: #27ae60; }
+        .mc-change.down { color: #e74c3c; }
+        .mc-change.flat { color: #95a5a6; }
+        .mc-change .mc-sub { display:block; font-size: 10px; font-weight: 600; color: #aaa; margin-top: 2px; }
+
+        body.dark .month-compare { background: #19232a; border-color: #32434d; }
+        body.dark .mc-title { color: #9aa7af; }
+        body.dark .mc-label { color: #8a98a0; }
+        body.dark .mc-change.flat { color: #8a98a0; }
+        body.dark .mc-change .mc-sub { color: #778; }
+
         /* ===== RINGKASAN TAHUNAN ===== */
         .annual-summary {
             margin-top: 30px;
@@ -1816,6 +1850,25 @@
 
             <div id="trendAlert" style="display:none;"></div>
 
+            <!-- ===== PERBANDINGAN BULAN (vs bulan lalu) ===== -->
+            <div class="month-compare" id="monthCompare" style="display:none;">
+                <div class="mc-title" id="mcTitle">📊 vs Bulan Lalu</div>
+                <div class="mc-grid">
+                    <div class="mc-item">
+                        <div class="mc-label" data-i18n="mc_revenue">Pemasukan</div>
+                        <div class="mc-change" id="mcRevenue">—</div>
+                    </div>
+                    <div class="mc-item">
+                        <div class="mc-label" data-i18n="mc_expense">Pengeluaran</div>
+                        <div class="mc-change" id="mcExpense">—</div>
+                    </div>
+                    <div class="mc-item">
+                        <div class="mc-label" data-i18n="mc_profit">Laba</div>
+                        <div class="mc-change" id="mcProfit">—</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Toggle Harian / Bulanan -->
             <div class="chart-toggle">
                 <button type="button" class="chart-toggle-btn active" id="toggleHarian" onclick="setChartMode('harian')" data-i18n="toggle_harian">📅 Harian</button>
@@ -2061,6 +2114,10 @@
 
                 <div style="text-align:center; padding:24px 12px; color:#aaa; font-size:13px;">
                     <span data-i18n="setting_more">⚙️ Opsi pengaturan lain akan ditambahkan di update berikutnya.</span>
+                </div>
+
+                <div class="app-version" id="appVersionBox">
+                    <span data-i18n="setting_version">Versi</span> <span id="appVersionNum">—</span>
                 </div>
             </div>
         </div><!-- /view-setting -->
@@ -2368,6 +2425,9 @@
         // ============================================================
         let currentLang = localStorage.getItem('appLang') || 'default';
 
+        // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
+        const APP_VERSION = 'v4.6.0';
+
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
         function dispMonth(i) {  // i = index 0-11
@@ -2423,7 +2483,8 @@
                 annual_title:'📅 Annual Summary', annual_revenue:'Total Revenue', annual_expense:'Total Expense',
                 annual_profit:'Net Profit', annual_avg:'Average/Month', annual_best:'🏆 Best Month', annual_worst:'Lowest Month',
                 annual_th_month:'Month', annual_th_revenue:'Revenue', annual_th_expense:'Expense', annual_th_profit:'Profit',
-                annual_th_margin:'Margin', annual_total:'TOTAL'
+                annual_th_margin:'Margin', annual_total:'TOTAL',
+                mc_revenue:'Revenue', mc_expense:'Expense', mc_profit:'Profit', setting_version:'Version'
             },            id: {
                 menu_title:'Menu', nav_input:'Input Data', nav_dashboard:'Dasbor', nav_pajak:'Laporan Pajak',
                 nav_export:'Ekspor', nav_install:'Pasang Aplikasi', nav_setting:'Pengaturan', nav_config:'Konfigurasi',
@@ -2467,7 +2528,8 @@
                 annual_title:'📅 Ringkasan Tahunan', annual_revenue:'Total Pemasukan', annual_expense:'Total Pengeluaran',
                 annual_profit:'Laba Bersih', annual_avg:'Rata-rata/Bulan', annual_best:'🏆 Bulan Terbaik', annual_worst:'Bulan Terendah',
                 annual_th_month:'Bulan', annual_th_revenue:'Pemasukan', annual_th_expense:'Pengeluaran', annual_th_profit:'Laba',
-                annual_th_margin:'Margin', annual_total:'TOTAL'
+                annual_th_margin:'Margin', annual_total:'TOTAL',
+                mc_revenue:'Pemasukan', mc_expense:'Pengeluaran', mc_profit:'Laba', setting_version:'Versi'
             }
         };
 
@@ -2540,6 +2602,7 @@
             attachMoneyFormatters();
             initDarkMode();
             initLanguage();
+            document.getElementById('appVersionNum').textContent = APP_VERSION;
         }
 
         function loadConfig() {
@@ -3067,6 +3130,72 @@
             };
         }
 
+        // Hitung metrik untuk bulan/tahun tertentu (untuk perbandingan)
+        function metricsForMonth(month, year) {
+            const data = appData[`${year}-${month}`] || [];
+            if (data.length === 0) return null;
+            const revenue = data.reduce((s, i) => s + i.totalPenjualan, 0);
+            const expense = data.reduce((s, i) => s + i.totalPengeluaran, 0);
+            const profit  = data[data.length - 1].saldo || (revenue - expense);
+            return { revenue, expense, profit };
+        }
+
+        // ===== PERBANDINGAN BULAN (vs bulan lalu) =====
+        function updateMonthCompare() {
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year  = parseInt(document.getElementById('yearSelect').value);
+
+            const cur = metricsForMonth(month, year);
+            // Bulan sebelumnya (lintas tahun)
+            let pm = month - 1, py = year;
+            if (pm < 1) { pm = 12; py--; }
+            const prev = metricsForMonth(pm, py);
+
+            const box = document.getElementById('monthCompare');
+
+            // Tampil hanya jika bulan ini & bulan lalu sama-sama ada data
+            if (!cur || !prev) {
+                box.style.display = 'none';
+                return;
+            }
+            box.style.display = 'block';
+
+            const prevLabel = `${dispMonth(pm - 1)} ${py}`;
+            document.getElementById('mcTitle').textContent =
+                (currentLang === 'en' ? `📊 vs ${prevLabel}` : `📊 vs ${prevLabel}`);
+
+            function renderChange(elId, curVal, prevVal, expenseField) {
+                const el = document.getElementById(elId);
+                let pct;
+                if (prevVal === 0) {
+                    pct = curVal === 0 ? 0 : 100;
+                } else {
+                    pct = ((curVal - prevVal) / Math.abs(prevVal)) * 100;
+                }
+                const rounded = Math.round(pct);
+                let cls, arrow;
+                if (rounded > 0) { cls = 'up'; arrow = '▲'; }
+                else if (rounded < 0) { cls = 'down'; arrow = '▼'; }
+                else { cls = 'flat'; arrow = '■'; }
+
+                // Untuk pengeluaran: naik itu "buruk" → warnanya kita balik (naik = merah)
+                if (expenseField) {
+                    if (rounded > 0) cls = 'down';      // pengeluaran naik → merah
+                    else if (rounded < 0) cls = 'up';   // pengeluaran turun → hijau
+                }
+
+                el.className = 'mc-change ' + cls;
+                const diff = curVal - prevVal;
+                const sign = diff >= 0 ? '+' : '−';
+                const diffStr = formatKPI(Math.abs(diff)).replace('Rp ', '');
+                el.innerHTML = `${arrow} ${Math.abs(rounded)}%<span class="mc-sub">${sign}${diffStr}</span>`;
+            }
+
+            renderChange('mcRevenue', cur.revenue, prev.revenue, false);
+            renderChange('mcExpense', cur.expense, prev.expense, true);
+            renderChange('mcProfit',  cur.profit,  prev.profit,  false);
+        }
+
         // Format angka compact untuk KPI cards
         function formatKPI(num) {
             if (num >= 1000000000) {
@@ -3104,6 +3233,7 @@
             updateChart();
             updateTrendAlert(metrics);
             updateAnnualSummary();
+            updateMonthCompare();
         }
 
         // ===== RINGKASAN TAHUNAN =====
