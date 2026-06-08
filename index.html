@@ -20,6 +20,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * {
             margin: 0;
@@ -1544,7 +1545,26 @@
         body.dark .config-header { background: #22303a; border-bottom-color: #5fb0d0; }
         body.dark .config-header h2 { color: #6fc0e0; }
 
-        /* ===== VERSI APP ===== */        /* ===== VERSI APP ===== */
+        /* ===== VERSI APP ===== */        /* ===== STATUS DRIVE ===== */
+        .drive-status {
+            margin-top: 14px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: #f0f4f7;
+            font-size: 13px;
+            font-weight: 600;
+            color: #5a6c7a;
+            text-align: center;
+        }
+        .drive-status.synced { background: #e8f5e9; color: #2e7d32; }
+        .drive-status.busy { background: #fff8e1; color: #b9770e; }
+        .drive-status.error { background: #fdecea; color: #c0392b; }
+        body.dark .drive-status { background: #19232a; color: #9aa7af; }
+        body.dark .drive-status.synced { background: #1b3320; color: #7fd99a; }
+        body.dark .drive-status.busy { background: #2a2616; color: #f0c060; }
+        body.dark .drive-status.error { background: #3a1f1c; color: #ff8a7a; }
+
+        /* ===== VERSI APP ===== */
         .app-version {
             text-align: center;
             font-size: 12px;
@@ -2309,6 +2329,32 @@
                 </p>
             </div>
         </div>
+
+        <!-- Google Drive Sync (Fase 5.0) -->
+        <div class="data-section" style="margin-top: 20px;">
+            <h2 data-i18n="drive_title">☁️ GOOGLE DRIVE</h2>
+            <p style="font-size:13px; color:#888; margin:-6px 0 16px;" data-i18n="drive_hint">Simpan & ambil data dari Google Drive — praktis untuk pindah perangkat.</p>
+            <div class="export-options">
+                <button class="export-btn" onclick="backupToDrive()">
+                    <span data-i18n="btn_drive_backup">☁️⬆️ Backup ke Drive</span>
+                    <div class="export-desc" data-i18n="desc_drive_backup">Simpan data ke Google Drive</div>
+                </button>
+
+                <button class="export-btn" onclick="restoreFromDrive()">
+                    <span data-i18n="btn_drive_restore">☁️⬇️ Restore dari Drive</span>
+                    <div class="export-desc" data-i18n="desc_drive_restore">Ambil data dari Google Drive</div>
+                </button>
+            </div>
+
+            <div id="driveStatus" class="drive-status" data-i18n="drive_status_idle">Belum tersinkron ke Drive.</div>
+
+            <div style="background: #e7f3fb; border-left: 4px solid #1a5f7a; padding: 15px; border-radius: 6px; margin-top: 16px; font-size: 13px; color: #1a5f7a;">
+                <strong data-i18n="drive_note_title">ℹ️ Catatan:</strong>
+                <p style="margin-top: 8px;" data-i18n="drive_note_body">
+                    Pertama kali akan diminta login Google & izin akses. Aplikasi hanya bisa mengakses file backup buatannya sendiri, bukan file Drive Anda yang lain. Butuh koneksi internet.
+                </p>
+            </div>
+        </div>
         </div><!-- /view-export -->
 
         <!-- ===== VIEW: SETTING ===== -->
@@ -2667,7 +2713,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v4.6.7';
+        const APP_VERSION = 'v5.0.0';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -2734,7 +2780,19 @@
                 libur_marked:'Day {d} marked as HOLIDAY.', libur_cancelled:'Day {d} is no longer a holiday.',
                 libur_confirm:'Day {d} already has data. Make it a holiday (data will be cleared)?',
                 trend_progress:'Data Progress', trend_days:'days', trend_filled:'filled', trend_libur:'holiday',
-                trend_margin:'Profit Margin', chart_libur:'Holiday'
+                trend_margin:'Profit Margin', chart_libur:'Holiday',
+                drive_title:'☁️ GOOGLE DRIVE', drive_hint:'Save & fetch your data from Google Drive — handy for switching devices.',
+                btn_drive_backup:'☁️⬆️ Backup to Drive', desc_drive_backup:'Save data to Google Drive',
+                btn_drive_restore:'☁️⬇️ Restore from Drive', desc_drive_restore:'Fetch data from Google Drive',
+                drive_status_idle:'Not synced to Drive yet.', drive_last:'Last sync', drive_connecting:'☁️ Connecting to Google Drive...',
+                drive_uploading:'☁️ Uploading data...', drive_downloading:'☁️ Downloading data...',
+                drive_backup_ok:'✓ Backup to Google Drive successful!', drive_backup_fail:'Failed to backup to Drive',
+                drive_restore_ok:'✓ Data restored from Google Drive!', drive_restore_fail:'Failed to restore from Drive',
+                drive_none:'No backup on Drive yet.', drive_restore_confirm:'Restore data from Google Drive? Current data will be replaced.',
+                drive_err_lib:'Google library not loaded yet. Check your internet and try again.', drive_err_find:'Failed to search file on Drive',
+                drive_err_update:'Failed to update file', drive_err_create:'Failed to create file', drive_err_download:'Failed to download file',
+                drive_err_format:'Backup format not recognized.', drive_note_title:'ℹ️ Note:',
+                drive_note_body:'First time will ask for Google login & permission. The app can only access its own backup file, not your other Drive files. Requires internet.'
             },            id: {
                 menu_title:'Menu', nav_input:'Input Data', nav_dashboard:'Dasbor', nav_pajak:'Laporan Pajak',
                 nav_export:'Ekspor', nav_install:'Pasang Aplikasi', nav_setting:'Pengaturan', nav_config:'Konfigurasi',
@@ -2788,7 +2846,19 @@
                 libur_marked:'Tanggal {d} ditandai LIBUR.', libur_cancelled:'Tanggal {d} bukan libur lagi.',
                 libur_confirm:'Tanggal {d} sudah ada data. Jadikan hari libur (data akan dikosongkan)?',
                 trend_progress:'Data Progress', trend_days:'hari', trend_filled:'terisi', trend_libur:'libur',
-                trend_margin:'Margin Laba', chart_libur:'Libur'
+                trend_margin:'Margin Laba', chart_libur:'Libur',
+                drive_title:'☁️ GOOGLE DRIVE', drive_hint:'Simpan & ambil data dari Google Drive — praktis untuk pindah perangkat.',
+                btn_drive_backup:'☁️⬆️ Backup ke Drive', desc_drive_backup:'Simpan data ke Google Drive',
+                btn_drive_restore:'☁️⬇️ Restore dari Drive', desc_drive_restore:'Ambil data dari Google Drive',
+                drive_status_idle:'Belum tersinkron ke Drive.', drive_last:'Terakhir sinkron', drive_connecting:'☁️ Menghubungkan ke Google Drive...',
+                drive_uploading:'☁️ Mengunggah data...', drive_downloading:'☁️ Mengunduh data...',
+                drive_backup_ok:'✓ Backup ke Google Drive berhasil!', drive_backup_fail:'Gagal backup ke Drive',
+                drive_restore_ok:'✓ Data dari Google Drive berhasil dipulihkan!', drive_restore_fail:'Gagal restore dari Drive',
+                drive_none:'Belum ada backup di Drive.', drive_restore_confirm:'Pulihkan data dari Google Drive? Data saat ini akan diganti.',
+                drive_err_lib:'Library Google belum termuat. Cek koneksi internet, lalu coba lagi.', drive_err_find:'Gagal mencari file di Drive',
+                drive_err_update:'Gagal memperbarui file', drive_err_create:'Gagal membuat file', drive_err_download:'Gagal mengunduh file',
+                drive_err_format:'Format backup tidak dikenali.', drive_note_title:'ℹ️ Catatan:',
+                drive_note_body:'Pertama kali akan diminta login Google & izin akses. Aplikasi hanya bisa mengakses file backup buatannya sendiri, bukan file Drive Anda yang lain. Butuh koneksi internet.'
             }
         };
 
@@ -2863,6 +2933,7 @@
             initLanguage();
             document.getElementById('appVersionNum').textContent = APP_VERSION;
             setTimeout(checkBackupReminder, 1500);
+            if (typeof updateDriveStatus === 'function') updateDriveStatus();
         }
 
         function loadConfig() {
@@ -3271,6 +3342,177 @@
                 }
             };
             reader.readAsText(file);
+        }
+
+        // ============================================================
+        //  GOOGLE DRIVE SYNC (Fase 5.0 — Backup/Restore manual)
+        //  Izin: drive.file (app hanya akses file buatannya sendiri)
+        // ============================================================
+        const GOOGLE_CLIENT_ID = '623078021032-jb26jivejbo5keob50mgbr0sce5b5cn8.apps.googleusercontent.com';
+        const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+        const DRIVE_BACKUP_FILENAME = 'findaily-backup.json';
+        let driveTokenClient = null;
+        let driveAccessToken = null;
+        let driveTokenExpiry = 0;
+
+        function setDriveStatus(msg, cls) {
+            const el = document.getElementById('driveStatus');
+            if (!el) return;
+            el.textContent = msg;
+            el.className = 'drive-status' + (cls ? ' ' + cls : '');
+        }
+
+        function updateDriveStatus() {
+            const last = localStorage.getItem('lastDriveSync');
+            if (last) {
+                const d = new Date(last);
+                const str = `${d.getDate()} ${dispMonth(d.getMonth())} ${d.getFullYear()}, ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+                setDriveStatus(`✓ ${t('drive_last','Terakhir sinkron')}: ${str}`, 'synced');
+            } else {
+                setDriveStatus(t('drive_status_idle', 'Belum tersinkron ke Drive.'), '');
+            }
+        }
+
+        function initDriveClient() {
+            if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+                return false; // library Google belum termuat
+            }
+            if (!driveTokenClient) {
+                driveTokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: GOOGLE_CLIENT_ID,
+                    scope: DRIVE_SCOPE,
+                    callback: () => {}
+                });
+            }
+            return true;
+        }
+
+        // Pastikan ada token akses yang valid (minta login bila perlu)
+        function ensureDriveToken() {
+            return new Promise((resolve, reject) => {
+                if (driveAccessToken && Date.now() < driveTokenExpiry - 60000) {
+                    resolve(driveAccessToken);
+                    return;
+                }
+                if (!initDriveClient()) {
+                    reject(new Error(t('drive_err_lib', 'Library Google belum termuat. Cek koneksi internet, lalu coba lagi.')));
+                    return;
+                }
+                driveTokenClient.callback = (resp) => {
+                    if (resp && resp.error) {
+                        reject(new Error(resp.error));
+                        return;
+                    }
+                    driveAccessToken = resp.access_token;
+                    driveTokenExpiry = Date.now() + ((resp.expires_in || 3600) * 1000);
+                    resolve(driveAccessToken);
+                };
+                try {
+                    driveTokenClient.requestAccessToken({ prompt: driveAccessToken ? '' : 'consent' });
+                } catch (e) {
+                    reject(e);
+                }
+            });
+        }
+
+        // Cari file backup di Drive (hanya file buatan app ini yang terlihat)
+        async function driveFindBackupFile(token) {
+            const q = encodeURIComponent(`name='${DRIVE_BACKUP_FILENAME}' and trashed=false`);
+            const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&fields=files(id,name,modifiedTime)`, {
+                headers: { Authorization: 'Bearer ' + token }
+            });
+            if (!res.ok) throw new Error(t('drive_err_find', 'Gagal mencari file di Drive') + ' (' + res.status + ')');
+            const data = await res.json();
+            return (data.files && data.files.length) ? data.files[0] : null;
+        }
+
+        async function backupToDrive() {
+            try {
+                setDriveStatus(t('drive_connecting', '☁️ Menghubungkan ke Google Drive...'), 'busy');
+                const token = await ensureDriveToken();
+                setDriveStatus(t('drive_uploading', '☁️ Mengunggah data...'), 'busy');
+
+                const backup = {
+                    _meta: { app: 'Financial Daily Report', version: APP_VERSION, exportedAt: new Date().toISOString() },
+                    financialData: appData,
+                    financialConfig: configSettings
+                };
+                const content = JSON.stringify(backup, null, 2);
+                const existing = await driveFindBackupFile(token);
+
+                if (existing) {
+                    const res = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existing.id}?uploadType=media`, {
+                        method: 'PATCH',
+                        headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+                        body: content
+                    });
+                    if (!res.ok) throw new Error(t('drive_err_update', 'Gagal memperbarui file') + ' (' + res.status + ')');
+                } else {
+                    const boundary = 'findaily_' + Date.now();
+                    const metadata = { name: DRIVE_BACKUP_FILENAME, mimeType: 'application/json' };
+                    const body =
+                        `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n` +
+                        JSON.stringify(metadata) +
+                        `\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n` +
+                        content +
+                        `\r\n--${boundary}--`;
+                    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
+                        method: 'POST',
+                        headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'multipart/related; boundary=' + boundary },
+                        body
+                    });
+                    if (!res.ok) throw new Error(t('drive_err_create', 'Gagal membuat file') + ' (' + res.status + ')');
+                }
+
+                const now = new Date().toISOString();
+                localStorage.setItem('lastBackup', now);
+                localStorage.setItem('lastDriveSync', now);
+                dismissBackupReminder();
+                updateDriveStatus();
+                showSuccessMessage(t('drive_backup_ok', '✓ Backup ke Google Drive berhasil!'));
+            } catch (e) {
+                setDriveStatus('❌ ' + e.message, 'error');
+                showSuccessMessage('❌ ' + t('drive_backup_fail', 'Gagal backup ke Drive') + ': ' + e.message);
+            }
+        }
+
+        async function restoreFromDrive() {
+            try {
+                setDriveStatus(t('drive_connecting', '☁️ Menghubungkan ke Google Drive...'), 'busy');
+                const token = await ensureDriveToken();
+                const existing = await driveFindBackupFile(token);
+                if (!existing) {
+                    setDriveStatus(t('drive_none', 'Belum ada backup di Drive.'), '');
+                    showSuccessMessage('❌ ' + t('drive_none', 'Belum ada backup di Drive.'));
+                    return;
+                }
+                if (!confirm(t('drive_restore_confirm', 'Pulihkan data dari Google Drive? Data saat ini akan diganti.'))) {
+                    updateDriveStatus();
+                    return;
+                }
+                setDriveStatus(t('drive_downloading', '☁️ Mengunduh data...'), 'busy');
+                const res = await fetch(`https://www.googleapis.com/drive/v3/files/${existing.id}?alt=media`, {
+                    headers: { Authorization: 'Bearer ' + token }
+                });
+                if (!res.ok) throw new Error(t('drive_err_download', 'Gagal mengunduh file') + ' (' + res.status + ')');
+                const data = await res.json();
+
+                const fd = (data.financialData !== undefined) ? data.financialData : null;
+                const fc = (data.financialConfig !== undefined) ? data.financialConfig : null;
+                if (fd === null && fc === null) throw new Error(t('drive_err_format', 'Format backup tidak dikenali.'));
+
+                if (fd) { appData = fd; localStorage.setItem('financialData', JSON.stringify(appData)); }
+                if (fc) { configSettings = fc; localStorage.setItem('financialConfig', JSON.stringify(configSettings)); }
+
+                localStorage.setItem('lastDriveSync', new Date().toISOString());
+                loadConfig();
+                updateUI();
+                updateDriveStatus();
+                showSuccessMessage(t('drive_restore_ok', '✓ Data dari Google Drive berhasil dipulihkan!'));
+            } catch (e) {
+                setDriveStatus('❌ ' + e.message, 'error');
+                showSuccessMessage('❌ ' + t('drive_restore_fail', 'Gagal restore dari Drive') + ': ' + e.message);
+            }
         }
 
         function resetForm() {
