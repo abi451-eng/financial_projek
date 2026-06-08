@@ -478,6 +478,19 @@
             background: #27ae60;
         }
         .cal-day.selected.has-data::after { background: #fff; }
+        .cal-day.is-libur::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: #e74c3c;
+        }
+        .cal-day.is-libur { color: #e74c3c; font-weight: 700; }
+        .cal-day.selected.is-libur { color: #fff; }
+        .cal-day.selected.is-libur::after { background: #fff; }
 
         .cal-today-btn {
             width: 100%;
@@ -789,6 +802,25 @@
         .btn-secondary {
             background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
             color: white;
+        }
+
+        .btn-libur {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+        .btn-libur.libur-active {
+            background: linear-gradient(135deg, #7f8c8d 0%, #5d6d7e 100%);
+        }
+
+        .row-libur td {
+            background: #fdecea !important;
+            color: #c0392b;
+            font-weight: 700;
+            font-style: italic;
+        }
+        body.dark .row-libur td {
+            background: #3a1f1c !important;
+            color: #ff8a7a;
         }
 
         /* Label dengan ikon salin per-field */
@@ -1887,6 +1919,7 @@
 
             <div class="button-group">
                 <button class="btn btn-primary" onclick="showPreview()" data-i18n="btn_preview">👁️ Preview Data</button>
+                <button class="btn btn-libur" onclick="toggleLibur()" id="liburBtn" data-i18n="btn_libur">🔴 Tandai Hari Libur</button>
                 <button class="btn btn-secondary" onclick="resetForm()" id="resetBtn" style="display:none;" data-i18n="btn_reset">🔄 Reset</button>
             </div>
         </div>
@@ -2549,7 +2582,8 @@
 
             const key = `${calViewYear}-${calViewMonth}`;
             const monthData = appData[key] || [];
-            const daysWithData = new Set(monthData.map(d => d.day));
+            const daysWithData = new Set(monthData.filter(d => !d.isLibur).map(d => d.day));
+            const liburDays = new Set(monthData.filter(d => d.isLibur).map(d => d.day));
 
             const grid = document.getElementById('calDays');
             grid.innerHTML = '';
@@ -2575,6 +2609,9 @@
                 }
                 if (daysWithData.has(d)) {
                     btn.classList.add('has-data');
+                }
+                if (liburDays.has(d)) {
+                    btn.classList.add('is-libur');
                 }
                 btn.onclick = function(e) { e.stopPropagation(); calSelectDay(d); };
                 grid.appendChild(btn);
@@ -2608,6 +2645,7 @@
             const todayLabel = (currentLang === 'en') ? '  •  Today' : '  •  Hari ini';
             document.getElementById('dateDisplay').textContent =
                 `${dayName}, ${d} ${dispMonth(m - 1)} ${y}` + (isToday ? todayLabel : '');
+            if (typeof updateLiburButton === 'function') updateLiburButton();
         }
 
         // Tutup kalender saat klik di luar
@@ -2629,7 +2667,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v4.6.4';
+        const APP_VERSION = 'v4.6.5';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -2691,7 +2729,12 @@
                 search_ph:'Search date, amount, or notes...', filter_all:'All', filter_minus:'Negative Balance',
                 filter_high_expense:'High Expense', filter_high_income:'High Income',
                 search_empty:'No results found.', search_more:'more results... narrow your search',
-                insight_title:'💡 Monthly Insights', backup_now:'Backup', backup_later:'Later ✕'
+                insight_title:'💡 Monthly Insights', backup_now:'Backup', backup_later:'Later ✕',
+                btn_libur:'🔴 Mark as Holiday', btn_libur_cancel:'↩️ Cancel Holiday', libur_label:'HOLIDAY',
+                libur_marked:'Day {d} marked as HOLIDAY.', libur_cancelled:'Day {d} is no longer a holiday.',
+                libur_confirm:'Day {d} already has data. Make it a holiday (data will be cleared)?',
+                trend_progress:'Data Progress', trend_days:'days', trend_filled:'filled', trend_libur:'holiday',
+                trend_margin:'Profit Margin', chart_libur:'Holiday'
             },            id: {
                 menu_title:'Menu', nav_input:'Input Data', nav_dashboard:'Dasbor', nav_pajak:'Laporan Pajak',
                 nav_export:'Ekspor', nav_install:'Pasang Aplikasi', nav_setting:'Pengaturan', nav_config:'Konfigurasi',
@@ -2740,7 +2783,12 @@
                 search_ph:'Cari tanggal, nominal, atau keterangan...', filter_all:'Semua', filter_minus:'Saldo Minus',
                 filter_high_expense:'Pengeluaran Tinggi', filter_high_income:'Pemasukan Tinggi',
                 search_empty:'Tidak ada hasil ditemukan.', search_more:'hasil lainnya... persempit pencarian',
-                insight_title:'💡 Insight Bulan Ini', backup_now:'Backup', backup_later:'Nanti ✕'
+                insight_title:'💡 Insight Bulan Ini', backup_now:'Backup', backup_later:'Nanti ✕',
+                btn_libur:'🔴 Tandai Hari Libur', btn_libur_cancel:'↩️ Batalkan Libur', libur_label:'LIBUR',
+                libur_marked:'Tanggal {d} ditandai LIBUR.', libur_cancelled:'Tanggal {d} bukan libur lagi.',
+                libur_confirm:'Tanggal {d} sudah ada data. Jadikan hari libur (data akan dikosongkan)?',
+                trend_progress:'Data Progress', trend_days:'hari', trend_filled:'terisi', trend_libur:'libur',
+                trend_margin:'Margin Laba', chart_libur:'Libur'
             }
         };
 
@@ -3049,12 +3097,12 @@
             if (existingIndex >= 0) {
                 appData[key][existingIndex] = {
                     day, totalPenjualan, tunai, qris, edc, transfer, gojek, grab, pesanan,
-                    totalPengeluaran, belanjaPagi, belanjaSore, daging, dll, keterangan, saldo: 0
+                    totalPengeluaran, belanjaPagi, belanjaSore, daging, dll, keterangan, saldo: 0, isLibur: false
                 };
             } else {
                 appData[key].push({
                     day, totalPenjualan, tunai, qris, edc, transfer, gojek, grab, pesanan,
-                    totalPengeluaran, belanjaPagi, belanjaSore, daging, dll, keterangan, saldo: 0
+                    totalPengeluaran, belanjaPagi, belanjaSore, daging, dll, keterangan, saldo: 0, isLibur: false
                 });
             }
 
@@ -3075,6 +3123,80 @@
             updateDashboard();
             updatePPNTable();
             updateRoyaltiTable();
+        }
+
+        // ===== HARI LIBUR =====
+        // Entri libur = entri dengan isLibur:true & semua nilai 0.
+        function isLiburDay(day, month, year) {
+            const entry = (appData[`${year}-${month}`] || []).find(e => e.day === day);
+            return !!(entry && entry.isLibur);
+        }
+
+        function recalcBalances(key) {
+            let runningBalance = 0;
+            (appData[key] || []).forEach(item => {
+                runningBalance += item.totalPenjualan + (item.pesanan || 0) - item.totalPengeluaran;
+                item.saldo = runningBalance;
+            });
+        }
+
+        function toggleLibur() {
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year  = parseInt(document.getElementById('yearSelect').value);
+            const day   = parseInt(document.getElementById('daySelect').value);
+            const key   = `${year}-${month}`;
+            if (!appData[key]) appData[key] = [];
+
+            const idx = appData[key].findIndex(e => e.day === day);
+            const already = idx >= 0 && appData[key][idx].isLibur;
+
+            if (already) {
+                // Batalkan libur → hapus entri
+                appData[key].splice(idx, 1);
+                if (appData[key].length === 0) delete appData[key];
+                else recalcBalances(key);
+                showSuccessMessage(t('libur_cancelled', `Tanggal ${day} bukan libur lagi.`).replace('{d}', day));
+            } else {
+                // Jika sudah ada data biasa di tanggal itu, konfirmasi timpa jadi libur
+                if (idx >= 0 && (appData[key][idx].totalPenjualan > 0 || appData[key][idx].totalPengeluaran > 0)) {
+                    if (!confirm(t('libur_confirm', `Tanggal ${day} sudah ada data. Jadikan hari libur (data akan dikosongkan)?`).replace('{d}', day))) return;
+                }
+                const liburEntry = {
+                    day, totalPenjualan: 0, tunai: 0, qris: 0, edc: 0, transfer: 0, gojek: 0, grab: 0, pesanan: 0,
+                    totalPengeluaran: 0, belanjaPagi: 0, belanjaSore: 0, daging: 0, dll: 0,
+                    keterangan: '', saldo: 0, isLibur: true
+                };
+                if (idx >= 0) appData[key][idx] = liburEntry;
+                else appData[key].push(liburEntry);
+                appData[key].sort((a, b) => a.day - b.day);
+                recalcBalances(key);
+                showSuccessMessage(t('libur_marked', `Tanggal ${day} ditandai LIBUR.`).replace('{d}', day));
+            }
+
+            localStorage.setItem('financialData', JSON.stringify(appData));
+            resetForm();
+            updateLiburButton();
+            loadDataTable();
+            updateDashboard();
+            updatePPNTable();
+            updateRoyaltiTable();
+            renderCalendar();
+        }
+
+        // Perbarui label tombol libur sesuai status tanggal terpilih
+        function updateLiburButton() {
+            const btn = document.getElementById('liburBtn');
+            if (!btn) return;
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const year  = parseInt(document.getElementById('yearSelect').value);
+            const day   = parseInt(document.getElementById('daySelect').value);
+            if (isLiburDay(day, month, year)) {
+                btn.textContent = t('btn_libur_cancel', '↩️ Batalkan Libur');
+                btn.classList.add('libur-active');
+            } else {
+                btn.textContent = t('btn_libur', '🔴 Tandai Hari Libur');
+                btn.classList.remove('libur-active');
+            }
         }
 
         function showSuccessMessage(message) {
@@ -3296,6 +3418,20 @@
 
             data.forEach(item => {
                 const row = tbody.insertRow();
+                if (item.isLibur) {
+                    row.className = 'row-libur';
+                    row.innerHTML = `
+                        <td class="col-center">${item.day}</td>
+                        <td class="col-center" colspan="4">🔴 ${t('libur_label', 'LIBUR')}</td>
+                        <td class="col-left">${item.keterangan || '-'}</td>
+                        <td class="col-center">
+                            <div class="action-buttons">
+                                <button class="btn btn-danger" onclick="deleteData(${item.day})">Delete</button>
+                            </div>
+                        </td>
+                    `;
+                    return;
+                }
                 row.innerHTML = `
                     <td class="col-center">${item.day}</td>
                     <td class="currency"><span class="money-cell"><span class="rp">Rp</span><span>${item.totalPenjualan.toLocaleString('id-ID')}</span></span></td>
@@ -3325,10 +3461,14 @@
                     expense: 0,
                     profit: 0,
                     margin: 0,
-                    daysWithData: 0
+                    daysWithData: 0,
+                    liburDays: 0,
+                    filledDays: 0
                 };
             }
 
+            const liburDays  = data.filter(d => d.isLibur).length;
+            const filledDays = data.length - liburDays;
             const revenue = data.reduce((sum, item) => sum + item.totalPenjualan, 0);
             const expense = data.reduce((sum, item) => sum + item.totalPengeluaran, 0);
             const profit = data[data.length - 1].saldo || (revenue - expense);
@@ -3339,7 +3479,9 @@
                 expense,
                 profit,
                 margin,
-                daysWithData: data.length
+                daysWithData: data.length,
+                liburDays,
+                filledDays
             };
         }
 
@@ -3421,6 +3563,8 @@
 
             const insights = [];
             const fmt = (n) => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+            // Hari kerja (bukan libur) untuk rata-rata & hari teramai
+            const workDays = data.filter(e => !e.isLibur);
 
             // 1) Kategori pengeluaran terbesar (akumulasi sebulan)
             const expenseCats = {
@@ -3444,17 +3588,17 @@
                 insights.push(`${label}: ${catNames[topCat]} (${fmt(topVal)})`);
             }
 
-            // 2) Hari paling ramai (penjualan tertinggi)
-            let busiest = data[0];
-            data.forEach(e => { if ((e.totalPenjualan || 0) > (busiest.totalPenjualan || 0)) busiest = e; });
+            // 2) Hari paling ramai (penjualan tertinggi, abaikan libur)
+            let busiest = workDays[0];
+            workDays.forEach(e => { if ((e.totalPenjualan || 0) > ((busiest && busiest.totalPenjualan) || 0)) busiest = e; });
             if (busiest && busiest.totalPenjualan > 0) {
                 const label = (currentLang === 'en') ? 'Busiest day' : 'Hari paling ramai';
                 const dayWord = (currentLang === 'en') ? 'day' : 'tgl';
                 insights.push(`${label}: ${dayWord} ${busiest.day} (${fmt(busiest.totalPenjualan)})`);
             }
 
-            // 3) Rata-rata pemasukan harian
-            const avgRev = data.reduce((s, e) => s + (e.totalPenjualan || 0), 0) / data.length;
+            // 3) Rata-rata pemasukan harian (hanya hari kerja)
+            const avgRev = workDays.length ? workDays.reduce((s, e) => s + (e.totalPenjualan || 0), 0) / workDays.length : 0;
             const avgLabel = (currentLang === 'en') ? 'Average daily income' : 'Rata-rata pemasukan harian';
             insights.push(`${avgLabel}: ${fmt(avgRev)}`);
 
@@ -3683,7 +3827,10 @@
                 profitData  = agg.map(a => a.profit);
                 chartTitle  = mobile ? `${t('chart_year','Tahun')} ${year}` : `${t('chart_monthly','Performa Bulanan')} — ${t('chart_year','Tahun')} ${year}`;
             } else {
-                labels      = data.map(d => mobile ? `${d.day}` : `Hari ${d.day}`);
+                labels      = data.map(d => {
+                    if (d.isLibur) return mobile ? `${d.day}🔴` : `${t('chart_libur','Libur')} ${d.day}`;
+                    return mobile ? `${d.day}` : `Hari ${d.day}`;
+                });
                 revenueData = data.map(d => d.totalPenjualan);
                 expenseData = data.map(d => d.totalPengeluaran);
                 profitData  = data.map(d => d.saldo);
@@ -3858,7 +4005,12 @@
             const daysInMonth = new Date(parseInt(document.getElementById('yearSelect').value), parseInt(document.getElementById('monthSelect').value), 0).getDate();
             const percentComplete = (daysWithData / daysInMonth * 100).toFixed(0);
 
-            trendInfo.innerHTML = `<strong>📊 Trend Analysis:</strong><p style="margin-top: 10px;">Data Progress: ${daysWithData}/${daysInMonth} hari (${percentComplete}% complete) | Revenue: Rp ${metrics.revenue.toLocaleString('id-ID')} | Profit Margin: ${metrics.margin.toFixed(1)}%</p>`;
+            const filled = metrics.filledDays || 0;
+            const libur  = metrics.liburDays || 0;
+            let breakdown = `${filled} ${t('trend_filled','terisi')}`;
+            if (libur > 0) breakdown += ` + ${libur} ${t('trend_libur','libur')}`;
+
+            trendInfo.innerHTML = `<strong>📊 Trend Analysis:</strong><p style="margin-top: 10px;">${t('trend_progress','Data Progress')}: ${daysWithData}/${daysInMonth} ${t('trend_days','hari')} (${percentComplete}%) — ${breakdown} | Revenue: Rp ${metrics.revenue.toLocaleString('id-ID')} | ${t('trend_margin','Profit Margin')}: ${metrics.margin.toFixed(1)}%</p>`;
             trendInfo.style.display = 'block';
         }
 
@@ -3875,11 +4027,18 @@
             let totalPPN = 0;
 
             data.forEach(item => {
+                const row = tbody.insertRow();
+                if (item.isLibur) {
+                    row.className = 'row-libur';
+                    row.innerHTML = `
+                        <td class="col-center">${item.day}</td>
+                        <td class="col-center" colspan="2">🔴 ${t('libur_label','LIBUR')}</td>
+                    `;
+                    return;
+                }
                 const ppnAmount = item.totalPenjualan * (configSettings.ppnRate / 100);
                 totalPendapatan += item.totalPenjualan;
                 totalPPN += ppnAmount;
-
-                const row = tbody.insertRow();
                 row.innerHTML = `
                     <td class="col-center">${item.day}</td>
                     <td class="currency"><span class="money-cell"><span class="rp">Rp</span><span>${item.totalPenjualan.toLocaleString('id-ID')}</span></span></td>
@@ -4235,15 +4394,25 @@
                 let totalPPN = 0;
 
                 data.forEach(item => {
-                    const ppnAmount = item.totalPenjualan * (configSettings.ppnRate / 100);
-                    totalPendapatan += item.totalPenjualan;
-                    totalPPN += ppnAmount;
-
                     // Draw row borders
                     doc.setLineWidth(0.3);
                     doc.rect(tableStartX, yPosition, col1Width, rowHeight);
                     doc.rect(tableStartX + col1Width, yPosition, col2Width, rowHeight);
                     doc.rect(tableStartX + col1Width + col2Width, yPosition, col3Width, rowHeight);
+
+                    if (item.isLibur) {
+                        // Hari libur: tanggal tetap tampil, kolom nominal kosong + tulisan LIBUR
+                        doc.text(item.day.toString(), tableStartX + (col1Width / 2), yPosition + 4.5, { align: 'center' });
+                        doc.setFont('Arial', 'italic');
+                        doc.text('LIBUR', tableStartX + col1Width + col2Width + (col3Width / 2), yPosition + 4.5, { align: 'center' });
+                        doc.setFont('Arial', 'normal');
+                        yPosition += rowHeight;
+                        return;
+                    }
+
+                    const ppnAmount = item.totalPenjualan * (configSettings.ppnRate / 100);
+                    totalPendapatan += item.totalPenjualan;
+                    totalPPN += ppnAmount;
 
                     // Row data
                     doc.text(item.day.toString(), tableStartX + (col1Width / 2), yPosition + 4.5, { align: 'center' });
