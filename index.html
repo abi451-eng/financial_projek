@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Financial Daily</title>
+    <title>Financial Dayli</title>
 
     <!-- PWA -->
     <link rel="manifest" href="./manifest.json">
@@ -1724,7 +1724,7 @@
     <!-- Sticky Header -->
     <div class="sticky-header">
         <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
-        <h1>📊 Financial Daily Report</h1>
+        <h1>📊 Financial Dayli Report BKCM</h1>
         <button class="header-search-btn" id="headerSearchBtn" onclick="openSearch()" aria-label="Cari" title="Cari data">🔍</button>
     </div>
 
@@ -2667,7 +2667,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v4.6.5';
+        const APP_VERSION = 'v4.6.6';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -3211,7 +3211,7 @@
             const backup = {
                 _meta: {
                     app: 'Financial Daily Report',
-                    version: 'V4.6',
+                    version: APP_VERSION,
                     exportedAt: new Date().toISOString()
                 },
                 financialData: appData,
@@ -4181,9 +4181,16 @@
                     data.forEach((item, idx) => {
                         const r = firstDataRow + idx;
                         const row = ws.getRow(r);
+                        const libur = item.isLibur;
                         columns.forEach((col, i) => {
                             const cell = row.getCell(i + 1);
-                            cell.value = item[col.key] !== undefined ? item[col.key] : '';
+                            if (libur && moneyKeys.includes(col.key)) {
+                                cell.value = '';                 // nominal hari libur dikosongkan
+                            } else if (libur && col.key === 'keterangan') {
+                                cell.value = 'LIBUR';
+                            } else {
+                                cell.value = item[col.key] !== undefined ? item[col.key] : '';
+                            }
 
                             // Border tipis
                             cell.border = {
@@ -4192,7 +4199,9 @@
                                 bottom: { style: 'hair', color: { argb: 'FFCCCCCC' } },
                                 right:  { style: 'hair', color: { argb: 'FFCCCCCC' } }
                             };
-                            cell.font = { name: 'Arial', size: 10 };
+                            cell.font = libur
+                                ? { name: 'Arial', size: 10, bold: true, italic: true, color: { argb: 'FFC0392B' } }
+                                : { name: 'Arial', size: 10 };
 
                             if (col.key === 'day') {
                                 cell.alignment = { horizontal: 'center' };
@@ -4203,8 +4212,12 @@
                                 cell.alignment = { horizontal: 'right' };
                             }
                         });
-                        // Zebra striping
-                        if (idx % 2 === 1) {
+                        // Hari libur: warna merah muda; selain itu zebra striping
+                        if (libur) {
+                            columns.forEach((col, i) => {
+                                row.getCell(i + 1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFDECEA' } };
+                            });
+                        } else if (idx % 2 === 1) {
                             columns.forEach((col, i) => {
                                 row.getCell(i + 1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF5F8FA' } };
                             });
