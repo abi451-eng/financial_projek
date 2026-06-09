@@ -2788,7 +2788,7 @@
                 drive_uploading:'☁️ Uploading data...', drive_downloading:'☁️ Downloading data...',
                 drive_backup_ok:'✓ Backup to Google Drive successful!', drive_backup_fail:'Failed to backup to Drive',
                 drive_restore_ok:'✓ Data restored from Google Drive!', drive_restore_fail:'Failed to restore from Drive',
-                drive_none:'No backup on Drive yet.', drive_restore_confirm:'Restore data from Google Drive? Current data will be replaced.',
+                drive_none:'No backup on Drive yet.', drive_none_account:'No files visible to the app. Make sure you are signed in with the SAME Google account used for backup.', drive_restore_confirm:'Restore data from Google Drive? Current data will be replaced.',
                 drive_err_lib:'Google library not loaded yet. Check your internet and try again.', drive_err_find:'Failed to search file on Drive',
                 drive_err_update:'Failed to update file', drive_err_create:'Failed to create file', drive_err_download:'Failed to download file',
                 drive_err_format:'Backup format not recognized.', drive_note_title:'ℹ️ Note:',
@@ -2854,7 +2854,7 @@
                 drive_uploading:'☁️ Mengunggah data...', drive_downloading:'☁️ Mengunduh data...',
                 drive_backup_ok:'✓ Backup ke Google Drive berhasil!', drive_backup_fail:'Gagal backup ke Drive',
                 drive_restore_ok:'✓ Data dari Google Drive berhasil dipulihkan!', drive_restore_fail:'Gagal restore dari Drive',
-                drive_none:'Belum ada backup di Drive.', drive_restore_confirm:'Pulihkan data dari Google Drive? Data saat ini akan diganti.',
+                drive_none:'Belum ada backup di Drive.', drive_none_account:'App tidak melihat file apa pun. Pastikan login dengan akun Google yang SAMA seperti saat backup.', drive_restore_confirm:'Pulihkan data dari Google Drive? Data saat ini akan diganti.',
                 drive_err_lib:'Library Google belum termuat. Cek koneksi internet, lalu coba lagi.', drive_err_find:'Gagal mencari file di Drive',
                 drive_err_update:'Gagal memperbarui file', drive_err_create:'Gagal membuat file', drive_err_download:'Gagal mengunduh file',
                 drive_err_format:'Format backup tidak dikenali.', drive_note_title:'ℹ️ Catatan:',
@@ -3415,15 +3415,25 @@
             });
         }
 
-        // Cari file backup di Drive (hanya file buatan app ini yang terlihat)
-        async function driveFindBackupFile(token) {
-            const q = encodeURIComponent(`name='${DRIVE_BACKUP_FILENAME}' and trashed=false`);
-            const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&fields=files(id,name,modifiedTime)`, {
+        // Daftar semua file yang BISA diakses app (dengan drive.file, ini hanya file buatan app sendiri)
+        async function driveListAppFiles(token) {
+            const q = encodeURIComponent('trashed=false');
+            const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&spaces=drive&pageSize=100&fields=files(id,name,modifiedTime,mimeType)&orderBy=modifiedTime desc`, {
                 headers: { Authorization: 'Bearer ' + token }
             });
             if (!res.ok) throw new Error(t('drive_err_find', 'Gagal mencari file di Drive') + ' (' + res.status + ')');
             const data = await res.json();
-            return (data.files && data.files.length) ? data.files[0] : null;
+            return data.files || [];
+        }
+
+        // Cari file backup. Mengembalikan { file, totalSeen, names } untuk diagnostik.
+        async function driveFindBackupFile(token) {
+            const files = await driveListAppFiles(token);
+            // 1) cocokkan nama persis (tanpa peduli huruf besar/kecil)
+            let f = files.find(x => (x.name || '').toLowerCase() === DRIVE_BACKUP_FILENAME.toLowerCase());
+            // 2) cadangan: file .json terbaru buatan app (app hanya melihat file buatannya sendiri)
+            if (!f) f = files.find(x => (x.name || '').toLowerCase().endsWith('.json'));
+            return { file: f || null, totalSeen: files.length, names: files.map(x => x.name) };
         }
 
         async function backupToDrive() {
@@ -3438,7 +3448,7 @@
                     financialConfig: configSettings
                 };
                 const content = JSON.stringify(backup, null, 2);
-                const existing = await driveFindBackupFile(token);
+                const existing = (await driveFindBackupFile(token)).file;
 
                 if (existing) {
                     const res = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existing.id}?uploadType=media`, {
@@ -3480,10 +3490,17 @@
             try {
                 setDriveStatus(t('drive_connecting', '☁️ Menghubungkan ke Google Drive...'), 'busy');
                 const token = await ensureDriveToken();
-                const existing = await driveFindBackupFile(token);
+                const found = await driveFindBackupFile(token);
+                const existing = found.file;
                 if (!existing) {
-                    setDriveStatus(t('drive_none', 'Belum ada backup di Drive.'), '');
-                    showSuccessMessage('❌ ' + t('drive_none', 'Belum ada backup di Drive.'));
+                    let msg;
+                    if (found.totalSeen === 0) {
+                        msg = t('drive_none_account', 'App tidak melihat file apa pun. Pastikan login dengan akun Google yang SAMA seperti saat backup.');
+                    } else {
+                        msg = t('drive_none', 'Belum ada backup di Drive.') + ' (' + found.totalSeen + ' file lain terlihat)';
+                    }
+                    setDriveStatus(msg, 'error');
+                    showSuccessMessage('❌ ' + msg);
                     return;
                 }
                 if (!confirm(t('drive_restore_confirm', 'Pulihkan data dari Google Drive? Data saat ini akan diganti.'))) {
