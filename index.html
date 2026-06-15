@@ -83,6 +83,21 @@
         .nav-ic { width: 19px; height: 19px; flex-shrink: 0; stroke-width: 2; }
         .hdr-ic { width: 20px; height: 20px; }
 
+        /* ===== IKON LINE (Tahap 2) ===== */
+        .sec-title { display: flex; align-items: center; gap: 10px; }
+        .sec-ic { width: 18px; height: 18px; flex-shrink: 0; color: var(--accent); }
+        .kpi-label, .stat-label { display: flex; align-items: center; gap: 7px; }
+        .kpi-ic { width: 15px; height: 15px; flex-shrink: 0; }
+        .lic { width: 16px; height: 16px; flex-shrink: 0; vertical-align: -3px; }
+        .annual-card-label { display: inline-flex; align-items: center; gap: 6px; }
+        .setting-title { display: flex; align-items: center; gap: 8px; }
+        .empty-ic { width: 46px; height: 46px; opacity: 0.4; }
+        .copy-ic { width: 14px; height: 14px; display: block; }
+        .btn .lic, .chart-toggle-btn .lic, .export-btn .lic, .save-config-btn .lic, .pdf-btn .lic { margin-right: 7px; }
+        .btn, .chart-toggle-btn, .save-config-btn, .pdf-btn { display: inline-flex; align-items: center; justify-content: center; }
+        .trend-alert .lic { margin-right: 4px; }
+        button svg, .sidebar-item svg, .export-btn svg { pointer-events: none; }
+
         /* Sticky Header */
         .sticky-header {
             position: fixed;
@@ -1062,28 +1077,30 @@
         }
 
         .kpi-card {
-            background: linear-gradient(135deg, #f0f4f7 0%, #e8f0f5 100%);
-            padding: 16px;
-            border-radius: 8px;
-            border-top: 4px solid #1a5f7a;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            min-width: 0; /* penting untuk text-overflow */
+            background: var(--surface);
+            padding: 18px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--line);
+            border-top: 3px solid var(--accent);
+            box-shadow: var(--shadow-sm);
+            min-width: 0;
         }
 
         .kpi-label {
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 11.5px;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #999;
+            letter-spacing: 0.04em;
+            color: var(--ink-3);
             margin-bottom: 10px;
         }
 
         .kpi-value {
-            font-size: 22px;
+            font-size: 23px;
             font-weight: 800;
-            color: #1a5f7a;
-            font-family: 'Courier New', monospace;
+            color: var(--ink);
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.02em;
             margin-bottom: 6px;
             white-space: nowrap;
             overflow: hidden;
@@ -1093,12 +1110,13 @@
         .kpi-trend {
             font-size: 13px;
             font-weight: 600;
-            color: #666;
+            color: var(--ink-2);
         }
 
         .chart-toggle {
             display: inline-flex;
-            background: #eef2f5;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
             border-radius: 10px;
             padding: 4px;
             margin-bottom: 16px;
@@ -1111,16 +1129,16 @@
             border-radius: 8px;
             font-size: 13px;
             font-weight: 700;
-            color: #6b7c8c;
+            color: var(--ink-2);
             cursor: pointer;
             font-family: inherit;
             transition: all 0.2s;
         }
-        .chart-toggle-btn:hover { color: #1a5f7a; }
+        .chart-toggle-btn:hover { color: var(--accent); }
         .chart-toggle-btn.active {
-            background: white;
-            color: #1a5f7a;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            background: var(--surface);
+            color: var(--accent);
+            box-shadow: var(--shadow-sm);
         }
 
         .chart-container {
@@ -1159,21 +1177,22 @@
 
         .export-btn {
             padding: 15px;
-            border: 2px solid #1a5f7a;
-            background: white;
-            border-radius: 8px;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             font-weight: 600;
             text-align: center;
-            color: #1a5f7a;
+            color: var(--ink);
         }
 
         .export-btn:hover {
-            background: #1a5f7a;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(26, 95, 122, 0.3);
+            background: var(--accent-soft);
+            color: var(--accent-strong);
+            border-color: var(--accent);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
         }
 
         .export-desc {
@@ -1831,7 +1850,7 @@
         <div class="search-panel">
             <div class="search-head">
                 <input type="text" id="searchInput" class="search-input" placeholder="Cari tanggal, nominal, atau keterangan..." data-i18n-ph="search_ph" oninput="runSearch()">
-                <button class="search-close" onclick="closeSearch()" aria-label="Tutup">✕</button>
+                <button class="search-close" onclick="closeSearch()" aria-label="Tutup"></button>
             </div>
             <div class="search-filters">
                 <button class="search-chip active" data-filter="all" onclick="setSearchFilter('all', this)" data-i18n="filter_all">Semua</button>
@@ -1873,7 +1892,7 @@
 
         <!-- Month Selector (hanya tampil di menu Input) -->
         <div class="month-selector">
-            <label style="white-space:nowrap;" data-i18n="date_label">📆 Tanggal Laporan:</label>
+            <label style="white-space:nowrap;" data-i18n="date_label">Tanggal Laporan:</label>
 
             <div class="date-picker-wrap">
                 <button type="button" class="date-trigger" id="dateTrigger" onclick="toggleCalendar(event)">
@@ -1934,7 +1953,7 @@
 
         <!-- Form Section -->
         <div class="form-section">
-            <h2 id="formTitle">📝 Input Data Harian</h2>
+            <h2 id="formTitle" class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span id="formTitleText">Input Data Harian</span></h2>
 
             <div class="form-grid">
                 <div class="form-group">
@@ -1978,7 +1997,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="lbl-with-copy"><span data-i18n="lbl_belanja_pagi">Belanja Pagi</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('belanjaPagi')" title="Salin nilai terakhir">📋</button></label>
+                    <label class="lbl-with-copy"><span data-i18n="lbl_belanja_pagi">Belanja Pagi</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('belanjaPagi')" title="Salin nilai terakhir"><svg class="copy-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></label>
                     <input type="text" inputmode="numeric" id="belanjaPagi" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
@@ -2005,26 +2024,26 @@
 
             <div class="stats-row">
                 <div class="stat-card">
-                    <div class="stat-label" data-i18n="stat_total_expense">💰 Total Pengeluaran (Auto)</div>
+                    <div class="stat-label"><svg class="kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 4 4 4-4"/><path d="M12 8v8"/></svg><span data-i18n="stat_total_expense">Total Pengeluaran (Auto)</span></div>
                     <div class="stat-value" id="totalPengeluaranDisplay">Rp 0</div>
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-label" data-i18n="stat_saldo">📊 Saldo (Auto)</div>
+                    <div class="stat-label"><svg class="kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg><span data-i18n="stat_saldo">Saldo (Auto)</span></div>
                     <div class="stat-value" id="saldoDisplay">Rp 0</div>
                 </div>
             </div>
 
             <div class="button-group">
-                <button class="btn btn-primary" onclick="showPreview()" data-i18n="btn_preview">👁️ Preview Data</button>
-                <button class="btn btn-libur" onclick="toggleLibur()" id="liburBtn" data-i18n="btn_libur">🔴 Tandai Hari Libur</button>
-                <button class="btn btn-secondary" onclick="resetForm()" id="resetBtn" style="display:none;" data-i18n="btn_reset">🔄 Reset</button>
+                <button class="btn btn-primary" onclick="showPreview()"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><span class="btn-label" data-i18n="btn_preview">Preview Data</span></button>
+                <button class="btn btn-libur" onclick="toggleLibur()" id="liburBtn"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m14 14-4 4"/><path d="m10 14 4 4"/></svg><span class="btn-label" data-i18n="btn_libur">Tandai Hari Libur</span></button>
+                <button class="btn btn-secondary" onclick="resetForm()" id="resetBtn" style="display:none;"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg><span class="btn-label" data-i18n="btn_reset">Reset</span></button>
             </div>
         </div>
 
         <!-- Preview Section -->
         <div class="preview-section" id="previewSection">
-            <h2 data-i18n="prev_title">✓ Preview Data</h2>
+            <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><span data-i18n="prev_title">Preview Data</span></h2>
             <table class="preview-table">
                 <tr>
                     <td><strong data-i18n="prev_tanggal">Tanggal</strong></td>
@@ -2053,14 +2072,14 @@
             </table>
 
             <div class="button-group">
-                <button class="btn btn-success" onclick="saveData()" data-i18n="btn_save_data">✓ Simpan Data</button>
-                <button class="btn btn-secondary" onclick="hidePreview()" data-i18n="btn_cancel">✕ Batal</button>
+                <button class="btn btn-success" onclick="saveData()"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span class="btn-label" data-i18n="btn_save_data">Simpan Data</span></button>
+                <button class="btn btn-secondary" onclick="hidePreview()"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span class="btn-label" data-i18n="btn_cancel">Batal</span></button>
             </div>
         </div>
 
         <!-- Data Table Section -->
         <div id="dataSection" style="display:none;" class="data-section">
-            <h2 id="dataTableTitle">📋 Data Bulan</h2>
+            <h2 id="dataTableTitle" class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg><span id="dataTableTitleText">Data Bulan</span></h2>
             <div style="overflow-x: auto;">
                 <table class="data-table">
                     <thead>
@@ -2082,7 +2101,7 @@
 
         <!-- Empty state untuk Input view -->
         <div id="emptyInput" class="view-empty" style="display:none;">
-            <div class="view-empty-icon">📋</div>
+            <div class="view-empty-icon"><svg class="empty-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></div>
             <div style="font-size: 17px; margin-bottom: 6px; font-weight: 600;" data-i18n="empty_input_1">Belum ada data bulan ini</div>
             <div style="font-size: 13px; color: #bbb;" data-i18n="empty_input_2">Isi form di atas untuk mulai mencatat</div>
         </div>
@@ -2092,35 +2111,35 @@
         <div class="view-panel" id="view-dashboard">
         <!-- Financial Dashboard Section -->
         <div id="dashboardSection" style="display:none;" class="dashboard-section">
-            <h2 data-i18n="dash_title">📊 FINANCIAL DASHBOARD</h2>
+            <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span data-i18n="dash_title">FINANCIAL DASHBOARD</span></h2>
 
             <!-- Kartu Insight -->
             <div class="insight-card" id="insightCard" style="display:none;">
-                <div class="insight-title" data-i18n="insight_title">💡 Insight Bulan Ini</div>
+                <div class="insight-title" data-i18n="insight_title">Insight Bulan Ini</div>
                 <ul class="insight-list" id="insightList"></ul>
             </div>
 
             <div class="kpi-grid">
                 <div class="kpi-card">
-                    <div class="kpi-label" data-i18n="kpi_revenue">💰 Total Revenue</div>
+                    <div class="kpi-label"><svg class="kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4"/><path d="M12 16V8"/></svg><span data-i18n="kpi_revenue">Total Revenue</span></div>
                     <div class="kpi-value" id="kpiRevenue">Rp 0</div>
                     <div class="kpi-trend" id="kpiRevenueTrend">-</div>
                 </div>
 
                 <div class="kpi-card">
-                    <div class="kpi-label" data-i18n="kpi_expense">📊 Total Expense</div>
+                    <div class="kpi-label"><svg class="kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 4 4 4-4"/><path d="M12 8v8"/></svg><span data-i18n="kpi_expense">Total Expense</span></div>
                     <div class="kpi-value" id="kpiExpense">Rp 0</div>
                     <div class="kpi-trend" id="kpiExpenseTrend">-</div>
                 </div>
 
                 <div class="kpi-card">
-                    <div class="kpi-label" data-i18n="kpi_profit">💎 Net Profit</div>
+                    <div class="kpi-label"><svg class="kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg><span data-i18n="kpi_profit">Net Profit</span></div>
                     <div class="kpi-value" id="kpiProfit">Rp 0</div>
                     <div class="kpi-trend" id="kpiProfitTrend">-</div>
                 </div>
 
                 <div class="kpi-card">
-                    <div class="kpi-label" data-i18n="kpi_margin">📈 Profit Margin</div>
+                    <div class="kpi-label"><svg class="kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg><span data-i18n="kpi_margin">Profit Margin</span></div>
                     <div class="kpi-value" id="kpiMargin">0%</div>
                     <div class="kpi-trend" id="kpiMarginStatus">-</div>
                 </div>
@@ -2130,7 +2149,7 @@
 
             <!-- ===== PERBANDINGAN BULAN (vs bulan lalu) ===== -->
             <div class="month-compare" id="monthCompare" style="display:none;">
-                <div class="mc-title" id="mcTitle">📊 vs Bulan Lalu</div>
+                <div class="mc-title" id="mcTitle">vs Bulan Lalu</div>
                 <div class="mc-grid">
                     <div class="mc-item">
                         <div class="mc-label" data-i18n="mc_revenue">Pemasukan</div>
@@ -2149,8 +2168,8 @@
 
             <!-- Toggle Harian / Bulanan -->
             <div class="chart-toggle">
-                <button type="button" class="chart-toggle-btn active" id="toggleHarian" onclick="setChartMode('harian')" data-i18n="toggle_harian">📅 Harian</button>
-                <button type="button" class="chart-toggle-btn" id="toggleBulanan" onclick="setChartMode('bulanan')" data-i18n="toggle_bulanan">🗓️ Bulanan</button>
+                <button type="button" class="chart-toggle-btn active" id="toggleHarian" onclick="setChartMode('harian')"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span data-i18n="toggle_harian">Harian</span></button>
+                <button type="button" class="chart-toggle-btn" id="toggleBulanan" onclick="setChartMode('bulanan')"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg><span data-i18n="toggle_bulanan">Bulanan</span></button>
             </div>
 
             <div class="chart-container">
@@ -2158,13 +2177,13 @@
             </div>
 
             <div id="trendInfo" style="display:none; background: #f0f4f7; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                <strong>📈 Trend Analysis:</strong>
+                <strong>Trend Analysis:</strong>
                 <p id="trendText" style="margin-top: 10px;"></p>
             </div>
 
             <!-- ===== RINGKASAN TAHUNAN ===== -->
             <div class="annual-summary">
-                <h3 class="annual-title"><span data-i18n="annual_title">📅 Ringkasan Tahunan</span> <span id="annualYear">2026</span></h3>
+                <h3 class="annual-title"><span data-i18n="annual_title">Ringkasan Tahunan</span> <span id="annualYear">2026</span></h3>
 
                 <div class="annual-cards">
                     <div class="annual-card ac-revenue">
@@ -2184,7 +2203,7 @@
                         <div class="annual-card-value" id="annualAvg">Rp 0</div>
                     </div>
                     <div class="annual-card ac-best">
-                        <div class="annual-card-label" data-i18n="annual_best">🏆 Bulan Terbaik</div>
+                        <div class="annual-card-label"><svg class="kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg><span data-i18n="annual_best">Bulan Terbaik</span></div>
                         <div class="annual-card-value" id="annualBest">—</div>
                     </div>
                     <div class="annual-card ac-worst">
@@ -2212,7 +2231,7 @@
 
         <!-- Empty state untuk Dashboard view -->
         <div id="emptyDashboard" class="view-empty" style="display:none;">
-            <div class="view-empty-icon">📊</div>
+            <div class="view-empty-icon"><svg class="empty-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
             <div style="font-size: 17px; margin-bottom: 6px; font-weight: 600;" data-i18n="empty_dash_1">Dashboard masih kosong</div>
             <div style="font-size: 13px; color: #bbb;" data-i18n="empty_hint">Input data dulu di menu Input Data</div>
         </div>
@@ -2222,7 +2241,7 @@
         <div class="view-panel" id="view-pajak">
         <!-- PPN Table Section -->
         <div id="ppnSection" style="display:none;" class="data-section">
-            <h2 data-i18n="ppn_title">💰 LAPORAN PPN HARIAN</h2>
+            <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6"/><path d="M16 12h-6"/><path d="M13 16h-3"/></svg><span data-i18n="ppn_title">LAPORAN PPN HARIAN</span></h2>
             <div style="overflow-x: auto;">
                 <table class="data-table">
                     <thead>
@@ -2243,7 +2262,7 @@
 
         <!-- Royalti & PPN Summary Section -->
         <div id="royaltiSection" style="display:none;" class="data-section">
-            <h2 data-i18n="royalti_title">👑 ROYALTI & PPN BULANAN</h2>
+            <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg><span data-i18n="royalti_title">ROYALTI & PPN BULANAN</span></h2>
 
             <div style="overflow-x: auto;">
                 <table class="data-table royalti-table">
@@ -2271,7 +2290,7 @@
             <!-- Transfer Name - CUSTOM (tidak fixed) -->
             <div class="transfer-box">
                 <div class="transfer-box-header">
-                    <span data-i18n="transfer_to">💸 Transfer ke:</span>
+                    <span data-i18n="transfer_to">Transfer ke:</span>
                 </div>
                 <div class="transfer-input-row">
                     <input
@@ -2290,7 +2309,7 @@
 
         <!-- Empty state untuk Pajak view -->
         <div id="emptyPajak" class="view-empty" style="display:none;">
-            <div class="view-empty-icon">💰</div>
+            <div class="view-empty-icon"><svg class="empty-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6"/><path d="M16 12h-6"/><path d="M13 16h-3"/></svg></div>
             <div style="font-size: 17px; margin-bottom: 6px; font-weight: 600;" data-i18n="empty_pajak_1">Belum ada data pajak</div>
             <div style="font-size: 13px; color: #bbb;" data-i18n="empty_hint">Input data dulu di menu Input Data</div>
         </div>
@@ -2300,7 +2319,7 @@
         <div class="view-panel" id="view-export">
         <!-- Konfigurasi (digabung ke Export, di atas pilihan export) -->
         <div class="data-section">
-            <h2 data-i18n="cfg_title">⚙️ KONFIGURASI SISTEM</h2>
+            <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg><span data-i18n="cfg_title">KONFIGURASI SISTEM</span></h2>
             <p style="font-size:13px; color:#888; margin:-6px 0 16px;" data-i18n="cfg_hint">Isi data ini dulu sebelum export PDF (PPN & Royalti).</p>
             <div class="config-grid">
                     <div class="config-group">
@@ -2325,7 +2344,7 @@
                 </div>
 
                 <div class="config-rates">
-                    <p><strong>⚠️ Flexible Tax & Commission Rates</strong></p>
+                    <p><strong>Flexible Tax & Commission Rates</strong></p>
                     <div class="rate-inputs">
                         <div class="config-group">
                             <label data-i18n="cfg_ppn_rate">Tarif PPN (%)</label>
@@ -2342,32 +2361,32 @@
                     </div>
                 </div>
 
-                <button class="save-config-btn" onclick="saveConfig()" data-i18n="cfg_save">💾 Simpan Konfigurasi</button>
+                <button class="save-config-btn" onclick="saveConfig()"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg><span data-i18n="cfg_save">Simpan Konfigurasi</span></button>
         </div>
 
         <!-- Export Options -->
         <div id="exportSection" style="display:none;" class="data-section">
-            <h2 data-i18n="export_title">📥 PILIHAN EXPORT</h2>
+            <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span data-i18n="export_title">PILIHAN EXPORT</span></h2>
             
             <div class="export-options">
                 <button class="export-btn" onclick="exportTabelData()">
-                    <span data-i18n="btn_export_excel">📋 Export Tabel Tahunan</span>
+                    <svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg><span data-i18n="btn_export_excel">Export Tabel Tahunan</span>
                     <div class="export-desc" data-i18n="desc_export_excel">Excel (.xlsx) — 1 file, per bulan jadi sheet</div>
                 </button>
 
                 <button class="export-btn" onclick="exportPPNPDF()">
-                    <span data-i18n="btn_export_ppn">📄 Export PPN Laporan</span>
+                    <svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg><span data-i18n="btn_export_ppn">Export PPN Laporan</span>
                     <div class="export-desc" data-i18n="desc_export_pdf1">PDF — laporan bulanan</div>
                 </button>
 
                 <button class="export-btn" onclick="exportRoyaltiPDF()">
-                    <span data-i18n="btn_export_royalti">📄 Export Royalti & PPN</span>
+                    <svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg><span data-i18n="btn_export_royalti">Export Royalti & PPN</span>
                     <div class="export-desc" data-i18n="desc_export_pdf2">PDF — laporan bulanan</div>
                 </button>
             </div>
 
             <div style="background: #e3f2fd; border-left: 4px solid #1a5f7a; padding: 15px; border-radius: 6px; margin-top: 20px; font-size: 13px;">
-                <strong data-i18n="export_tips_label">💡 Export Tips:</strong>
+                <strong data-i18n="export_tips_label">Export Tips:</strong>
                 <p style="margin-top: 8px;">
                     <strong>Tabel Tahunan (Excel):</strong> 1 file berisi semua bulan yang sudah diisi (tiap bulan = 1 sheet). Bisa dibuka di Excel atau Google Sheets.<br>
                     <strong>PDF:</strong> Laporan bulanan untuk dikirim ke atasan (PPN & Royalti).
@@ -2377,22 +2396,22 @@
 
         <!-- Empty state untuk Export view -->
         <div id="emptyExport" class="view-empty" style="display:none;">
-            <div class="view-empty-icon">📥</div>
+            <div class="view-empty-icon"><svg class="empty-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
             <div style="font-size: 17px; margin-bottom: 6px; font-weight: 600;" data-i18n="empty_export_1">Belum ada laporan untuk di-export</div>
             <div style="font-size: 13px; color: #bbb;" data-i18n="empty_export_2">Input data dulu di menu Input Data — atau restore dari backup di bawah</div>
         </div>
 
         <!-- Backup & Restore (SELALU tampil) -->
         <div class="data-section" style="margin-top: 20px;">
-            <h2 data-i18n="backup_title">💾 BACKUP & RESTORE DATA</h2>
+            <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg><span data-i18n="backup_title">BACKUP & RESTORE DATA</span></h2>
             <div class="export-options">
                 <button class="export-btn" onclick="exportBackupJSON()">
-                    <span data-i18n="btn_backup">⬇️ Backup Data (.json)</span>
+                    <svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span data-i18n="btn_backup">Backup Data (.json)</span>
                     <div class="export-desc" data-i18n="desc_backup">Simpan semua data ke 1 file</div>
                 </button>
 
                 <button class="export-btn" onclick="document.getElementById('restoreFileInput').click()">
-                    <span data-i18n="btn_restore">⬆️ Restore Data (.json)</span>
+                    <svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span data-i18n="btn_restore">Restore Data (.json)</span>
                     <div class="export-desc" data-i18n="desc_restore">Muat data dari file backup</div>
                 </button>
             </div>
@@ -2400,7 +2419,7 @@
             <input type="file" id="restoreFileInput" accept=".json,application/json" style="display:none;" onchange="restoreBackupJSON(event)">
 
             <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 6px; margin-top: 20px; font-size: 13px; color: #856404;">
-                <strong>⚠️ Penting soal Backup:</strong>
+                <strong>Penting soal Backup:</strong>
                 <p style="margin-top: 8px;">
                     Data tersimpan di browser perangkat ini saja. Lakukan <strong>backup rutin</strong> agar aman bila ganti HP/laptop atau browser dibersihkan.<br>
                     <strong>Restore akan mengganti</strong> seluruh data saat ini dengan isi file backup.
@@ -2410,16 +2429,16 @@
 
         <!-- Google Drive Sync (Fase 5.0) -->
         <div class="data-section" style="margin-top: 20px;">
-            <h2 data-i18n="drive_title">☁️ GOOGLE DRIVE</h2>
+            <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg><span data-i18n="drive_title">GOOGLE DRIVE</span></h2>
             <p style="font-size:13px; color:#888; margin:-6px 0 16px;" data-i18n="drive_hint">Simpan & ambil data dari Google Drive — praktis untuk pindah perangkat.</p>
             <div class="export-options">
                 <button class="export-btn" onclick="backupToDrive()">
-                    <span data-i18n="btn_drive_backup">☁️⬆️ Backup ke Drive</span>
+                    <svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16l-4-4-4 4"/><path d="M12 12v9"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg><span data-i18n="btn_drive_backup">Backup ke Drive</span>
                     <div class="export-desc" data-i18n="desc_drive_backup">Simpan data ke Google Drive</div>
                 </button>
 
                 <button class="export-btn" onclick="restoreFromDrive()">
-                    <span data-i18n="btn_drive_restore">☁️⬇️ Restore dari Drive</span>
+                    <svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 17l4 4 4-4"/><path d="M12 12v9"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg><span data-i18n="btn_drive_restore">Restore dari Drive</span>
                     <div class="export-desc" data-i18n="desc_drive_restore">Ambil data dari Google Drive</div>
                 </button>
             </div>
@@ -2427,7 +2446,7 @@
             <div id="driveStatus" class="drive-status" data-i18n="drive_status_idle">Belum tersinkron ke Drive.</div>
 
             <div style="background: #e7f3fb; border-left: 4px solid #1a5f7a; padding: 15px; border-radius: 6px; margin-top: 16px; font-size: 13px; color: #1a5f7a;">
-                <strong data-i18n="drive_note_title">ℹ️ Catatan:</strong>
+                <strong data-i18n="drive_note_title">Catatan:</strong>
                 <p style="margin-top: 8px;" data-i18n="drive_note_body">
                     Pertama kali akan diminta login Google & izin akses. Aplikasi hanya bisa mengakses file backup buatannya sendiri, bukan file Drive Anda yang lain. Butuh koneksi internet.
                 </p>
@@ -2438,7 +2457,7 @@
         <!-- ===== VIEW: SETTING ===== -->
         <div class="view-panel" id="view-setting">
             <div class="data-section">
-                <h2 data-i18n="setting_title">🎛️ PENGATURAN</h2>
+                <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg><span data-i18n="setting_title">PENGATURAN</span></h2>
 
                 <div class="setting-row">
                     <div class="setting-info">
@@ -2454,7 +2473,7 @@
 
                 <div class="setting-row">
                     <div class="setting-info">
-                        <div class="setting-title" data-i18n="setting_dark_title">🌙 Mode Gelap</div>
+                        <div class="setting-title"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span data-i18n="setting_dark_title">Mode Gelap</span></div>
                         <div class="setting-desc" data-i18n="setting_dark_desc">Mengikuti pengaturan perangkat secara otomatis. Bisa juga diatur manual di sini.</div>
                     </div>
                     <label class="switch">
@@ -2464,7 +2483,7 @@
                 </div>
 
                 <div style="text-align:center; padding:24px 12px; color:#aaa; font-size:13px;">
-                    <span data-i18n="setting_more">⚙️ Opsi pengaturan lain akan ditambahkan di update berikutnya.</span>
+                    <span data-i18n="setting_more">Opsi pengaturan lain akan ditambahkan di update berikutnya.</span>
                 </div>
 
                 <div class="app-version" id="appVersionBox">
@@ -2478,11 +2497,11 @@
         <!-- PDF Viewer Modal -->
         <div class="pdf-modal-overlay" id="pdfModal">
             <div class="pdf-modal-header">
-                <span class="pdf-modal-title" id="pdfModalTitle">📄 Preview Laporan</span>
+                <span class="pdf-modal-title" id="pdfModalTitle">Preview Laporan</span>
                 <div class="pdf-modal-actions">
-                    <button class="pdf-btn pdf-btn-print" onclick="printPDF()" data-i18n="pdf_print">🖨️ Print</button>
-                    <button class="pdf-btn pdf-btn-download" onclick="downloadPDF()" data-i18n="pdf_download">⬇️ Download PDF</button>
-                    <button class="pdf-btn pdf-btn-close" onclick="closePDFModal()">✕</button>
+                    <button class="pdf-btn pdf-btn-print" onclick="printPDF()"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg><span data-i18n="pdf_print">Print</span></button>
+                    <button class="pdf-btn pdf-btn-download" onclick="downloadPDF()"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span data-i18n="pdf_download">Download PDF</span></button>
+                    <button class="pdf-btn pdf-btn-close" onclick="closePDFModal()"></button>
                 </div>
             </div>
             <div class="pdf-modal-body">
@@ -2492,16 +2511,16 @@
 
     <!-- Banner Update PWA -->
     <div class="update-banner" id="updateBanner">
-        <span data-i18n="update_text">🔄 Versi baru tersedia</span>
+        <svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span data-i18n="update_text">Versi baru tersedia</span>
         <button onclick="applyUpdate()" data-i18n="update_btn">Update</button>
     </div>
 
     <!-- Banner Reminder Backup -->
     <div class="backup-reminder" id="backupReminder">
-        <span id="backupReminderText">💾 Sudah lama belum backup.</span>
+        <span id="backupReminderText">Sudah lama belum backup.</span>
         <div class="backup-reminder-btns">
             <button class="brb-now" onclick="goBackupNow()" data-i18n="backup_now">Backup</button>
-            <button class="brb-later" onclick="dismissBackupReminder()" data-i18n="backup_later">Nanti ✕</button>
+            <button class="brb-later" onclick="dismissBackupReminder()" data-i18n="backup_later">Nanti</button>
         </div>
     </div>
 
@@ -2516,7 +2535,7 @@
             if (currentPdfUrl) URL.revokeObjectURL(currentPdfUrl);
             currentPdfUrl = URL.createObjectURL(blob);
 
-            document.getElementById('pdfModalTitle').textContent = '📄 ' + title;
+            document.getElementById('pdfModalTitle').textContent = '' + title;
             document.getElementById('pdfIframe').src = currentPdfUrl;
             document.getElementById('pdfModal').classList.add('show');
             document.body.style.overflow = 'hidden';
@@ -2544,7 +2563,7 @@
 
         function downloadPDF() {
             if (!currentPdfBlob) return;
-            const title = document.getElementById('pdfModalTitle').textContent.replace('📄 ', '');
+            const title = document.getElementById('pdfModalTitle').textContent.replace('', '');
             const link = document.createElement('a');
             link.href = currentPdfUrl;
             link.download = title.replace(/\s+/g, '_') + '.pdf';
@@ -2791,7 +2810,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v5.0.0';
+        const APP_VERSION = 'v5.1.0';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -2808,134 +2827,134 @@
             en: {
                 menu_title:'Menu', nav_input:'Data Entry', nav_dashboard:'Dashboard', nav_pajak:'Tax Report',
                 nav_export:'Export', nav_install:'Install App', nav_setting:'Settings', nav_config:'Configuration',
-                cfg_title:'⚙️ SYSTEM CONFIGURATION', cfg_business:'Business Name *', cfg_business_ph:'Business Name',
+                cfg_title:'SYSTEM CONFIGURATION', cfg_business:'Business Name *', cfg_business_ph:'Business Name',
                 cfg_address:'Address/Location *', cfg_address_ph:'Address/Location', cfg_city:'City/Regency *', cfg_city_ph:'City/Regency',
                 cfg_boss:'Supervisor Name *', cfg_boss_ph:'Supervisor Name', cfg_ppn_rate:'VAT Rate (%)',
-                cfg_royalti_rate:'Royalty Rate (%)', cfg_ppn_royalti_rate:'VAT on Royalty Rate (%)', cfg_save:'💾 Save Configuration', cfg_hint:'Fill this in before exporting PDF (VAT & Royalty).',
-                date_label:'📆 Report Date:', wd0:'Sun', wd1:'Mon', wd2:'Tue', wd3:'Wed', wd4:'Thu', wd5:'Fri', wd6:'Sat', cal_today:'● Today',
+                cfg_royalti_rate:'Royalty Rate (%)', cfg_ppn_royalti_rate:'VAT on Royalty Rate (%)', cfg_save:'Save Configuration', cfg_hint:'Fill this in before exporting PDF (VAT & Royalty).',
+                date_label:'Report Date:', wd0:'Sun', wd1:'Mon', wd2:'Tue', wd3:'Wed', wd4:'Thu', wd5:'Fri', wd6:'Sat', cal_today:'● Today',
                 lbl_total_sales:'Total Sales *', lbl_cash:'Ending Balance/Cash *', lbl_qris:'QRIS', lbl_edc:'EDC',
                 lbl_transfer:'Transfer', lbl_gojek:'GoJek', lbl_grab:'Grab', lbl_pesanan:'Orders',
                 lbl_belanja_pagi:'Morning Shopping', lbl_belanja_sore:'Evening Shopping', lbl_daging:'Meat', lbl_dll:'Others',
-                lbl_keterangan:'Notes', ph_keterangan:'Additional notes...', stat_total_expense:'💰 Total Expense (Auto)',
-                stat_saldo:'📊 Balance (Auto)', btn_preview:'👁️ Preview Data', btn_reset:'🔄 Reset', copy_none:'No previous data to copy yet.',
-                prev_title:'✓ Preview Data', prev_tanggal:'Date', prev_total_sales:'Total Sales', prev_cash:'Cash',
-                prev_expense:'Total Expense', prev_saldo:'Balance', prev_notes:'Notes', btn_save_data:'✓ Save Data', btn_cancel:'✕ Cancel',
+                lbl_keterangan:'Notes', ph_keterangan:'Additional notes...', stat_total_expense:'Total Expense (Auto)',
+                stat_saldo:'Balance (Auto)', btn_preview:'Preview Data', btn_reset:'Reset', copy_none:'No previous data to copy yet.',
+                prev_title:'Preview Data', prev_tanggal:'Date', prev_total_sales:'Total Sales', prev_cash:'Cash',
+                prev_expense:'Total Expense', prev_saldo:'Balance', prev_notes:'Notes', btn_save_data:'Save Data', btn_cancel:'Cancel',
                 th_hari:'Day', th_total_sales:'Total Sales', th_cash:'Cash', th_expense:'Total Expense', th_saldo:'Balance',
                 th_notes:'Notes', th_action:'Action',
                 empty_input_1:'No data for this month yet', empty_input_2:'Fill the form above to start recording',
                 empty_dash_1:'Dashboard is empty', empty_hint:'Enter data first in the Data Entry menu',
                 empty_pajak_1:'No tax data yet', empty_export_1:'No report to export yet',
                 empty_export_2:'Enter data first — or restore from backup below',
-                dash_title:'📊 FINANCIAL DASHBOARD', kpi_revenue:'💰 Total Revenue', kpi_expense:'📊 Total Expense',
-                kpi_profit:'💎 Net Profit', kpi_margin:'📈 Profit Margin', toggle_harian:'📅 Daily', toggle_bulanan:'🗓️ Monthly',
-                ppn_title:'💰 DAILY VAT REPORT', ppn_th_date:'Date', ppn_th_income:'Income (Rp)', ppn_th_ppn:'VAT (Rp)',
+                dash_title:'FINANCIAL DASHBOARD', kpi_revenue:'Total Revenue', kpi_expense:'Total Expense',
+                kpi_profit:'Net Profit', kpi_margin:'Profit Margin', toggle_harian:'Daily', toggle_bulanan:'Monthly',
+                ppn_title:'DAILY VAT REPORT', ppn_th_date:'Date', ppn_th_income:'Income (Rp)', ppn_th_ppn:'VAT (Rp)',
                 ppn_note_label:'Note:', ppn_note_rate:'VAT Rate =',
-                royalti_title:'👑 MONTHLY ROYALTY & VAT', roy_total_sales:'TOTAL SALES', roy_royalti:'ROYALTY', roy_ppn:'VAT',
-                roy_total:'TOTAL ROYALTY & VAT', transfer_to:'💸 Transfer to:', ph_transfer:'e.g. Cakman Malang, BCA Bank, etc...',
-                export_title:'📥 EXPORT OPTIONS', btn_export_excel:'📋 Export Annual Table',
-                desc_export_excel:'Excel (.xlsx) — 1 file, each month a sheet', btn_export_ppn:'📄 Export VAT Report',
-                desc_export_pdf1:'PDF — monthly report', btn_export_royalti:'📄 Export Royalty & VAT', desc_export_pdf2:'PDF — monthly report',
-                export_tips_label:'💡 Export Tips:', backup_title:'💾 BACKUP & RESTORE DATA', btn_backup:'⬇️ Backup Data (.json)',
-                desc_backup:'Save all data to 1 file', btn_restore:'⬆️ Restore Data (.json)', desc_restore:'Load data from backup file',
-                setting_title:'🎛️ SETTINGS', setting_lang_title:'🌐 Language', setting_lang_desc:'Choose the app display language.',
-                setting_dark_title:'🌙 Dark Mode', setting_dark_desc:'Follows device settings automatically. Can also be set manually here.',
-                setting_more:'⚙️ More settings will be added in future updates.',
+                royalti_title:'MONTHLY ROYALTY & VAT', roy_total_sales:'TOTAL SALES', roy_royalti:'ROYALTY', roy_ppn:'VAT',
+                roy_total:'TOTAL ROYALTY & VAT', transfer_to:'Transfer to:', ph_transfer:'e.g. Cakman Malang, BCA Bank, etc...',
+                export_title:'EXPORT OPTIONS', btn_export_excel:'Export Annual Table',
+                desc_export_excel:'Excel (.xlsx) — 1 file, each month a sheet', btn_export_ppn:'Export VAT Report',
+                desc_export_pdf1:'PDF — monthly report', btn_export_royalti:'Export Royalty & VAT', desc_export_pdf2:'PDF — monthly report',
+                export_tips_label:'Export Tips:', backup_title:'BACKUP & RESTORE DATA', btn_backup:'Backup Data (.json)',
+                desc_backup:'Save all data to 1 file', btn_restore:'Restore Data (.json)', desc_restore:'Load data from backup file',
+                setting_title:'SETTINGS', setting_lang_title:'🌐 Language', setting_lang_desc:'Choose the app display language.',
+                setting_dark_title:'Dark Mode', setting_dark_desc:'Follows device settings automatically. Can also be set manually here.',
+                setting_more:'More settings will be added in future updates.',
                 lang_default:'Default (Mixed)', lang_id:'Indonesian', lang_en:'English',
-                pdf_print:'🖨️ Print', pdf_download:'⬇️ Download PDF', update_text:'🔄 New version available', update_btn:'Update',
+                pdf_print:'Print', pdf_download:'Download PDF', update_text:'New version available', update_btn:'Update',
                 dt_title:'Data of', form_title:'Daily Data Entry', form_edit:'Edit Data for Day',
                 chart_year:'Year', chart_monthly:'Monthly Performance', chart_daily:'Daily Performance',
                 chart_revenue:'Revenue', chart_expense:'Expense', chart_profit:'Profit',
-                annual_title:'📅 Annual Summary', annual_revenue:'Total Revenue', annual_expense:'Total Expense',
-                annual_profit:'Net Profit', annual_avg:'Average/Month', annual_best:'🏆 Best Month', annual_worst:'Lowest Month',
+                annual_title:'Annual Summary', annual_revenue:'Total Revenue', annual_expense:'Total Expense',
+                annual_profit:'Net Profit', annual_avg:'Average/Month', annual_best:'Best Month', annual_worst:'Lowest Month',
                 annual_th_month:'Month', annual_th_revenue:'Revenue', annual_th_expense:'Expense', annual_th_profit:'Profit',
                 annual_th_margin:'Margin', annual_total:'TOTAL',
                 mc_revenue:'Revenue', mc_expense:'Expense', mc_profit:'Profit', setting_version:'Version',
                 search_ph:'Search date, amount, or notes...', filter_all:'All', filter_minus:'Negative Balance',
                 filter_high_expense:'High Expense', filter_high_income:'High Income',
                 search_empty:'No results found.', search_more:'more results... narrow your search',
-                insight_title:'💡 Monthly Insights', backup_now:'Backup', backup_later:'Later ✕',
-                btn_libur:'🔴 Mark as Holiday', btn_libur_cancel:'↩️ Cancel Holiday', libur_label:'HOLIDAY',
+                insight_title:'Monthly Insights', backup_now:'Backup', backup_later:'Later',
+                btn_libur:'Mark as Holiday', btn_libur_cancel:'Cancel Holiday', libur_label:'HOLIDAY',
                 libur_marked:'Day {d} marked as HOLIDAY.', libur_cancelled:'Day {d} is no longer a holiday.',
                 libur_confirm:'Day {d} already has data. Make it a holiday (data will be cleared)?',
                 trend_progress:'Data Progress', trend_days:'days', trend_filled:'filled', trend_libur:'holiday',
                 trend_margin:'Profit Margin', chart_libur:'Holiday',
-                drive_title:'☁️ GOOGLE DRIVE', drive_hint:'Save & fetch your data from Google Drive — handy for switching devices.',
-                btn_drive_backup:'☁️⬆️ Backup to Drive', desc_drive_backup:'Save data to Google Drive',
-                btn_drive_restore:'☁️⬇️ Restore from Drive', desc_drive_restore:'Fetch data from Google Drive',
-                drive_status_idle:'Not synced to Drive yet.', drive_last:'Last sync', drive_connecting:'☁️ Connecting to Google Drive...',
-                drive_uploading:'☁️ Uploading data...', drive_downloading:'☁️ Downloading data...',
-                drive_backup_ok:'✓ Backup to Google Drive successful!', drive_backup_fail:'Failed to backup to Drive',
-                drive_restore_ok:'✓ Data restored from Google Drive!', drive_restore_fail:'Failed to restore from Drive',
+                drive_title:'GOOGLE DRIVE', drive_hint:'Save & fetch your data from Google Drive — handy for switching devices.',
+                btn_drive_backup:'Backup to Drive', desc_drive_backup:'Save data to Google Drive',
+                btn_drive_restore:'Restore from Drive', desc_drive_restore:'Fetch data from Google Drive',
+                drive_status_idle:'Not synced to Drive yet.', drive_last:'Last sync', drive_connecting:'Connecting to Google Drive...',
+                drive_uploading:'Uploading data...', drive_downloading:'Downloading data...',
+                drive_backup_ok:'Backup to Google Drive successful!', drive_backup_fail:'Failed to backup to Drive',
+                drive_restore_ok:'Data restored from Google Drive!', drive_restore_fail:'Failed to restore from Drive',
                 drive_none:'No backup on Drive yet.', drive_none_account:'No files visible to the app. Make sure you are signed in with the SAME Google account used for backup.', drive_restore_confirm:'Restore data from Google Drive? Current data will be replaced.',
                 drive_err_lib:'Google library not loaded yet. Check your internet and try again.', drive_err_find:'Failed to search file on Drive',
                 drive_err_update:'Failed to update file', drive_err_create:'Failed to create file', drive_err_download:'Failed to download file',
-                drive_err_format:'Backup format not recognized.', drive_note_title:'ℹ️ Note:',
+                drive_err_format:'Backup format not recognized.', drive_note_title:'Note:',
                 drive_note_body:'First time will ask for Google login & permission. The app can only access its own backup file, not your other Drive files. Requires internet.'
             },            id: {
                 menu_title:'Menu', nav_input:'Input Data', nav_dashboard:'Dasbor', nav_pajak:'Laporan Pajak',
                 nav_export:'Ekspor', nav_install:'Pasang Aplikasi', nav_setting:'Pengaturan', nav_config:'Konfigurasi',
-                cfg_title:'⚙️ KONFIGURASI SISTEM', cfg_business:'Nama Bisnis/Warung *', cfg_business_ph:'Nama Bisnis/Warung',
+                cfg_title:'KONFIGURASI SISTEM', cfg_business:'Nama Bisnis/Warung *', cfg_business_ph:'Nama Bisnis/Warung',
                 cfg_address:'Alamat/Lokasi *', cfg_address_ph:'Alamat/Lokasi', cfg_city:'Kabupaten/Kota *', cfg_city_ph:'Kabupaten/Kota',
                 cfg_boss:'Nama Atasan *', cfg_boss_ph:'Nama Atasan', cfg_ppn_rate:'Tarif PPN (%)',
-                cfg_royalti_rate:'Tarif Royalti (%)', cfg_ppn_royalti_rate:'Tarif PPN pada Royalti (%)', cfg_save:'💾 Simpan Konfigurasi', cfg_hint:'Isi data ini dulu sebelum export PDF (PPN & Royalti).',
-                date_label:'📆 Tanggal Laporan:', wd0:'Min', wd1:'Sen', wd2:'Sel', wd3:'Rab', wd4:'Kam', wd5:'Jum', wd6:'Sab', cal_today:'● Hari Ini',
+                cfg_royalti_rate:'Tarif Royalti (%)', cfg_ppn_royalti_rate:'Tarif PPN pada Royalti (%)', cfg_save:'Simpan Konfigurasi', cfg_hint:'Isi data ini dulu sebelum export PDF (PPN & Royalti).',
+                date_label:'Tanggal Laporan:', wd0:'Min', wd1:'Sen', wd2:'Sel', wd3:'Rab', wd4:'Kam', wd5:'Jum', wd6:'Sab', cal_today:'● Hari Ini',
                 lbl_total_sales:'Total Penjualan *', lbl_cash:'Saldo Akhir/Tunai *', lbl_qris:'QRIS', lbl_edc:'EDC',
                 lbl_transfer:'Transfer', lbl_gojek:'GoJek', lbl_grab:'Grab', lbl_pesanan:'Pesanan',
                 lbl_belanja_pagi:'Belanja Pagi', lbl_belanja_sore:'Belanja Sore', lbl_daging:'Daging', lbl_dll:'Dan Lain-Lain',
-                lbl_keterangan:'Keterangan', ph_keterangan:'Catatan tambahan...', stat_total_expense:'💰 Total Pengeluaran (Auto)',
-                stat_saldo:'📊 Saldo (Auto)', btn_preview:'👁️ Pratinjau Data', btn_reset:'🔄 Atur Ulang', copy_none:'Belum ada data sebelumnya untuk disalin.',
-                prev_title:'✓ Pratinjau Data', prev_tanggal:'Tanggal', prev_total_sales:'Total Penjualan', prev_cash:'Tunai',
-                prev_expense:'Total Pengeluaran', prev_saldo:'Saldo', prev_notes:'Keterangan', btn_save_data:'✓ Simpan Data', btn_cancel:'✕ Batal',
+                lbl_keterangan:'Keterangan', ph_keterangan:'Catatan tambahan...', stat_total_expense:'Total Pengeluaran (Auto)',
+                stat_saldo:'Saldo (Auto)', btn_preview:'Pratinjau Data', btn_reset:'Atur Ulang', copy_none:'Belum ada data sebelumnya untuk disalin.',
+                prev_title:'Pratinjau Data', prev_tanggal:'Tanggal', prev_total_sales:'Total Penjualan', prev_cash:'Tunai',
+                prev_expense:'Total Pengeluaran', prev_saldo:'Saldo', prev_notes:'Keterangan', btn_save_data:'Simpan Data', btn_cancel:'Batal',
                 th_hari:'Hari', th_total_sales:'Total Penjualan', th_cash:'Tunai', th_expense:'Total Pengeluaran', th_saldo:'Saldo',
                 th_notes:'Keterangan', th_action:'Aksi',
                 empty_input_1:'Belum ada data bulan ini', empty_input_2:'Isi formulir di atas untuk mulai mencatat',
                 empty_dash_1:'Dasbor masih kosong', empty_hint:'Input data dulu di menu Input Data',
                 empty_pajak_1:'Belum ada data pajak', empty_export_1:'Belum ada laporan untuk diekspor',
                 empty_export_2:'Input data dulu di menu Input Data — atau pulihkan dari cadangan di bawah',
-                dash_title:'📊 DASBOR KEUANGAN', kpi_revenue:'💰 Total Pemasukan', kpi_expense:'📊 Total Pengeluaran',
-                kpi_profit:'💎 Laba Bersih', kpi_margin:'📈 Margin Laba', toggle_harian:'📅 Harian', toggle_bulanan:'🗓️ Bulanan',
-                ppn_title:'💰 LAPORAN PPN HARIAN', ppn_th_date:'Tanggal', ppn_th_income:'Pendapatan (Rp)', ppn_th_ppn:'PPN (Rp)',
+                dash_title:'DASBOR KEUANGAN', kpi_revenue:'Total Pemasukan', kpi_expense:'Total Pengeluaran',
+                kpi_profit:'Laba Bersih', kpi_margin:'Margin Laba', toggle_harian:'Harian', toggle_bulanan:'Bulanan',
+                ppn_title:'LAPORAN PPN HARIAN', ppn_th_date:'Tanggal', ppn_th_income:'Pendapatan (Rp)', ppn_th_ppn:'PPN (Rp)',
                 ppn_note_label:'Keterangan:', ppn_note_rate:'Tarif PPN =',
-                royalti_title:'👑 ROYALTI & PPN BULANAN', roy_total_sales:'TOTAL PENJUALAN', roy_royalti:'ROYALTI', roy_ppn:'PPN',
-                roy_total:'TOTAL ROYALTI & PPN', transfer_to:'💸 Transfer ke:', ph_transfer:'Contoh: Cakman Malang, Bank BCA, dll...',
-                export_title:'📥 PILIHAN EKSPOR', btn_export_excel:'📋 Ekspor Tabel Tahunan',
-                desc_export_excel:'Excel (.xlsx) — 1 berkas, tiap bulan jadi sheet', btn_export_ppn:'📄 Ekspor Laporan PPN',
-                desc_export_pdf1:'PDF — laporan bulanan', btn_export_royalti:'📄 Ekspor Royalti & PPN', desc_export_pdf2:'PDF — laporan bulanan',
-                export_tips_label:'💡 Tips Ekspor:', backup_title:'💾 CADANGAN & PEMULIHAN DATA', btn_backup:'⬇️ Cadangkan Data (.json)',
-                desc_backup:'Simpan semua data ke 1 berkas', btn_restore:'⬆️ Pulihkan Data (.json)', desc_restore:'Muat data dari berkas cadangan',
-                setting_title:'🎛️ PENGATURAN', setting_lang_title:'🌐 Bahasa', setting_lang_desc:'Pilih bahasa tampilan aplikasi.',
-                setting_dark_title:'🌙 Mode Gelap', setting_dark_desc:'Mengikuti pengaturan perangkat secara otomatis. Bisa juga diatur manual di sini.',
-                setting_more:'⚙️ Opsi pengaturan lain akan ditambahkan di pembaruan berikutnya.',
+                royalti_title:'ROYALTI & PPN BULANAN', roy_total_sales:'TOTAL PENJUALAN', roy_royalti:'ROYALTI', roy_ppn:'PPN',
+                roy_total:'TOTAL ROYALTI & PPN', transfer_to:'Transfer ke:', ph_transfer:'Contoh: Cakman Malang, Bank BCA, dll...',
+                export_title:'PILIHAN EKSPOR', btn_export_excel:'Ekspor Tabel Tahunan',
+                desc_export_excel:'Excel (.xlsx) — 1 berkas, tiap bulan jadi sheet', btn_export_ppn:'Ekspor Laporan PPN',
+                desc_export_pdf1:'PDF — laporan bulanan', btn_export_royalti:'Ekspor Royalti & PPN', desc_export_pdf2:'PDF — laporan bulanan',
+                export_tips_label:'Tips Ekspor:', backup_title:'CADANGAN & PEMULIHAN DATA', btn_backup:'Cadangkan Data (.json)',
+                desc_backup:'Simpan semua data ke 1 berkas', btn_restore:'Pulihkan Data (.json)', desc_restore:'Muat data dari berkas cadangan',
+                setting_title:'PENGATURAN', setting_lang_title:'🌐 Bahasa', setting_lang_desc:'Pilih bahasa tampilan aplikasi.',
+                setting_dark_title:'Mode Gelap', setting_dark_desc:'Mengikuti pengaturan perangkat secara otomatis. Bisa juga diatur manual di sini.',
+                setting_more:'Opsi pengaturan lain akan ditambahkan di pembaruan berikutnya.',
                 lang_default:'Default (Campuran)', lang_id:'Indonesia', lang_en:'English',
-                pdf_print:'🖨️ Cetak', pdf_download:'⬇️ Unduh PDF', update_text:'🔄 Versi baru tersedia', update_btn:'Perbarui',
+                pdf_print:'Cetak', pdf_download:'Unduh PDF', update_text:'Versi baru tersedia', update_btn:'Perbarui',
                 dt_title:'Data Bulan', form_title:'Input Data Harian', form_edit:'Edit Data Tanggal',
                 chart_year:'Tahun', chart_monthly:'Performa Bulanan', chart_daily:'Performa Harian',
                 chart_revenue:'Pemasukan', chart_expense:'Pengeluaran', chart_profit:'Laba',
-                annual_title:'📅 Ringkasan Tahunan', annual_revenue:'Total Pemasukan', annual_expense:'Total Pengeluaran',
-                annual_profit:'Laba Bersih', annual_avg:'Rata-rata/Bulan', annual_best:'🏆 Bulan Terbaik', annual_worst:'Bulan Terendah',
+                annual_title:'Ringkasan Tahunan', annual_revenue:'Total Pemasukan', annual_expense:'Total Pengeluaran',
+                annual_profit:'Laba Bersih', annual_avg:'Rata-rata/Bulan', annual_best:'Bulan Terbaik', annual_worst:'Bulan Terendah',
                 annual_th_month:'Bulan', annual_th_revenue:'Pemasukan', annual_th_expense:'Pengeluaran', annual_th_profit:'Laba',
                 annual_th_margin:'Margin', annual_total:'TOTAL',
                 mc_revenue:'Pemasukan', mc_expense:'Pengeluaran', mc_profit:'Laba', setting_version:'Versi',
                 search_ph:'Cari tanggal, nominal, atau keterangan...', filter_all:'Semua', filter_minus:'Saldo Minus',
                 filter_high_expense:'Pengeluaran Tinggi', filter_high_income:'Pemasukan Tinggi',
                 search_empty:'Tidak ada hasil ditemukan.', search_more:'hasil lainnya... persempit pencarian',
-                insight_title:'💡 Insight Bulan Ini', backup_now:'Backup', backup_later:'Nanti ✕',
-                btn_libur:'🔴 Tandai Hari Libur', btn_libur_cancel:'↩️ Batalkan Libur', libur_label:'LIBUR',
+                insight_title:'Insight Bulan Ini', backup_now:'Backup', backup_later:'Nanti',
+                btn_libur:'Tandai Hari Libur', btn_libur_cancel:'Batalkan Libur', libur_label:'LIBUR',
                 libur_marked:'Tanggal {d} ditandai LIBUR.', libur_cancelled:'Tanggal {d} bukan libur lagi.',
                 libur_confirm:'Tanggal {d} sudah ada data. Jadikan hari libur (data akan dikosongkan)?',
                 trend_progress:'Data Progress', trend_days:'hari', trend_filled:'terisi', trend_libur:'libur',
                 trend_margin:'Margin Laba', chart_libur:'Libur',
-                drive_title:'☁️ GOOGLE DRIVE', drive_hint:'Simpan & ambil data dari Google Drive — praktis untuk pindah perangkat.',
-                btn_drive_backup:'☁️⬆️ Backup ke Drive', desc_drive_backup:'Simpan data ke Google Drive',
-                btn_drive_restore:'☁️⬇️ Restore dari Drive', desc_drive_restore:'Ambil data dari Google Drive',
-                drive_status_idle:'Belum tersinkron ke Drive.', drive_last:'Terakhir sinkron', drive_connecting:'☁️ Menghubungkan ke Google Drive...',
-                drive_uploading:'☁️ Mengunggah data...', drive_downloading:'☁️ Mengunduh data...',
-                drive_backup_ok:'✓ Backup ke Google Drive berhasil!', drive_backup_fail:'Gagal backup ke Drive',
-                drive_restore_ok:'✓ Data dari Google Drive berhasil dipulihkan!', drive_restore_fail:'Gagal restore dari Drive',
+                drive_title:'GOOGLE DRIVE', drive_hint:'Simpan & ambil data dari Google Drive — praktis untuk pindah perangkat.',
+                btn_drive_backup:'Backup ke Drive', desc_drive_backup:'Simpan data ke Google Drive',
+                btn_drive_restore:'Restore dari Drive', desc_drive_restore:'Ambil data dari Google Drive',
+                drive_status_idle:'Belum tersinkron ke Drive.', drive_last:'Terakhir sinkron', drive_connecting:'Menghubungkan ke Google Drive...',
+                drive_uploading:'Mengunggah data...', drive_downloading:'Mengunduh data...',
+                drive_backup_ok:'Backup ke Google Drive berhasil!', drive_backup_fail:'Gagal backup ke Drive',
+                drive_restore_ok:'Data dari Google Drive berhasil dipulihkan!', drive_restore_fail:'Gagal restore dari Drive',
                 drive_none:'Belum ada backup di Drive.', drive_none_account:'App tidak melihat file apa pun. Pastikan login dengan akun Google yang SAMA seperti saat backup.', drive_restore_confirm:'Pulihkan data dari Google Drive? Data saat ini akan diganti.',
                 drive_err_lib:'Library Google belum termuat. Cek koneksi internet, lalu coba lagi.', drive_err_find:'Gagal mencari file di Drive',
                 drive_err_update:'Gagal memperbarui file', drive_err_create:'Gagal membuat file', drive_err_download:'Gagal mengunduh file',
-                drive_err_format:'Format backup tidak dikenali.', drive_note_title:'ℹ️ Catatan:',
+                drive_err_format:'Format backup tidak dikenali.', drive_note_title:'Catatan:',
                 drive_note_body:'Pertama kali akan diminta login Google & izin akses. Aplikasi hanya bisa mengakses file backup buatannya sendiri, bukan file Drive Anda yang lain. Butuh koneksi internet.'
             }
         };
@@ -3038,7 +3057,7 @@
             };
 
             localStorage.setItem('financialConfig', JSON.stringify(configSettings));
-            showSuccessMessage('✓ Konfigurasi berhasil disimpan');
+            showSuccessMessage('Konfigurasi berhasil disimpan');
             updateDashboard();
             updatePPNTable();
             updateRoyaltiTable();
@@ -3087,7 +3106,7 @@
             banner.style.background = 'linear-gradient(135deg, #ffeeba 0%, #ffd966 100%)';
             banner.style.borderLeft  = '5px solid #d39e00';
             banner.style.color       = '#856404';
-            banner.textContent = '⚠️ Harap isi dan simpan Konfigurasi Sistem terlebih dahulu sebelum export PDF!';
+            banner.textContent = 'Harap isi dan simpan Konfigurasi Sistem terlebih dahulu sebelum export PDF!';
             banner.classList.add('show');
 
             // Auto hide setelah 5 detik, kemudian reset warna
@@ -3124,8 +3143,8 @@
             const year = parseInt(document.getElementById('yearSelect').value);
             const monthName = months[month - 1];
 
-            document.getElementById('dataTableTitle').textContent = `📋 ${t('dt_title','Data Bulan')} ${dispMonth(month - 1)} ${year}`;
-            document.getElementById('formTitle').textContent = currentEditDay ? `✏️ ${t('form_edit','Edit Data Tanggal')} ${currentEditDay}` : `📝 ${t('form_title','Input Data Harian')}`;
+            document.getElementById('dataTableTitleText').textContent = `${t('dt_title','Data Bulan')} ${dispMonth(month - 1)} ${year}`;
+            document.getElementById('formTitleText').textContent = currentEditDay ? `${t('form_edit','Edit Data Tanggal')} ${currentEditDay}` : `${t('form_title','Input Data Harian')}`;
 
             const daysInMonth = new Date(year, month, 0).getDate();
             const daySelect = document.getElementById('daySelect');
@@ -3340,10 +3359,10 @@
             const year  = parseInt(document.getElementById('yearSelect').value);
             const day   = parseInt(document.getElementById('daySelect').value);
             if (isLiburDay(day, month, year)) {
-                btn.textContent = t('btn_libur_cancel', '↩️ Batalkan Libur');
+                btn.querySelector('.btn-label').textContent = t('btn_libur_cancel', 'Batalkan Libur');
                 btn.classList.add('libur-active');
             } else {
-                btn.textContent = t('btn_libur', '🔴 Tandai Hari Libur');
+                btn.querySelector('.btn-label').textContent = t('btn_libur', 'Tandai Hari Libur');
                 btn.classList.remove('libur-active');
             }
         }
@@ -3377,7 +3396,7 @@
             // Catat tanggal backup terakhir & sembunyikan reminder
             localStorage.setItem('lastBackup', new Date().toISOString());
             dismissBackupReminder();
-            showSuccessMessage('✓ Backup berhasil! File JSON sudah terunduh.');
+            showSuccessMessage('Backup berhasil! File JSON sudah terunduh.');
         }
 
         function restoreBackupJSON(event) {
@@ -3392,11 +3411,11 @@
                     const fc = (data.financialConfig !== undefined) ? data.financialConfig : null;
 
                     if (fd === null && fc === null) {
-                        alert('❌ File tidak dikenali. Pastikan ini file backup dari aplikasi ini.');
+                        alert('File tidak dikenali. Pastikan ini file backup dari aplikasi ini.');
                         return;
                     }
 
-                    if (!confirm('⚠️ Restore akan MENGGANTI semua data saat ini dengan isi file backup.\n\nLanjutkan?')) {
+                    if (!confirm('Restore akan MENGGANTI semua data saat ini dengan isi file backup.\n\nLanjutkan?')) {
                         return;
                     }
 
@@ -3411,10 +3430,10 @@
 
                     loadConfig();
                     updateUI();
-                    showSuccessMessage('✓ Data berhasil di-restore dari backup!');
+                    showSuccessMessage('Data berhasil di-restore dari backup!');
                 } catch (err) {
                     console.error(err);
-                    alert('❌ Gagal membaca file: ' + err.message);
+                    alert('Gagal membaca file: ' + err.message);
                 } finally {
                     event.target.value = ''; // reset agar bisa pilih file sama lagi
                 }
@@ -3516,9 +3535,9 @@
 
         async function backupToDrive() {
             try {
-                setDriveStatus(t('drive_connecting', '☁️ Menghubungkan ke Google Drive...'), 'busy');
+                setDriveStatus(t('drive_connecting', 'Menghubungkan ke Google Drive...'), 'busy');
                 const token = await ensureDriveToken();
-                setDriveStatus(t('drive_uploading', '☁️ Mengunggah data...'), 'busy');
+                setDriveStatus(t('drive_uploading', 'Mengunggah data...'), 'busy');
 
                 const backup = {
                     _meta: { app: 'Financial Daily Report', version: APP_VERSION, exportedAt: new Date().toISOString() },
@@ -3557,16 +3576,16 @@
                 localStorage.setItem('lastDriveSync', now);
                 dismissBackupReminder();
                 updateDriveStatus();
-                showSuccessMessage(t('drive_backup_ok', '✓ Backup ke Google Drive berhasil!'));
+                showSuccessMessage(t('drive_backup_ok', 'Backup ke Google Drive berhasil!'));
             } catch (e) {
-                setDriveStatus('❌ ' + e.message, 'error');
-                showSuccessMessage('❌ ' + t('drive_backup_fail', 'Gagal backup ke Drive') + ': ' + e.message);
+                setDriveStatus('' + e.message, 'error');
+                showSuccessMessage('' + t('drive_backup_fail', 'Gagal backup ke Drive') + ': ' + e.message);
             }
         }
 
         async function restoreFromDrive() {
             try {
-                setDriveStatus(t('drive_connecting', '☁️ Menghubungkan ke Google Drive...'), 'busy');
+                setDriveStatus(t('drive_connecting', 'Menghubungkan ke Google Drive...'), 'busy');
                 const token = await ensureDriveToken();
                 const found = await driveFindBackupFile(token);
                 const existing = found.file;
@@ -3578,14 +3597,14 @@
                         msg = t('drive_none', 'Belum ada backup di Drive.') + ' (' + found.totalSeen + ' file lain terlihat)';
                     }
                     setDriveStatus(msg, 'error');
-                    showSuccessMessage('❌ ' + msg);
+                    showSuccessMessage('' + msg);
                     return;
                 }
                 if (!confirm(t('drive_restore_confirm', 'Pulihkan data dari Google Drive? Data saat ini akan diganti.'))) {
                     updateDriveStatus();
                     return;
                 }
-                setDriveStatus(t('drive_downloading', '☁️ Mengunduh data...'), 'busy');
+                setDriveStatus(t('drive_downloading', 'Mengunduh data...'), 'busy');
                 const res = await fetch(`https://www.googleapis.com/drive/v3/files/${existing.id}?alt=media`, {
                     headers: { Authorization: 'Bearer ' + token }
                 });
@@ -3603,10 +3622,10 @@
                 loadConfig();
                 updateUI();
                 updateDriveStatus();
-                showSuccessMessage(t('drive_restore_ok', '✓ Data dari Google Drive berhasil dipulihkan!'));
+                showSuccessMessage(t('drive_restore_ok', 'Data dari Google Drive berhasil dipulihkan!'));
             } catch (e) {
-                setDriveStatus('❌ ' + e.message, 'error');
-                showSuccessMessage('❌ ' + t('drive_restore_fail', 'Gagal restore dari Drive') + ': ' + e.message);
+                setDriveStatus('' + e.message, 'error');
+                showSuccessMessage('' + t('drive_restore_fail', 'Gagal restore dari Drive') + ': ' + e.message);
             }
         }
 
@@ -3759,7 +3778,7 @@
                     row.className = 'row-libur';
                     row.innerHTML = `
                         <td class="col-center">${item.day}</td>
-                        <td class="col-center" colspan="4">🔴 ${t('libur_label', 'LIBUR')}</td>
+                        <td class="col-center" colspan="4">${t('libur_label', 'LIBUR')}</td>
                         <td class="col-left">${item.keterangan || '-'}</td>
                         <td class="col-center">
                             <div class="action-buttons">
@@ -3854,7 +3873,7 @@
 
             const prevLabel = `${dispMonth(pm - 1)} ${py}`;
             document.getElementById('mcTitle').textContent =
-                (currentLang === 'en' ? `📊 vs ${prevLabel}` : `📊 vs ${prevLabel}`);
+                (currentLang === 'en' ? `vs ${prevLabel}` : `vs ${prevLabel}`);
 
             function renderChange(elId, curVal, prevVal, expenseField) {
                 const el = document.getElementById(elId);
@@ -3972,9 +3991,9 @@
             // Susun pesan
             let msg;
             if (currentLang === 'en') {
-                msg = last ? `💾 ${daysSince} days since last backup.` : '💾 No backup yet. Secure your data.';
+                msg = last ? `${daysSince} days since last backup.` : 'No backup yet. Secure your data.';
             } else {
-                msg = last ? `💾 Sudah ${daysSince} hari belum backup.` : '💾 Anda belum pernah backup data.';
+                msg = last ? `Sudah ${daysSince} hari belum backup.` : 'Anda belum pernah backup data.';
             }
             document.getElementById('backupReminderText').textContent = msg;
             document.getElementById('backupReminder').classList.add('show');
@@ -4022,7 +4041,7 @@
             document.getElementById('kpiProfit').textContent  = fmt(metrics.profit);
             document.getElementById('kpiMargin').textContent  = `${metrics.margin.toFixed(1)}%`;
 
-            const marginStatus = metrics.margin > 40 ? '✓ Excellent' : metrics.margin > 20 ? '✓ Good' : metrics.margin > 10 ? '⚠️ Caution' : '🔴 Low Margin!';
+            const marginStatus = metrics.margin > 40 ? 'Excellent' : metrics.margin > 20 ? 'Good' : metrics.margin > 10 ? 'Caution' : 'Low Margin!';
             document.getElementById('kpiMarginStatus').innerHTML = marginStatus;
 
             updateChart();
@@ -4165,7 +4184,7 @@
                 chartTitle  = mobile ? `${t('chart_year','Tahun')} ${year}` : `${t('chart_monthly','Performa Bulanan')} — ${t('chart_year','Tahun')} ${year}`;
             } else {
                 labels      = data.map(d => {
-                    if (d.isLibur) return mobile ? `${d.day}🔴` : `${t('chart_libur','Libur')} ${d.day}`;
+                    if (d.isLibur) return mobile ? `${d.day}` : `${t('chart_libur','Libur')} ${d.day}`;
                     return mobile ? `${d.day}` : `Hari ${d.day}`;
                 });
                 revenueData = data.map(d => d.totalPenjualan);
@@ -4326,15 +4345,15 @@
 
             if (metrics.margin < 10) {
                 alertDiv.className = 'trend-alert';
-                alertDiv.innerHTML = `⚠️ <strong>LOW PROFIT MARGIN!</strong> Margin hanya ${metrics.margin.toFixed(1)}% dari revenue. Cek expense control!`;
+                alertDiv.innerHTML = `<svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> <strong>LOW PROFIT MARGIN!</strong> Margin hanya ${metrics.margin.toFixed(1)}% dari revenue. Cek expense control!`;
                 alertDiv.style.display = 'block';
             } else if (metrics.margin < 20) {
                 alertDiv.className = 'trend-alert';
-                alertDiv.innerHTML = `⚠️ <strong>CAUTION:</strong> Margin ${metrics.margin.toFixed(1)}%. Monitor expense lebih ketat.`;
+                alertDiv.innerHTML = `<svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> <strong>CAUTION:</strong> Margin ${metrics.margin.toFixed(1)}%. Monitor expense lebih ketat.`;
                 alertDiv.style.display = 'block';
             } else {
                 alertDiv.className = 'trend-alert success';
-                alertDiv.innerHTML = `✓ <strong>HEALTHY:</strong> Margin ${metrics.margin.toFixed(1)}% - Profit sedang good performance!`;
+                alertDiv.innerHTML = `<svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> <strong>HEALTHY:</strong> Margin ${metrics.margin.toFixed(1)}% - Profit sedang good performance!`;
                 alertDiv.style.display = 'block';
             }
 
@@ -4347,7 +4366,7 @@
             let breakdown = `${filled} ${t('trend_filled','terisi')}`;
             if (libur > 0) breakdown += ` + ${libur} ${t('trend_libur','libur')}`;
 
-            trendInfo.innerHTML = `<strong>📊 Trend Analysis:</strong><p style="margin-top: 10px;">${t('trend_progress','Data Progress')}: ${daysWithData}/${daysInMonth} ${t('trend_days','hari')} (${percentComplete}%) — ${breakdown} | Revenue: Rp ${metrics.revenue.toLocaleString('id-ID')} | ${t('trend_margin','Profit Margin')}: ${metrics.margin.toFixed(1)}%</p>`;
+            trendInfo.innerHTML = `<strong>Trend Analysis:</strong><p style="margin-top: 10px;">${t('trend_progress','Data Progress')}: ${daysWithData}/${daysInMonth} ${t('trend_days','hari')} (${percentComplete}%) — ${breakdown} | Revenue: Rp ${metrics.revenue.toLocaleString('id-ID')} | ${t('trend_margin','Profit Margin')}: ${metrics.margin.toFixed(1)}%</p>`;
             trendInfo.style.display = 'block';
         }
 
@@ -4369,7 +4388,7 @@
                     row.className = 'row-libur';
                     row.innerHTML = `
                         <td class="col-center">${item.day}</td>
-                        <td class="col-center" colspan="2">🔴 ${t('libur_label','LIBUR')}</td>
+                        <td class="col-center" colspan="2">${t('libur_label','LIBUR')}</td>
                     `;
                     return;
                 }
@@ -4803,7 +4822,7 @@
                 const pdfUrl = URL.createObjectURL(pdfBlob);
                 window.open(pdfUrl, '_blank');
                 setTimeout(() => URL.revokeObjectURL(pdfUrl), 300000);
-                showSuccessMessage('✓ PDF terbuka di tab baru! Gunakan tombol Print/Download di browser.');
+                showSuccessMessage('PDF terbuka di tab baru! Gunakan tombol Print/Download di browser.');
             } catch (error) {
                 console.error('PDF Export Error:', error);
                 alert('Error: ' + error.message);
@@ -4934,7 +4953,7 @@
                 const pdfUrl2 = URL.createObjectURL(pdfBlob2);
                 window.open(pdfUrl2, '_blank');
                 setTimeout(() => URL.revokeObjectURL(pdfUrl2), 300000);
-                showSuccessMessage('✓ PDF terbuka di tab baru! Gunakan tombol Print/Download di browser.');
+                showSuccessMessage('PDF terbuka di tab baru! Gunakan tombol Print/Download di browser.');
             } catch (error) {
                 console.error('PDF Export Error:', error);
                 alert('Error: ' + error.message);
@@ -5040,7 +5059,7 @@
                 const balLabel = (currentLang === 'en') ? 'Balance' : 'Saldo';
                 const note = e.keterangan ? `<div class="sri-note">"${e.keterangan}"</div>` : '';
                 return `<div class="search-result-item" onclick="gotoEntry(${e.day}, ${e._month}, ${e._year})">
-                    <div class="sri-date">📅 ${dateStr}</div>
+                    <div class="sri-date">${dateStr}</div>
                     <div class="sri-nums">${inLabel}: Rp ${(e.totalPenjualan||0).toLocaleString('id-ID')} • ${outLabel}: Rp ${(e.totalPengeluaran||0).toLocaleString('id-ID')} • ${balLabel}: <span class="${saldoCls}">Rp ${(e.saldo||0).toLocaleString('id-ID')}</span></div>
                     ${note}
                 </div>`;
@@ -5161,7 +5180,7 @@
             deferredInstallPrompt.prompt();
             deferredInstallPrompt.userChoice.then(function(choice) {
                 if (choice.outcome === 'accepted') {
-                    showSuccessMessage('✓ Aplikasi berhasil dipasang!');
+                    showSuccessMessage('Aplikasi berhasil dipasang!');
                 }
                 deferredInstallPrompt = null;
                 const btn = document.getElementById('installAppBtn');
