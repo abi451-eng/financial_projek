@@ -7,7 +7,10 @@
 
     <!-- PWA -->
     <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#1a5f7a">
+    <meta name="theme-color" content="#0F766E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <meta name="description" content="Pencatatan keuangan harian warung — PPN, royalti, dan laporan.">
     <link rel="icon" type="image/png" href="./favicon.png">
     <link rel="apple-touch-icon" href="./apple-touch-icon.png">
@@ -28,13 +31,57 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #2c3e50;
-            padding-top: 70px;
-            min-height: 100vh;
+        /* ===== DESIGN TOKENS (Tahap 1 — redesign modern) ===== */
+        :root {
+            --bg: #EFF2F5;
+            --surface: #FFFFFF;
+            --surface-2: #F7F9FA;
+            --ink: #161B20;
+            --ink-2: #5C6773;
+            --ink-3: #8a94a0;
+            --line: #E4E8EC;
+            --accent: #0F766E;        /* teal/hijau-tua modern */
+            --accent-strong: #0B5A54;
+            --accent-soft: #E3F1EF;
+            --up: #15803D;
+            --down: #DC2626;
+            --radius: 14px;
+            --radius-sm: 10px;
+            --shadow-sm: 0 1px 2px rgba(16,24,32,0.05);
+            --shadow-md: 0 4px 16px rgba(16,24,32,0.08);
         }
+        body.dark {
+            --bg: #0E1316;
+            --surface: #161D22;
+            --surface-2: #1B242A;
+            --ink: #E7EDF1;
+            --ink-2: #93A1AC;
+            --ink-3: #6b7882;
+            --line: #243036;
+            --accent: #2BB3A3;
+            --accent-strong: #229488;
+            --accent-soft: #16302C;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            padding-top: 64px;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.005em;
+        }
+
+        /* Angka rata (khas app keuangan) */
+        .currency, .money-input, .kpi-value, .annual-card-value, .mc-change,
+        .stat-value, td.currency, .sri-nums { font-variant-numeric: tabular-nums; }
+
+        /* Ikon line di navigasi & header */
+        .nav-ic { width: 19px; height: 19px; flex-shrink: 0; stroke-width: 2; }
+        .hdr-ic { width: 20px; height: 20px; }
 
         /* Sticky Header */
         .sticky-header {
@@ -42,21 +89,26 @@
             top: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(135deg, #1a5f7a 0%, #0d3d52 100%);
+            background: var(--accent);
             color: white;
-            padding: 15px 20px;
+            padding: 0 16px;
+            height: 64px;
             z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: var(--shadow-sm);
             display: flex;
             align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .sticky-header h1 {
-            font-size: 20px;
+            font-size: 16px;
+            font-weight: 700;
             margin: 0;
             flex: 1;
+            letter-spacing: -0.01em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .sticky-header .controls {
@@ -83,29 +135,32 @@
 
         /* ===== HAMBURGER BUTTON ===== */
         .hamburger-btn {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.16);
             color: white;
             border: none;
-            font-size: 22px;
-            line-height: 1;
-            padding: 6px 12px;
-            border-radius: 6px;
+            width: 38px; height: 38px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.18s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         .hamburger-btn:hover { background: rgba(255,255,255,0.3); }
 
         /* ===== HEADER SEARCH ===== */
         .header-search-btn {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.16);
             color: white;
             border: none;
-            font-size: 18px;
-            padding: 8px 12px;
-            border-radius: 8px;
+            width: 38px; height: 38px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.18s;
             flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         .header-search-btn:hover { background: rgba(255,255,255,0.3); }
 
@@ -210,43 +265,48 @@
         .sidebar {
             position: fixed;
             top: 0;
-            left: 0;
-            width: 260px;
-            max-width: 80vw;
+            right: 0;
+            left: auto;
+            width: 264px;
+            max-width: 84vw;
             height: 100%;
-            background: #ffffff;
-            box-shadow: 2px 0 18px rgba(0,0,0,0.18);
+            background: var(--surface);
+            box-shadow: -8px 0 28px rgba(16,24,32,0.14);
             z-index: 2000;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
+            transform: translateX(100%);
+            transition: transform 0.28s ease;
             display: flex;
             flex-direction: column;
+            border-left: 1px solid var(--line);
         }
         .sidebar.open { transform: translateX(0); }
 
         .sidebar-header {
-            background: linear-gradient(135deg, #1a5f7a 0%, #0d3d52 100%);
-            color: white;
+            background: var(--surface);
+            color: var(--ink);
             padding: 18px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            border-bottom: 1px solid var(--line);
         }
-        .sidebar-title { font-size: 17px; font-weight: 700; }
+        .sidebar-title { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
         .sidebar-close {
-            background: rgba(255,255,255,0.2);
-            color: white;
+            background: var(--surface-2);
+            color: var(--ink-2);
             border: none;
-            width: 30px; height: 30px;
-            border-radius: 6px;
+            width: 32px; height: 32px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
-        .sidebar-close:hover { background: rgba(255,255,255,0.35); }
+        .sidebar-close:hover { background: var(--line); }
 
         .sidebar-menu {
             list-style: none;
-            padding: 12px 0;
+            padding: 10px 10px;
             margin: 0;
             flex: 1;
             overflow-y: auto;
@@ -258,42 +318,53 @@
             text-align: left;
             background: none;
             border: none;
-            padding: 14px 22px;
-            font-size: 15px;
+            padding: 11px 12px;
+            margin: 2px 0;
+            border-radius: 10px;
+            font-size: 14.5px;
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--ink-2);
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 12px;
-            transition: all 0.2s;
-            border-left: 4px solid transparent;
+            transition: background 0.18s, color 0.18s;
             font-family: inherit;
         }
-        .sidebar-item:hover { background: #f0f4f7; }
+        .sidebar-item:hover { background: var(--surface-2); color: var(--ink); }
         .sidebar-item.active {
-            background: #e8f4f8;
-            color: #1a5f7a;
-            border-left-color: #1a5f7a;
+            background: var(--accent-soft);
+            color: var(--accent-strong);
+            font-weight: 700;
         }
-        .sidebar-item span { font-size: 15px; }
+        .sidebar-item.active svg { color: var(--accent); }
+        .sidebar-item span { font-size: 14.5px; }
 
         .sidebar-footer {
-            border-top: 1px solid #eee;
-            padding: 8px 0;
+            border-top: 1px solid var(--line);
+            padding: 10px;
         }
 
         .sidebar-overlay {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(16,24,32,0.45);
             z-index: 1999;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
         }
         .sidebar-overlay.show { opacity: 1; visibility: visible; }
+
+        /* ===== DESKTOP: sidebar kanan selalu terbuka ===== */
+        @media (min-width: 1024px) {
+            body { padding-right: 264px; }
+            .sticky-header { right: 264px; }
+            .sidebar { transform: none; box-shadow: none; }
+            .hamburger-btn, .sidebar-close { display: none; }
+            .sidebar-overlay { display: none !important; }
+        }
 
         /* ===== VIEW PANELS ===== */
         .view-panel { display: none; }
@@ -669,19 +740,22 @@
         }
 
         .form-section {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: var(--surface);
+            padding: 24px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-sm);
         }
 
         .form-section h2 {
-            font-size: 22px;
-            color: #1a5f7a;
-            margin-bottom: 25px;
-            border-bottom: 3px solid #1a5f7a;
+            font-size: 17px;
+            color: var(--ink);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--line);
             padding-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
         }
 
         .form-grid {
@@ -763,26 +837,25 @@
         }
 
         .btn {
-            padding: 12px 28px;
+            padding: 11px 22px;
             border: none;
-            border-radius: 6px;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: 700;
+            font-weight: 600;
             font-size: 14px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+            letter-spacing: 0;
+            font-family: inherit;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #1a5f7a 0%, #0d3d52 100%);
+            background: var(--accent);
             color: white;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(26, 95, 122, 0.3);
+            background: var(--accent-strong);
+            transform: translateY(-1px);
         }
 
         .btn-success {
@@ -864,19 +937,22 @@
         }
 
         .data-section {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: var(--surface);
+            padding: 24px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-sm);
         }
 
         .data-section h2 {
-            font-size: 22px;
-            color: #1a5f7a;
-            margin-bottom: 25px;
-            border-bottom: 3px solid #1a5f7a;
+            font-size: 17px;
+            color: var(--ink);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--line);
             padding-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
         }
 
         .data-table {
@@ -961,19 +1037,22 @@
         }
 
         .dashboard-section {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: var(--surface);
+            padding: 24px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-sm);
         }
 
         .dashboard-section h2 {
-            font-size: 22px;
-            color: #1a5f7a;
-            margin-bottom: 25px;
-            border-bottom: 3px solid #1a5f7a;
+            font-size: 17px;
+            color: var(--ink);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--line);
             padding-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
         }
 
         .kpi-grid {
@@ -1500,10 +1579,10 @@
         body.dark .royalti-total-label, body.dark .royalti-total-value { background: #1a3a4a; }
 
         /* Sidebar */
-        body.dark .sidebar-item { color: #cdd6db; }
-        body.dark .sidebar-item:hover { background: #26333b; }
-        body.dark .sidebar-item.active { background: #1a3a4a; color: #6fc0e0; border-left-color: #6fc0e0; }
-        body.dark .sidebar-footer { border-top-color: #32434d; }
+        body.dark .sidebar-item { color: var(--ink-2); }
+        body.dark .sidebar-item:hover { background: var(--surface-2); color: var(--ink); }
+        body.dark .sidebar-item.active { background: var(--accent-soft); color: var(--accent); }
+        body.dark .sidebar-footer { border-top-color: var(--line); }
 
         /* Kalender */
         body.dark .date-trigger { background: #26333b; color: #6fc0e0; border-color: #3a4b55; }
@@ -1743,9 +1822,9 @@
 <body>
     <!-- Sticky Header -->
     <div class="sticky-header">
-        <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
-        <h1>📊 Financial Daily Report BKCM</h1>
-        <button class="header-search-btn" id="headerSearchBtn" onclick="openSearch()" aria-label="Cari" title="Cari data">🔍</button>
+        <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Menu"><svg class="hdr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <h1>Financial Daily Report BKCM</h1>
+        <button class="header-search-btn" id="headerSearchBtn" onclick="openSearch()" aria-label="Cari" title="Cari data"><svg class="hdr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
     </div>
 
     <!-- ===== SEARCH OVERLAY ===== -->
@@ -1769,18 +1848,18 @@
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <span class="sidebar-title">📋 <span data-i18n="menu_title">Menu</span></span>
-            <button class="sidebar-close" onclick="closeSidebar()" aria-label="Tutup">✕</button>
+            <span class="sidebar-title"><span data-i18n="menu_title">Menu</span></span>
+            <button class="sidebar-close" onclick="closeSidebar()" aria-label="Tutup"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
         <ul class="sidebar-menu">
-            <li><button class="sidebar-item active" data-view="input"     onclick="showView('input', this)">📝 <span data-i18n="nav_input">Input Data</span></button></li>
-            <li><button class="sidebar-item"        data-view="dashboard" onclick="showView('dashboard', this)">📊 <span data-i18n="nav_dashboard">Dashboard</span></button></li>
-            <li><button class="sidebar-item"        data-view="pajak"     onclick="showView('pajak', this)">💰 <span data-i18n="nav_pajak">Laporan Pajak</span></button></li>
-            <li><button class="sidebar-item"        data-view="export"    onclick="showView('export', this)">📥 <span data-i18n="nav_export">Export</span></button></li>
+            <li><button class="sidebar-item active" data-view="input"     onclick="showView('input', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> <span data-i18n="nav_input">Input Data</span></button></li>
+            <li><button class="sidebar-item"        data-view="dashboard" onclick="showView('dashboard', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="10"/></svg> <span data-i18n="nav_dashboard">Dashboard</span></button></li>
+            <li><button class="sidebar-item"        data-view="pajak"     onclick="showView('pajak', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg> <span data-i18n="nav_pajak">Laporan Pajak</span></button></li>
+            <li><button class="sidebar-item"        data-view="export"    onclick="showView('export', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span data-i18n="nav_export">Export</span></button></li>
         </ul>
         <div class="sidebar-footer">
-            <button class="sidebar-item" id="installAppBtn" onclick="installApp()" style="display:none; color:#27ae60;">⬇️ <span data-i18n="nav_install">Install Aplikasi</span></button>
-            <button class="sidebar-item" data-view="setting" onclick="showView('setting', this)">🎛️ <span data-i18n="nav_setting">Setting</span></button>
+            <button class="sidebar-item" id="installAppBtn" onclick="installApp()" style="display:none; color:#27ae60;"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span data-i18n="nav_install">Install Aplikasi</span></button>
+            <button class="sidebar-item" data-view="setting" onclick="showView('setting', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg> <span data-i18n="nav_setting">Setting</span></button>
         </div>
     </nav>
 
@@ -2713,7 +2792,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v5.0.1';
+        const APP_VERSION = 'v5.0.0';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
