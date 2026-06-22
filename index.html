@@ -1589,6 +1589,10 @@
 
         /* Tabel */
         body.dark .data-table td { border-bottom-color: #32434d; color: #dfe6ea; }
+        /* Baris JUMLAH tabel PPN punya latar terang -> paksa angka GELAP saat dark mode agar terbaca */
+        body.dark .ppn-jumlah-row .currency,
+        body.dark .ppn-jumlah-row .currency .rp,
+        body.dark .ppn-jumlah-row td { color: #14313c; }
         body.dark .data-table tbody tr:hover { background: #26333b; }
         body.dark .currency { color: #6fc0e0; }
         body.dark .currency .money-cell .rp { color: #8fb8cb; }
@@ -2810,7 +2814,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v5.1.6';
+        const APP_VERSION = 'v5.1.7';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -4427,6 +4431,7 @@
 
             // Add JUMLAH row
             const jumlahRow = tbody.insertRow();
+            jumlahRow.className = 'ppn-jumlah-row';
             jumlahRow.style.background = '#f0f4f7';
             jumlahRow.innerHTML = `
                 <td class="col-center" style="font-weight: 700; color: #1a5f7a;">JUMLAH</td>
