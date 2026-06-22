@@ -2810,7 +2810,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v5.1.5';
+        const APP_VERSION = 'v5.1.1';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -3470,6 +3470,9 @@
             }
         }
 
+        // Handler promise untuk alur auth (dipakai callback/error_callback)
+        let driveAuthResolve = null, driveAuthReject = null, driveTriedConsent = false;
+
         function initDriveClient() {
             if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
                 return false; // library Google belum termuat
@@ -3478,13 +3481,38 @@
                 driveTokenClient = google.accounts.oauth2.initTokenClient({
                     client_id: GOOGLE_CLIENT_ID,
                     scope: DRIVE_SCOPE,
-                    callback: () => {}
+                    callback: (resp) => {
+                        if (resp && resp.error) {
+                            // Bila percobaan senyap gagal, coba sekali lagi dengan layar izin
+                            if (!driveTriedConsent) {
+                                driveTriedConsent = true;
+                                try { driveTokenClient.requestAccessToken({ prompt: 'consent' }); } catch (e) { if (driveAuthReject) driveAuthReject(e); }
+                                return;
+                            }
+                            if (driveAuthReject) driveAuthReject(new Error(resp.error));
+                            return;
+                        }
+                        driveAccessToken = resp.access_token;
+                        driveTokenExpiry = Date.now() + ((resp.expires_in || 3600) * 1000);
+                        localStorage.setItem('driveConsented', '1'); // tandai sudah pernah diizinkan di device ini
+                        if (driveAuthResolve) driveAuthResolve(driveAccessToken);
+                    },
+                    error_callback: (err) => {
+                        // Dipanggil bila login senyap perlu interaksi / popup gagal → fallback ke izin penuh
+                        if (!driveTriedConsent) {
+                            driveTriedConsent = true;
+                            try { driveTokenClient.requestAccessToken({ prompt: 'consent' }); } catch (e) { if (driveAuthReject) driveAuthReject(e); }
+                            return;
+                        }
+                        if (driveAuthReject) driveAuthReject(new Error((err && err.type) ? err.type : 'auth_failed'));
+                    }
                 });
             }
             return true;
         }
 
-        // Pastikan ada token akses yang valid (minta login bila perlu)
+        // Pastikan ada token akses yang valid. Izin diminta SEKALI per device,
+        // selanjutnya token diperbarui senyap (tanpa popup) selama sesi Google masih aktif.
         function ensureDriveToken() {
             return new Promise((resolve, reject) => {
                 if (driveAccessToken && Date.now() < driveTokenExpiry - 60000) {
@@ -3495,17 +3523,12 @@
                     reject(new Error(t('drive_err_lib', 'Library Google belum termuat. Cek koneksi internet, lalu coba lagi.')));
                     return;
                 }
-                driveTokenClient.callback = (resp) => {
-                    if (resp && resp.error) {
-                        reject(new Error(resp.error));
-                        return;
-                    }
-                    driveAccessToken = resp.access_token;
-                    driveTokenExpiry = Date.now() + ((resp.expires_in || 3600) * 1000);
-                    resolve(driveAccessToken);
-                };
+                driveAuthResolve = resolve;
+                driveAuthReject = reject;
+                const consented = localStorage.getItem('driveConsented') === '1';
+                driveTriedConsent = !consented; // kalau belum pernah, langsung minta izin (jangan retry lagi)
                 try {
-                    driveTokenClient.requestAccessToken({ prompt: driveAccessToken ? '' : 'consent' });
+                    driveTokenClient.requestAccessToken({ prompt: consented ? '' : 'consent' });
                 } catch (e) {
                     reject(e);
                 }
