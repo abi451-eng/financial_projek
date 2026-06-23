@@ -2569,9 +2569,32 @@
         <div class="view-panel" id="view-ifc-input">
             <div class="month-selector">
                 <label style="white-space:nowrap;">Tanggal:</label>
-                <select id="ifcDaySelect" onchange="ifcOnDateChange()"></select>
-                <select id="ifcMonthSelect" onchange="ifcOnMonthChange()"></select>
-                <select id="ifcYearSelect" onchange="ifcOnMonthChange()"></select>
+                <div class="date-picker-wrap" id="ifcDatePickerWrap">
+                    <button type="button" class="date-trigger" id="ifcDateTrigger" onclick="ifcToggleCalendar(event)">
+                        <span id="ifcDateDisplay">—</span>
+                        <span class="date-caret">▾</span>
+                    </button>
+                    <div class="calendar-popup" id="ifcCalendarPopup">
+                        <div class="cal-nav-row">
+                            <button type="button" class="cal-nav-btn" onclick="ifcCalChangeYear(-1)" title="Tahun sebelumnya">«</button>
+                            <span class="cal-nav-label" id="ifcCalYearLabel">2026</span>
+                            <button type="button" class="cal-nav-btn" onclick="ifcCalChangeYear(1)" title="Tahun berikutnya">»</button>
+                        </div>
+                        <div class="cal-nav-row">
+                            <button type="button" class="cal-nav-btn" onclick="ifcCalChangeMonth(-1)" title="Bulan sebelumnya">‹</button>
+                            <span class="cal-nav-label" id="ifcCalMonthLabel">Maret</span>
+                            <button type="button" class="cal-nav-btn" onclick="ifcCalChangeMonth(1)" title="Bulan berikutnya">›</button>
+                        </div>
+                        <div class="cal-weekdays">
+                            <span data-i18n="wd0">Min</span><span data-i18n="wd1">Sen</span><span data-i18n="wd2">Sel</span><span data-i18n="wd3">Rab</span><span data-i18n="wd4">Kam</span><span data-i18n="wd5">Jum</span><span data-i18n="wd6">Sab</span>
+                        </div>
+                        <div class="cal-days" id="ifcCalDays"></div>
+                        <button type="button" class="cal-today-btn" onclick="ifcCalGoToday()" data-i18n="cal_today">● Hari Ini</button>
+                    </div>
+                </div>
+                <select id="ifcDaySelect" style="display:none;"></select>
+                <select id="ifcMonthSelect" style="display:none;"></select>
+                <select id="ifcYearSelect" style="display:none;"></select>
             </div>
 
             <div class="form-section" id="ifcSaldoAwalSection" style="display:none; border-left:3px solid var(--accent);">
@@ -2961,7 +2984,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v5.3.0';
+        const APP_VERSION = 'v5.3.1';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -5348,6 +5371,74 @@
         function ifcOnMonthChange() { ifcPopulateDays(); ifcRefreshForm(); }
         function ifcOnDateChange() { ifcRefreshForm(); }
 
+        // ----- Kalender IFC (sama gaya BKCM, menandai tanggal terisi) -----
+        let ifcCalViewMonth = todayMonth, ifcCalViewYear = todayYear;
+        function ifcToggleCalendar(e) {
+            if (e) e.stopPropagation();
+            const pop = document.getElementById('ifcCalendarPopup');
+            if (pop.classList.contains('show')) { ifcCloseCalendar(); return; }
+            ifcCalViewMonth = +document.getElementById('ifcMonthSelect').value || todayMonth;
+            ifcCalViewYear = +document.getElementById('ifcYearSelect').value || todayYear;
+            ifcRenderCalendar();
+            pop.classList.add('show');
+        }
+        function ifcCloseCalendar() { document.getElementById('ifcCalendarPopup').classList.remove('show'); }
+        function ifcCalChangeMonth(d) { ifcCalViewMonth += d; if (ifcCalViewMonth < 1) { ifcCalViewMonth = 12; ifcCalViewYear--; } if (ifcCalViewMonth > 12) { ifcCalViewMonth = 1; ifcCalViewYear++; } ifcRenderCalendar(); }
+        function ifcCalChangeYear(d) { ifcCalViewYear += d; ifcRenderCalendar(); }
+        function ifcRenderCalendar() {
+            document.getElementById('ifcCalMonthLabel').textContent = dispMonth(ifcCalViewMonth - 1);
+            document.getElementById('ifcCalYearLabel').textContent = ifcCalViewYear;
+            const dim = new Date(ifcCalViewYear, ifcCalViewMonth, 0).getDate();
+            const firstWd = new Date(ifcCalViewYear, ifcCalViewMonth - 1, 1).getDay();
+            const selDay = +document.getElementById('ifcDaySelect').value || 0;
+            const selMonth = +document.getElementById('ifcMonthSelect').value;
+            const selYear = +document.getElementById('ifcYearSelect').value;
+            const key = ifcCalViewYear + '-' + ifcCalViewMonth;
+            const md = irfanData[key];
+            const filled = new Set();
+            if (md && md.entries) {
+                Object.keys(md.entries).forEach(d => {
+                    const e = md.entries[d];
+                    if ((e.pemasukan || 0) !== 0 || (e.pengeluaran || 0) !== 0 || (e.keterangan || '').trim() !== '') filled.add(+d);
+                });
+            }
+            const grid = document.getElementById('ifcCalDays');
+            grid.innerHTML = '';
+            for (let i = 0; i < firstWd; i++) { const em = document.createElement('div'); em.className = 'cal-day empty'; grid.appendChild(em); }
+            for (let d = 1; d <= dim; d++) {
+                const btn = document.createElement('button');
+                btn.type = 'button'; btn.className = 'cal-day'; btn.textContent = d;
+                if (d === todayDay && ifcCalViewMonth === todayMonth && ifcCalViewYear === todayYear) btn.classList.add('today');
+                if (d === selDay && ifcCalViewMonth === selMonth && ifcCalViewYear === selYear) btn.classList.add('selected');
+                if (filled.has(d)) btn.classList.add('has-data');
+                btn.onclick = function (e) { e.stopPropagation(); ifcCalSelectDay(d); };
+                grid.appendChild(btn);
+            }
+        }
+        function ifcCalSelectDay(day) {
+            document.getElementById('ifcMonthSelect').value = ifcCalViewMonth;
+            document.getElementById('ifcYearSelect').value = ifcCalViewYear;
+            ifcPopulateDays();
+            document.getElementById('ifcDaySelect').value = day;
+            ifcRefreshForm();
+            ifcCloseCalendar();
+        }
+        function ifcCalGoToday() { ifcCalViewMonth = todayMonth; ifcCalViewYear = todayYear; ifcCalSelectDay(todayDay); }
+        function ifcUpdateDateDisplay() {
+            const d = +document.getElementById('ifcDaySelect').value || todayDay;
+            const m = +document.getElementById('ifcMonthSelect').value;
+            const y = +document.getElementById('ifcYearSelect').value;
+            const dt = new Date(y, m - 1, d);
+            const isToday = (d === todayDay && m === todayMonth && y === todayYear);
+            const todayLabel = (currentLang === 'en') ? '  •  Today' : '  •  Hari ini';
+            const el = document.getElementById('ifcDateDisplay');
+            if (el) el.textContent = dispDayName(dt.getDay()) + ', ' + d + ' ' + dispMonth(m - 1) + ' ' + y + (isToday ? todayLabel : '');
+        }
+        document.addEventListener('click', function (e) {
+            const wrap = document.getElementById('ifcDatePickerWrap');
+            if (wrap && !wrap.contains(e.target)) ifcCloseCalendar();
+        });
+
         function ifcIsFirstMonthContext(key) {
             if (!irfanConfig.firstMonth) return true;       // belum ada -> bulan ini bisa jadi yang pertama
             return key === irfanConfig.firstMonth;
@@ -5371,6 +5462,7 @@
             document.getElementById('ifcKeterangan').value = e ? (e.keterangan || '') : '';
             document.getElementById('ifcResetBtn').style.display = e ? '' : 'none';
             document.getElementById('ifcFormTitleText').textContent = e ? ('Edit — Tanggal ' + day) : 'Input Harian — IFC';
+            if (typeof ifcUpdateDateDisplay === 'function') ifcUpdateDateDisplay();
             ifcUpdatePreview();
         }
 
