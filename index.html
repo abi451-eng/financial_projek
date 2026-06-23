@@ -319,6 +319,33 @@
         }
         .sidebar-close:hover { background: var(--line); }
 
+        .biz-switcher {
+            display: flex;
+            gap: 4px;
+            padding: 10px 12px 6px;
+            background: var(--surface-2);
+            border-bottom: 1px solid var(--line);
+        }
+        .biz-btn {
+            flex: 1;
+            padding: 8px 0;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            color: var(--ink-2);
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.18s;
+        }
+        .biz-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
         .sidebar-menu {
             list-style: none;
             padding: 10px 10px;
@@ -1665,6 +1692,17 @@
         body.dark .drive-status.busy { background: #2a2616; color: #f0c060; }
         body.dark .drive-status.error { background: #3a1f1c; color: #ff8a7a; }
 
+        /* ===== IFC info line ===== */
+        .ifc-info-line {
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            color: var(--ink-2);
+        }
+        .ifc-info-line strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+
         /* ===== VERSI APP ===== */
         .app-version {
             text-align: center;
@@ -1873,15 +1911,22 @@
             <span class="sidebar-title"><span data-i18n="menu_title">Menu</span></span>
             <button class="sidebar-close" onclick="closeSidebar()" aria-label="Tutup"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
+        <div class="biz-switcher">
+            <button type="button" class="biz-btn active" id="bizBtnBkcm" onclick="switchBusiness('bkcm')">BKCM</button>
+            <button type="button" class="biz-btn" id="bizBtnIfc" onclick="switchBusiness('ifc')">IFC</button>
+        </div>
         <ul class="sidebar-menu">
-            <li><button class="sidebar-item active" data-view="input"     onclick="showView('input', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> <span data-i18n="nav_input">Input Data</span></button></li>
-            <li><button class="sidebar-item"        data-view="dashboard" onclick="showView('dashboard', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="10"/></svg> <span data-i18n="nav_dashboard">Dashboard</span></button></li>
-            <li><button class="sidebar-item"        data-view="pajak"     onclick="showView('pajak', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg> <span data-i18n="nav_pajak">Laporan Pajak</span></button></li>
-            <li><button class="sidebar-item"        data-view="export"    onclick="showView('export', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span data-i18n="nav_export">Export</span></button></li>
+            <li><button class="sidebar-item active" data-biz="bkcm" data-view="input"     onclick="showView('input', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> <span data-i18n="nav_input">Input Data</span></button></li>
+            <li><button class="sidebar-item"        data-biz="bkcm" data-view="dashboard" onclick="showView('dashboard', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="10"/></svg> <span data-i18n="nav_dashboard">Dashboard</span></button></li>
+            <li><button class="sidebar-item"        data-biz="bkcm" data-view="pajak"     onclick="showView('pajak', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg> <span data-i18n="nav_pajak">Laporan Pajak</span></button></li>
+            <li><button class="sidebar-item"        data-biz="bkcm" data-view="export"    onclick="showView('export', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span data-i18n="nav_export">Export</span></button></li>
+            <li><button class="sidebar-item" data-biz="ifc" data-view="ifc-input" onclick="showView('ifc-input', this)" style="display:none;"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> <span data-i18n="nav_ifc_input">Input Harian</span></button></li>
+            <li><button class="sidebar-item" data-biz="ifc" data-view="ifc-laporan" onclick="showView('ifc-laporan', this)" style="display:none;"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> <span data-i18n="nav_ifc_laporan">Laporan Bulanan</span></button></li>
+            <li><button class="sidebar-item" data-biz="ifc" data-view="ifc-export" onclick="showView('ifc-export', this)" style="display:none;"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span data-i18n="nav_ifc_export">Export</span></button></li>
         </ul>
         <div class="sidebar-footer">
-            <button class="sidebar-item" id="installAppBtn" onclick="installApp()" style="display:none; color:#27ae60;"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span data-i18n="nav_install">Install Aplikasi</span></button>
-            <button class="sidebar-item" data-view="setting" onclick="showView('setting', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg> <span data-i18n="nav_setting">Setting</span></button>
+            <button class="sidebar-item" data-biz="both" id="installAppBtn" onclick="installApp()" style="display:none; color:#27ae60;"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span data-i18n="nav_install">Install Aplikasi</span></button>
+            <button class="sidebar-item" data-biz="both" data-view="setting" onclick="showView('setting', this)"><svg class="nav-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg> <span data-i18n="nav_setting">Setting</span></button>
         </div>
     </nav>
 
@@ -2465,7 +2510,7 @@
 
                 <div class="setting-row">
                     <div class="setting-info">
-                        <div class="setting-title" data-i18n="setting_lang_title">🌐 Bahasa</div>
+                        <div class="setting-title"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n="setting_lang_title">Bahasa</span></div>
                         <div class="setting-desc" data-i18n="setting_lang_desc">Pilih bahasa tampilan aplikasi.</div>
                     </div>
                     <select id="langSelect" class="lang-select" onchange="onLangChange()">
@@ -2495,6 +2540,67 @@
                 </div>
             </div>
         </div><!-- /view-setting -->
+
+        <!-- ===== VIEW: IFC INPUT HARIAN ===== -->
+        <div class="view-panel" id="view-ifc-input">
+            <div class="month-selector">
+                <label style="white-space:nowrap;">Tanggal:</label>
+                <select id="ifcDaySelect" onchange="ifcOnDateChange()"></select>
+                <select id="ifcMonthSelect" onchange="ifcOnMonthChange()"></select>
+                <select id="ifcYearSelect" onchange="ifcOnMonthChange()"></select>
+            </div>
+
+            <div class="form-section" id="ifcSaldoAwalSection" style="display:none; border-left:3px solid var(--accent);">
+                <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/></svg><span>Saldo Awal (Modal)</span></h2>
+                <p style="font-size:13px; color:var(--ink-2); margin:-6px 0 14px;">Ini bulan pertama Anda. Isi <strong>saldo/modal awal</strong> sekali saja — seterusnya saldo terbawa otomatis tiap bulan.</p>
+                <div class="form-group">
+                    <label>Saldo Awal Bulan Ini</label>
+                    <input type="text" inputmode="numeric" id="ifcSaldoAwalInput" class="money-input" placeholder="0" autocomplete="off">
+                </div>
+                <button class="btn btn-primary" onclick="saveIfcSaldoAwal()" style="margin-top:10px;"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Simpan Saldo Awal</span></button>
+            </div>
+
+            <div class="form-section">
+                <h2 id="ifcFormTitle" class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span id="ifcFormTitleText">Input Harian — Irfan Foto Copy</span></h2>
+                <div class="ifc-info-line">Saldo Awal Bulan: <strong id="ifcSaldoAwalDisplay">Rp0</strong></div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Pemasukan</label>
+                        <input type="text" inputmode="numeric" id="ifcPemasukan" class="money-input" placeholder="0" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label>Pengeluaran</label>
+                        <input type="text" inputmode="numeric" id="ifcPengeluaran" class="money-input" placeholder="0" autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Keterangan</label>
+                    <input type="text" id="ifcKeterangan" placeholder="(opsional) mis. Kertas A4, Telur 1 rak, dll" autocomplete="off">
+                </div>
+                <div class="ifc-info-line" style="margin-top:14px;">Saldo s/d tanggal ini: <strong id="ifcSaldoPreview">Rp0</strong></div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;">
+                    <button class="btn btn-success" onclick="saveIfcEntry()"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Simpan</span></button>
+                    <button class="btn btn-libur" onclick="ifcSetoran()"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Setoran</span></button>
+                    <button class="btn btn-secondary" id="ifcResetBtn" onclick="ifcResetForm()" style="display:none;"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg><span>Reset</span></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== VIEW: IFC LAPORAN (placeholder) ===== -->
+        <div class="view-panel" id="view-ifc-laporan">
+            <div class="data-section">
+                <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Laporan Bulanan IFC</span></h2>
+                <p style="color:var(--ink-2); font-size:14px;">Modul laporan bulanan disiapkan di tahap berikutnya — tabel kas berjalan + ringkasan.</p>
+            </div>
+        </div>
+
+        <!-- ===== VIEW: IFC EXPORT (placeholder) ===== -->
+        <div class="view-panel" id="view-ifc-export">
+            <div class="data-section">
+                <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Export Laporan IFC</span></h2>
+                <p style="color:var(--ink-2); font-size:14px;">Export PDF (format laporan kas IFC) &amp; Excel disiapkan di tahap berikutnya.</p>
+            </div>
+        </div>
     </div>
 
 
@@ -2814,7 +2920,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v5.1.7';
+        const APP_VERSION = 'v5.2.0';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -2829,7 +2935,7 @@
 
         const I18N = {
             en: {
-                menu_title:'Menu', nav_input:'Data Entry', nav_dashboard:'Dashboard', nav_pajak:'Tax Report',
+                menu_title:'Menu', nav_input:'Data Entry', nav_dashboard:'Dashboard', nav_pajak:'Tax Report', nav_ifc_input:'Daily Entry', nav_ifc_laporan:'Monthly Report', nav_ifc_export:'Export',
                 nav_export:'Export', nav_install:'Install App', nav_setting:'Settings', nav_config:'Configuration',
                 cfg_title:'SYSTEM CONFIGURATION', cfg_business:'Business Name *', cfg_business_ph:'Business Name',
                 cfg_address:'Address/Location *', cfg_address_ph:'Address/Location', cfg_city:'City/Regency *', cfg_city_ph:'City/Regency',
@@ -2860,7 +2966,7 @@
                 desc_export_pdf1:'PDF — monthly report', btn_export_royalti:'Export Royalty & VAT', desc_export_pdf2:'PDF — monthly report',
                 export_tips_label:'Export Tips:', backup_title:'BACKUP & RESTORE DATA', btn_backup:'Backup Data (.json)',
                 desc_backup:'Save all data to 1 file', btn_restore:'Restore Data (.json)', desc_restore:'Load data from backup file',
-                setting_title:'SETTINGS', setting_lang_title:'🌐 Language', setting_lang_desc:'Choose the app display language.',
+                setting_title:'SETTINGS', setting_lang_title:'Language', setting_lang_desc:'Choose the app display language.',
                 setting_dark_title:'Dark Mode', setting_dark_desc:'Follows device settings automatically. Can also be set manually here.',
                 setting_more:'More settings will be added in future updates.',
                 lang_default:'Default (Mixed)', lang_id:'Indonesian', lang_en:'English',
@@ -2895,7 +3001,7 @@
                 drive_err_format:'Backup format not recognized.', drive_note_title:'Note:',
                 drive_note_body:'First time will ask for Google login & permission. The app can only access its own backup file, not your other Drive files. Requires internet.'
             },            id: {
-                menu_title:'Menu', nav_input:'Input Data', nav_dashboard:'Dasbor', nav_pajak:'Laporan Pajak',
+                menu_title:'Menu', nav_input:'Input Data', nav_dashboard:'Dasbor', nav_pajak:'Laporan Pajak', nav_ifc_input:'Input Harian', nav_ifc_laporan:'Laporan Bulanan', nav_ifc_export:'Export',
                 nav_export:'Ekspor', nav_install:'Pasang Aplikasi', nav_setting:'Pengaturan', nav_config:'Konfigurasi',
                 cfg_title:'KONFIGURASI SISTEM', cfg_business:'Nama Bisnis/Warung *', cfg_business_ph:'Nama Bisnis/Warung',
                 cfg_address:'Alamat/Lokasi *', cfg_address_ph:'Alamat/Lokasi', cfg_city:'Kabupaten/Kota *', cfg_city_ph:'Kabupaten/Kota',
@@ -2926,7 +3032,7 @@
                 desc_export_pdf1:'PDF — laporan bulanan', btn_export_royalti:'Ekspor Royalti & PPN', desc_export_pdf2:'PDF — laporan bulanan',
                 export_tips_label:'Tips Ekspor:', backup_title:'CADANGAN & PEMULIHAN DATA', btn_backup:'Cadangkan Data (.json)',
                 desc_backup:'Simpan semua data ke 1 berkas', btn_restore:'Pulihkan Data (.json)', desc_restore:'Muat data dari berkas cadangan',
-                setting_title:'PENGATURAN', setting_lang_title:'🌐 Bahasa', setting_lang_desc:'Pilih bahasa tampilan aplikasi.',
+                setting_title:'PENGATURAN', setting_lang_title:'Bahasa', setting_lang_desc:'Pilih bahasa tampilan aplikasi.',
                 setting_dark_title:'Mode Gelap', setting_dark_desc:'Mengikuti pengaturan perangkat secara otomatis. Bisa juga diatur manual di sini.',
                 setting_more:'Opsi pengaturan lain akan ditambahkan di pembaruan berikutnya.',
                 lang_default:'Default (Campuran)', lang_id:'Indonesia', lang_en:'English',
@@ -3035,6 +3141,12 @@
             document.getElementById('appVersionNum').textContent = APP_VERSION;
             setTimeout(checkBackupReminder, 1500);
             if (typeof updateDriveStatus === 'function') updateDriveStatus();
+            // IFC module + restore bisnis aktif terakhir
+            initIfc();
+            applyBusinessView();
+            if (activeBusiness === 'ifc') {
+                showView('ifc-input', document.querySelector('.sidebar-item[data-view="ifc-input"]'));
+            }
         }
 
         function loadConfig() {
@@ -5109,6 +5221,213 @@
             showView('input', document.querySelector('.sidebar-item[data-view="input"]'));
         }
 
+        // ============================================================
+        //  MODUL IRFAN FOTO COPY (IFC) — buku kas berjalan
+        //  Data terpisah dari BKCM. Saldo berantai antar bulan.
+        // ============================================================
+        let activeBusiness = localStorage.getItem('activeBusiness') || 'bkcm';
+        let irfanData = JSON.parse(localStorage.getItem('irfanData') || '{}');
+        let irfanConfig = Object.assign(
+            { businessName: 'Irfan Foto Copy', ownerName: 'Irfan', firstMonth: null, firstSaldoAwal: 0 },
+            JSON.parse(localStorage.getItem('irfanConfig') || '{}')
+        );
+
+        function saveIrfanData() { localStorage.setItem('irfanData', JSON.stringify(irfanData)); }
+        function saveIrfanConfig() { localStorage.setItem('irfanConfig', JSON.stringify(irfanConfig)); }
+
+        // util bulan
+        function ifcMonthNum(key) { const [y, m] = key.split('-').map(Number); return y * 12 + (m - 1); }
+        function ifcPrevKey(key) { let [y, m] = key.split('-').map(Number); m--; if (m < 1) { m = 12; y--; } return y + '-' + m; }
+        function ifcDaysInMonth(y, m) { return new Date(y, m, 0).getDate(); } // m = 1-12
+
+        // Saldo Awal bulan = saldo akhir bulan sebelumnya (berantai ke bulan pertama)
+        function getIfcSaldoAwal(key) {
+            const first = irfanConfig.firstMonth;
+            if (!first) return 0;
+            if (ifcMonthNum(key) <= ifcMonthNum(first)) {
+                return (key === first) ? (irfanConfig.firstSaldoAwal || 0) : 0;
+            }
+            return getIfcClosing(ifcPrevKey(key));
+        }
+        function getIfcClosing(key) {
+            let s = getIfcSaldoAwal(key);
+            const md = irfanData[key];
+            if (md && md.entries) {
+                Object.keys(md.entries).forEach(d => { const e = md.entries[d]; s += (e.pemasukan || 0) - (e.pengeluaran || 0); });
+            }
+            return s;
+        }
+        // saldo sampai hari tertentu (inklusif), bisa override entri hari itu (untuk preview)
+        function getIfcSaldoUpto(key, day, overridePem, overridePeng) {
+            let s = getIfcSaldoAwal(key);
+            const md = irfanData[key];
+            for (let d = 1; d <= day; d++) {
+                if (d === day && overridePem !== undefined) {
+                    s += (overridePem || 0) - (overridePeng || 0);
+                } else if (md && md.entries && md.entries[d]) {
+                    s += (md.entries[d].pemasukan || 0) - (md.entries[d].pengeluaran || 0);
+                }
+            }
+            return s;
+        }
+
+        function ifcCurrentKey() {
+            return document.getElementById('ifcYearSelect').value + '-' + (+document.getElementById('ifcMonthSelect').value);
+        }
+
+        function ifcPopulateSelectors() {
+            const mSel = document.getElementById('ifcMonthSelect'), ySel = document.getElementById('ifcYearSelect');
+            if (mSel.options.length === 0) {
+                for (let m = 1; m <= 12; m++) { const o = document.createElement('option'); o.value = m; o.textContent = months[m - 1]; mSel.appendChild(o); }
+                for (let y = 2023; y <= 2032; y++) { const o = document.createElement('option'); o.value = y; o.textContent = y; ySel.appendChild(o); }
+                mSel.value = todayMonth; ySel.value = todayYear;
+            }
+            ifcPopulateDays();
+        }
+        function ifcPopulateDays() {
+            const dSel = document.getElementById('ifcDaySelect');
+            const y = +document.getElementById('ifcYearSelect').value, m = +document.getElementById('ifcMonthSelect').value;
+            const dim = ifcDaysInMonth(y, m); const cur = dSel.value;
+            dSel.innerHTML = '';
+            for (let d = 1; d <= dim; d++) { const o = document.createElement('option'); o.value = d; o.textContent = d; dSel.appendChild(o); }
+            if (cur && +cur <= dim) dSel.value = cur;
+            else dSel.value = (y === todayYear && m === todayMonth) ? Math.min(todayDay, dim) : 1;
+        }
+
+        function ifcOnMonthChange() { ifcPopulateDays(); ifcRefreshForm(); }
+        function ifcOnDateChange() { ifcRefreshForm(); }
+
+        function ifcIsFirstMonthContext(key) {
+            if (!irfanConfig.firstMonth) return true;       // belum ada -> bulan ini bisa jadi yang pertama
+            return key === irfanConfig.firstMonth;
+        }
+
+        function ifcRefreshForm() {
+            const key = ifcCurrentKey();
+            const day = +document.getElementById('ifcDaySelect').value;
+            const saSec = document.getElementById('ifcSaldoAwalSection');
+            if (ifcIsFirstMonthContext(key)) {
+                saSec.style.display = '';
+                document.getElementById('ifcSaldoAwalInput').value = (key === irfanConfig.firstMonth) ? formatNum(irfanConfig.firstSaldoAwal) : '';
+            } else {
+                saSec.style.display = 'none';
+            }
+            document.getElementById('ifcSaldoAwalDisplay').textContent = 'Rp' + formatNum(getIfcSaldoAwal(key));
+            const md = irfanData[key];
+            const e = (md && md.entries && md.entries[day]) ? md.entries[day] : null;
+            document.getElementById('ifcPemasukan').value = e ? formatNum(e.pemasukan) : '';
+            document.getElementById('ifcPengeluaran').value = e ? formatNum(e.pengeluaran) : '';
+            document.getElementById('ifcKeterangan').value = e ? (e.keterangan || '') : '';
+            document.getElementById('ifcResetBtn').style.display = e ? '' : 'none';
+            document.getElementById('ifcFormTitleText').textContent = e ? ('Edit — Tanggal ' + day) : 'Input Harian — IFC';
+            ifcUpdatePreview();
+        }
+
+        function ifcUpdatePreview() {
+            const key = ifcCurrentKey();
+            const day = +document.getElementById('ifcDaySelect').value;
+            const pem = parseNum(document.getElementById('ifcPemasukan').value);
+            const peng = parseNum(document.getElementById('ifcPengeluaran').value);
+            document.getElementById('ifcSaldoPreview').textContent = 'Rp' + formatNum(getIfcSaldoUpto(key, day, pem, peng));
+        }
+
+        function saveIfcSaldoAwal() {
+            const key = ifcCurrentKey();
+            const val = parseNum(document.getElementById('ifcSaldoAwalInput').value);
+            irfanConfig.firstMonth = key;
+            irfanConfig.firstSaldoAwal = val;
+            saveIrfanConfig();
+            showSuccessMessage('Saldo awal disimpan: Rp' + formatNum(val));
+            ifcRefreshForm();
+        }
+
+        function ifcSetoran() {
+            const val = prompt('Jumlah Setoran ke owner (Rp):', '');
+            if (val === null) return;
+            const n = parseNum(val);
+            if (n <= 0) { showSuccessMessage('Setoran dibatalkan / nilai kosong.'); return; }
+            document.getElementById('ifcPengeluaran').value = formatNum(n);
+            document.getElementById('ifcKeterangan').value = 'SETORAN';
+            ifcUpdatePreview();
+            showSuccessMessage('Setoran Rp' + formatNum(n) + ' diisi ke Pengeluaran. Tekan Simpan untuk mencatat.');
+        }
+
+        function saveIfcEntry() {
+            const key = ifcCurrentKey();
+            const day = +document.getElementById('ifcDaySelect').value;
+            const pem = parseNum(document.getElementById('ifcPemasukan').value);
+            const peng = parseNum(document.getElementById('ifcPengeluaran').value);
+            const ket = document.getElementById('ifcKeterangan').value.trim();
+            if (!irfanConfig.firstMonth) {
+                irfanConfig.firstMonth = key;
+                irfanConfig.firstSaldoAwal = parseNum(document.getElementById('ifcSaldoAwalInput').value);
+                saveIrfanConfig();
+            }
+            if (!irfanData[key]) irfanData[key] = { entries: {} };
+            if (!irfanData[key].entries) irfanData[key].entries = {};
+            if (pem === 0 && peng === 0 && !ket) {
+                delete irfanData[key].entries[day];
+            } else {
+                irfanData[key].entries[day] = { pemasukan: pem, pengeluaran: peng, keterangan: ket };
+            }
+            saveIrfanData();
+            const mName = months[(+document.getElementById('ifcMonthSelect').value) - 1];
+            showSuccessMessage('Tersimpan: ' + day + ' ' + mName + ' ' + document.getElementById('ifcYearSelect').value);
+            ifcRefreshForm();
+        }
+
+        function ifcResetForm() {
+            document.getElementById('ifcPemasukan').value = '';
+            document.getElementById('ifcPengeluaran').value = '';
+            document.getElementById('ifcKeterangan').value = '';
+            ifcUpdatePreview();
+        }
+
+        function ifcAttachFormatters() {
+            ['ifcPemasukan', 'ifcPengeluaran', 'ifcSaldoAwalInput'].forEach(id => {
+                const el = document.getElementById(id); if (!el) return;
+                el.addEventListener('input', () => {
+                    const d = el.value.replace(/[^0-9]/g, '');
+                    el.value = d ? parseInt(d, 10).toLocaleString('id-ID') : '';
+                    ifcUpdatePreview();
+                });
+            });
+            const ket = document.getElementById('ifcKeterangan');
+            if (ket) ket.addEventListener('input', ifcUpdatePreview);
+        }
+
+        // ----- Switcher bisnis -----
+        function applyBusinessView() {
+            document.querySelectorAll('.sidebar-item[data-biz]').forEach(b => {
+                if (b.id === 'installAppBtn') return; // dikontrol logika install sendiri
+                const biz = b.getAttribute('data-biz');
+                b.style.display = (biz === 'both' || biz === activeBusiness) ? '' : 'none';
+            });
+            const bk = document.getElementById('bizBtnBkcm'), ic = document.getElementById('bizBtnIfc');
+            if (bk && ic) { bk.classList.toggle('active', activeBusiness === 'bkcm'); ic.classList.toggle('active', activeBusiness === 'ifc'); }
+            const h1 = document.querySelector('.sticky-header h1');
+            if (h1) h1.textContent = (activeBusiness === 'ifc') ? 'Laporan Kas IFC' : 'Financial Daily Report BKCM';
+        }
+
+        function switchBusiness(biz) {
+            activeBusiness = biz;
+            localStorage.setItem('activeBusiness', biz);
+            applyBusinessView();
+            if (biz === 'ifc') {
+                ifcPopulateSelectors();
+                showView('ifc-input', document.querySelector('.sidebar-item[data-view="ifc-input"]'));
+                ifcRefreshForm();
+            } else {
+                showView('input', document.querySelector('.sidebar-item[data-view="input"]'));
+            }
+        }
+
+        function initIfc() {
+            ifcPopulateSelectors();
+            ifcAttachFormatters();
+            ifcRefreshForm();
+        }
+
         function showView(viewName, btnEl) {
             // Sembunyikan semua panel, tampilkan yang dipilih
             document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
@@ -5131,6 +5450,9 @@
             // Re-render chart kalau masuk dashboard (chart perlu container terlihat)
             if (viewName === 'dashboard') {
                 setTimeout(() => { updateChart(); }, 100);
+            }
+            if (viewName === 'ifc-input' && typeof ifcRefreshForm === 'function') {
+                ifcRefreshForm();
             }
         }
 
