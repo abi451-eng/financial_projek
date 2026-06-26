@@ -2281,6 +2281,55 @@
         body.dark #ifcLapTable td { border-bottom-color: var(--stroke); }
         body.dark #ifcLapTable tbody tr:hover { background: rgba(255,255,255,.04); }
 
+        /* ============================================================
+           ===== TAHAP 7: PENYEMPURNAAN VISUAL (paritas mockup, gelap) =====
+           ============================================================ */
+        /* Tepi-gradient menyala (cyan->violet->pink) di kartu utama */
+        body.dark .kpi-card,
+        body.dark .insight-card,
+        body.dark .setting-row,
+        body.dark .ifc-sum-card,
+        body.dark .transfer-box,
+        body.dark .mc-item { position: relative; }
+
+        body.dark .kpi-card::after,
+        body.dark .insight-card::after,
+        body.dark .setting-row::after,
+        body.dark .ifc-sum-card::after,
+        body.dark .transfer-box::after,
+        body.dark .mc-item::after {
+            content: ''; position: absolute; inset: 0; border-radius: inherit;
+            padding: 1px; pointer-events: none;
+            background: linear-gradient(135deg, rgba(34,211,238,.55), rgba(167,139,250,.12) 45%, rgba(244,114,182,.5));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+            opacity: .42; transition: opacity .25s;
+        }
+        body.dark .kpi-card:hover::after,
+        body.dark .insight-card:hover::after,
+        body.dark .setting-row:hover::after,
+        body.dark .ifc-sum-card:hover::after,
+        body.dark .transfer-box:hover::after,
+        body.dark .mc-item:hover::after { opacity: .78; }
+
+        /* Kedalaman & inner-highlight ala kaca mockup */
+        body.dark .kpi-card,
+        body.dark .insight-card,
+        body.dark .ifc-sum-card,
+        body.dark .month-compare,
+        body.dark .dashboard-section,
+        body.dark .form-section {
+            box-shadow: 0 12px 36px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.06);
+        }
+
+        /* Angka KPI: putih tegas + sedikit glow */
+        body.dark .kpi-value { text-shadow: 0 0 18px rgba(34,211,238,.18); }
+
+        /* Glow blob sedikit lebih hidup (mendekati mockup) */
+        body.dark .fx-blob.b1 { opacity: .30; }
+        body.dark .fx-blob.b2 { opacity: .30; }
+        body.dark .fx-blob.b3 { opacity: .20; }
+
     </style>
 </head>
 <body>
@@ -3373,7 +3422,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v5.5.0';
+        const APP_VERSION = 'v6.0.0';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
