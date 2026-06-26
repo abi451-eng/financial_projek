@@ -2330,6 +2330,118 @@
         body.dark .fx-blob.b2 { opacity: .30; }
         body.dark .fx-blob.b3 { opacity: .20; }
 
+        /* ============================================================
+           ===== TAHAP 8: SHELL DASBOR (topbar kaya + sidebar) =====
+           ============================================================ */
+        .sticky-header { gap: 14px; padding: 0 20px; }
+        .brand-mini { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .brand-logo {
+            width: 38px; height: 38px; border-radius: 11px;
+            background: linear-gradient(135deg, #22D3EE, #A78BFA);
+            color: #08111f; font-family: var(--font-display); font-weight: 800; font-size: 15px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 16px rgba(34,211,238,.45);
+        }
+        .brand-name { font-family: var(--font-display); font-weight: 800; font-size: 18px; letter-spacing: .3px; color: #fff; }
+        .header-search-btn {
+            flex: 0 1 430px; height: 40px; justify-content: flex-start; gap: 10px;
+            padding: 0 16px; border-radius: 999px;
+            background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.18); color: #fff;
+        }
+        .hsb-text { font-size: 13px; opacity: .72; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .topbar-spacer { flex: 1; }
+        .topbar-live {
+            display: inline-flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 600;
+            color: #c9f6e4; padding: 7px 12px; border-radius: 999px;
+            background: rgba(52,211,153,.14); border: 1px solid rgba(52,211,153,.30); flex-shrink: 0;
+        }
+        .topbar-live i { width: 7px; height: 7px; border-radius: 50%; background: #34D399; box-shadow: 0 0 8px #34D399; }
+        .topbar-bell {
+            position: relative; width: 40px; height: 40px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.08); color: #fff; cursor: pointer; flex-shrink: 0;
+        }
+        .topbar-bell svg { width: 19px; height: 19px; }
+        .bell-dot { position: absolute; top: 9px; right: 10px; width: 7px; height: 7px; border-radius: 50%; background: #F472B6; box-shadow: 0 0 8px #F472B6; }
+        .topbar-profile { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+        .topbar-av {
+            width: 38px; height: 38px; border-radius: 11px;
+            background: linear-gradient(135deg, #A78BFA, #F472B6);
+            color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 13px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .topbar-pm { display: flex; flex-direction: column; line-height: 1.2; color: #fff; }
+        .topbar-pm b { font-size: 13px; font-weight: 700; }
+        .topbar-pm span { font-size: 11px; opacity: .72; }
+
+        /* Sidebar: switcher di atas + label MENU (paritas mockup) */
+        .sidebar { display: flex; flex-direction: column; }
+        .biz-switcher { order: -2; }
+        .sidebar-header { order: -1; }
+        .sidebar-title { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; opacity: .6; font-weight: 700; }
+
+        /* Responsif: rapikan topbar di layar kecil */
+        @media (max-width: 1023px) {
+            .brand-name, .hsb-text, .topbar-live, .topbar-pm { display: none; }
+            .header-search-btn { flex: 0 0 40px; width: 40px; padding: 0; justify-content: center; }
+        }
+
+        /* ============================================================
+           ===== TAHAP 8b: INPUT DATA — 2 kolom + Ringkasan =====
+           ============================================================ */
+        .bk-input-2col { display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; align-items: start; }
+        @media (max-width: 1100px) { .bk-input-2col { grid-template-columns: 1fr; } }
+        .bk-col-main { min-width: 0; }
+        .bk-col-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
+        .group-label { font-size: 11.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #0F766E; margin: 14px 0 10px; }
+        .group-label:first-of-type { margin-top: 4px; }
+        body.dark .group-label { color: #9eeefb; }
+
+        .bk-ringkasan-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-family: var(--font-display); font-weight: 700; font-size: 16px; }
+        .bk-auto-badge { font-size: 10.5px; font-weight: 600; letter-spacing: .3px; padding: 4px 10px; border-radius: 999px; background: rgba(15,118,110,.12); color: #0c8aa0; border: 1px solid rgba(15,118,110,.25); }
+        body.dark .bk-auto-badge { background: rgba(34,211,238,.14); color: #b6f3ff; border-color: rgba(34,211,238,.3); }
+        .bk-saldo-auto { padding: 6px 0 14px; border-bottom: 1px solid #e6eaed; margin-bottom: 12px; }
+        body.dark .bk-saldo-auto { border-bottom-color: var(--stroke); }
+        .bk-sa-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; opacity: .7; margin-bottom: 6px; }
+        .bk-sa-value { font-family: var(--font-display); font-weight: 800; font-size: 27px; letter-spacing: -.5px; color: #0F766E; }
+        body.dark .bk-sa-value { color: #fff; text-shadow: 0 0 18px rgba(34,211,238,.25); }
+        .bk-sum-line { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; font-size: 13.5px; }
+        .bk-sum-line strong { font-weight: 700; }
+        .bk-sum-line strong.down { color: #d9534f; }
+        body.dark .bk-sum-line strong.down { color: #FDA4AF; }
+
+        /* ============================================================
+           ===== TAHAP 8c: DASHBOARD — kartu KPI ala mockup =====
+           ============================================================ */
+        .kpi-grid .kpi-card { position: relative; padding: 18px 18px 16px; }
+        .kpi-grid .kpi-label { padding-right: 48px; }
+        .kpi-grid .kpi-ic {
+            position: absolute; top: 16px; right: 16px;
+            width: 38px; height: 38px; padding: 9px; box-sizing: border-box; border-radius: 11px;
+        }
+        .kpi-grid .kpi-card:nth-child(1) .kpi-ic { background: rgba(34,211,238,.14);  color: #1296ad; }
+        .kpi-grid .kpi-card:nth-child(2) .kpi-ic { background: rgba(244,114,182,.14); color: #d6478f; }
+        .kpi-grid .kpi-card:nth-child(3) .kpi-ic { background: rgba(167,139,250,.16); color: #7c5fce; }
+        .kpi-grid .kpi-card:nth-child(4) .kpi-ic { background: rgba(251,191,36,.18);  color: #c9921a; }
+        body.dark .kpi-grid .kpi-card:nth-child(1) .kpi-ic { color: #22D3EE; }
+        body.dark .kpi-grid .kpi-card:nth-child(2) .kpi-ic { color: #F472B6; }
+        body.dark .kpi-grid .kpi-card:nth-child(3) .kpi-ic { color: #A78BFA; }
+        body.dark .kpi-grid .kpi-card:nth-child(4) .kpi-ic { color: #FBBF24; }
+        .kpi-grid .kpi-value { font-family: var(--font-display); font-size: 26px; margin-top: 2px; }
+        .kpi-grid .kpi-trend {
+            display: inline-block; margin-top: 9px; font-size: 12px; font-weight: 600;
+            padding: 4px 11px; border-radius: 999px; background: rgba(15,118,110,.10); color: var(--ink-2);
+        }
+        body.dark .kpi-grid .kpi-trend { background: rgba(255,255,255,.06); color: var(--ink-2); }
+
+        /* ============================================================
+           ===== TAHAP 8d: LAPORAN PAJAK — 2 kolom (PPN | Royalti+Transfer) =====
+           ============================================================ */
+        .bk-pajak-2col { display: grid; grid-template-columns: 1.5fr 1fr; gap: 18px; align-items: start; }
+        @media (max-width: 1000px) { .bk-pajak-2col { grid-template-columns: 1fr; } }
+        .bk-pajak-2col > .data-section { margin: 0; min-width: 0; }
+
     </style>
 </head>
 <body>
@@ -2344,8 +2456,12 @@
     <!-- Sticky Header -->
     <div class="sticky-header">
         <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Menu"><svg class="hdr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-        <h1>Financial Daily Report BKCM</h1>
-        <button class="header-search-btn" id="headerSearchBtn" onclick="openSearch()" aria-label="Cari" title="Cari data"><svg class="hdr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        <div class="brand-mini"><div class="brand-logo" id="brandLogo">BK</div><span class="brand-name" id="brandName">BKCM</span></div>
+        <button class="header-search-btn" id="headerSearchBtn" onclick="openSearch()" aria-label="Cari" title="Cari data"><svg class="hdr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span class="hsb-text">Cari tanggal, nominal, atau keterangan…</span></button>
+        <span class="topbar-spacer"></span>
+        <span class="topbar-live"><i></i>Tersinkron</span>
+        <button class="topbar-bell" type="button" aria-label="Notifikasi"><span class="bell-dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
+        <div class="topbar-profile"><div class="topbar-av" id="profileAv">BK</div><div class="topbar-pm"><b id="profileName">Abiyou</b><span>Pemilik</span></div></div>
     </div>
 
     <!-- ===== SEARCH OVERLAY ===== -->
@@ -2400,6 +2516,8 @@
         <!-- ===== VIEW: INPUT ===== -->
         <div class="view-panel active" id="view-input">
 
+        <div class="bk-input-2col">
+        <div class="bk-col-main">
         <!-- Month Selector (hanya tampil di menu Input) -->
         <div class="month-selector">
             <label style="white-space:nowrap;" data-i18n="date_label">Tanggal Laporan:</label>
@@ -2465,6 +2583,7 @@
         <div class="form-section">
             <h2 id="formTitle" class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span id="formTitleText">Input Data Harian</span></h2>
 
+            <div class="group-label">Penjualan &amp; Pembayaran</div>
             <div class="form-grid">
                 <div class="form-group">
                     <label data-i18n="lbl_total_sales">Total Penjualan *</label>
@@ -2506,6 +2625,9 @@
                     <input type="text" inputmode="numeric" id="pesanan" class="money-input" placeholder="0" autocomplete="off">
                 </div>
 
+            </div>
+            <div class="group-label">Pengeluaran</div>
+            <div class="form-grid">
                 <div class="form-group">
                     <label class="lbl-with-copy"><span data-i18n="lbl_belanja_pagi">Belanja Pagi</span><button class="copy-field-btn" type="button" onclick="copyFieldLast('belanjaPagi')" title="Salin nilai terakhir"><svg class="copy-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></label>
                     <input type="text" inputmode="numeric" id="belanjaPagi" class="money-input" placeholder="0" autocomplete="off">
@@ -2532,24 +2654,25 @@
                 <textarea id="keterangan" placeholder="Catatan tambahan..." data-i18n-ph="ph_keterangan" rows="3"></textarea>
             </div>
 
-            <div class="stats-row">
-                <div class="stat-card">
-                    <div class="stat-label"><svg class="kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 4 4 4-4"/><path d="M12 8v8"/></svg><span data-i18n="stat_total_expense">Total Pengeluaran (Auto)</span></div>
-                    <div class="stat-value" id="totalPengeluaranDisplay">Rp 0</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-label"><svg class="kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg><span data-i18n="stat_saldo">Saldo (Auto)</span></div>
-                    <div class="stat-value" id="saldoDisplay">Rp 0</div>
-                </div>
-            </div>
-
             <div class="button-group">
                 <button class="btn btn-primary" onclick="showPreview()"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg><span class="btn-label" data-i18n="btn_preview">Preview Data</span></button>
                 <button class="btn btn-libur" onclick="toggleLibur()" id="liburBtn"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m14 14-4 4"/><path d="m10 14 4 4"/></svg><span class="btn-label" data-i18n="btn_libur">Tandai Hari Libur</span></button>
                 <button class="btn btn-secondary" onclick="resetForm()" id="resetBtn" style="display:none;"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg><span class="btn-label" data-i18n="btn_reset">Reset</span></button>
             </div>
         </div>
+        </div><!-- /bk-col-main -->
+
+        <aside class="bk-col-side">
+            <div class="form-section bk-ringkasan">
+                <div class="bk-ringkasan-head"><span>Ringkasan</span><span class="bk-auto-badge">Otomatis</span></div>
+                <div class="bk-saldo-auto">
+                    <div class="bk-sa-label" data-i18n="stat_saldo">Saldo (Auto)</div>
+                    <div class="bk-sa-value" id="saldoDisplay">Rp 0</div>
+                </div>
+                <div class="bk-sum-line"><span data-i18n="stat_total_expense">Total Pengeluaran (Auto)</span><strong class="down" id="totalPengeluaranDisplay">Rp 0</strong></div>
+            </div>
+        </aside>
+        </div><!-- /bk-input-2col -->
 
         <!-- Preview Section -->
         <div class="preview-section" id="previewSection">
@@ -2749,6 +2872,7 @@
 
         <!-- ===== VIEW: LAPORAN PAJAK (PPN + Royalti) ===== -->
         <div class="view-panel" id="view-pajak">
+        <div class="bk-pajak-2col">
         <!-- PPN Table Section -->
         <div id="ppnSection" style="display:none;" class="data-section">
             <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6"/><path d="M16 12h-6"/><path d="M13 16h-3"/></svg><span data-i18n="ppn_title">LAPORAN PPN HARIAN</span></h2>
@@ -2816,6 +2940,7 @@
                 </div>
             </div>
         </div>
+        </div><!-- /bk-pajak-2col -->
 
         <!-- Empty state untuk Pajak view -->
         <div id="emptyPajak" class="view-empty" style="display:none;">
@@ -3422,7 +3547,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v6.0.0';
+        const APP_VERSION = 'v6.0.1';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -6042,6 +6167,10 @@
             if (bk && ic) { bk.classList.toggle('active', activeBusiness === 'bkcm'); ic.classList.toggle('active', activeBusiness === 'ifc'); }
             const h1 = document.querySelector('.sticky-header h1');
             if (h1) h1.textContent = (activeBusiness === 'ifc') ? 'Laporan Kas IFC' : 'Financial Daily Report BKCM';
+            const _bn = document.getElementById('brandName'); if (_bn) _bn.textContent = (activeBusiness === 'ifc') ? 'IFC' : 'BKCM';
+            const _bl = document.getElementById('brandLogo'); if (_bl) _bl.textContent = (activeBusiness === 'ifc') ? 'IF' : 'BK';
+            const _av = document.getElementById('profileAv'); if (_av) _av.textContent = (activeBusiness === 'ifc') ? 'IF' : 'BK';
+            const _rl = document.querySelector('.topbar-pm span'); if (_rl) _rl.textContent = (activeBusiness === 'ifc') ? 'Pengelola' : 'Pemilik';
         }
 
         function switchBusiness(biz) {
