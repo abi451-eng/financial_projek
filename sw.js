@@ -1,7 +1,7 @@
 /* Service Worker — Financial Daily Report V4.5
    Membuat aplikasi bisa dibuka offline (app shell + library CDN). */
 
-const CACHE_NAME = 'finreport-v6-0-1';
+const CACHE_NAME = 'finreport-v6-0-2';
 
 // File inti aplikasi (same-origin) — wajib ter-cache
 const APP_SHELL = [
