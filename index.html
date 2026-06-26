@@ -2442,6 +2442,21 @@
         @media (max-width: 1000px) { .bk-pajak-2col { grid-template-columns: 1fr; } }
         .bk-pajak-2col > .data-section { margin: 0; min-width: 0; }
 
+        /* ============================================================
+           ===== TAHAP 8e: EXPORT — kartu ikon-kotak ala mockup =====
+           ============================================================ */
+        .export-btn { text-align: left; display: flex; flex-direction: column; align-items: flex-start; gap: 5px; padding: 18px; }
+        .export-btn .lic { width: 44px; height: 44px; padding: 11px; border-radius: 12px; margin: 0 0 8px 0; box-sizing: border-box; }
+        .export-options .export-btn:nth-child(1) .lic { background: rgba(34,211,238,.14);  color: #1296ad; }
+        .export-options .export-btn:nth-child(2) .lic { background: rgba(167,139,250,.16); color: #7c5fce; }
+        .export-options .export-btn:nth-child(3) .lic { background: rgba(251,191,36,.18);  color: #c9921a; }
+        body.dark .export-options .export-btn:nth-child(1) .lic { color: #22D3EE; }
+        body.dark .export-options .export-btn:nth-child(2) .lic { color: #A78BFA; }
+        body.dark .export-options .export-btn:nth-child(3) .lic { color: #FBBF24; }
+        .export-btn > span { font-family: var(--font-display); font-weight: 700; font-size: 14.5px; }
+        .export-desc { margin-top: 2px; }
+        body.dark .save-config-btn { background: linear-gradient(135deg, #22D3EE, #A78BFA); color: #08111f; box-shadow: 0 6px 18px rgba(34,211,238,.28); }
+
     </style>
 </head>
 <body>
@@ -3547,7 +3562,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v6.0.1';
+        const APP_VERSION = 'v6.0.2';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
