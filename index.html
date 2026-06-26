@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     <meta name="description" content="Pencatatan keuangan harian warung — PPN, royalti, dan laporan.">
     <link rel="icon" type="image/png" href="./favicon.png">
     <link rel="apple-touch-icon" href="./apple-touch-icon.png">
@@ -49,6 +50,17 @@
             --radius-sm: 10px;
             --shadow-sm: 0 1px 2px rgba(16,24,32,0.05);
             --shadow-md: 0 4px 16px rgba(16,24,32,0.08);
+
+            /* ===== Tahap 1: token redesign gelap-glass (mode terang = nilai lembut) ===== */
+            --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --cyan: #0E7490; --violet: #7C3AED; --pink: #DB2777; --amber: #D97706;
+            --glass: var(--surface);
+            --glass-2: var(--surface-2);
+            --stroke: var(--line);
+            --stroke-2: #D4DADE;
+            --glow: transparent;
+            --r-glass: 18px;
         }
         body.dark {
             --bg: #0E1316;
@@ -63,7 +75,31 @@
             --accent-soft: #16302C;
             --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
             --shadow-md: 0 6px 20px rgba(0,0,0,0.4);
+
+            /* Tahap 1: token gelap-glass (neon) */
+            --cyan: #22D3EE; --violet: #A78BFA; --pink: #F472B6; --amber: #FBBF24;
+            --glass: rgba(255,255,255,.05);
+            --glass-2: rgba(255,255,255,.07);
+            --stroke: rgba(255,255,255,.10);
+            --stroke-2: rgba(255,255,255,.16);
+            --glow: rgba(34,211,238,.45);
         }
+
+        /* ===== Tahap 1: lapisan latar gelap-glass (HANYA mode gelap) ===== */
+        .fx-bg { display: none; }
+        body.dark .fx-bg {
+            display: block; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background: linear-gradient(180deg, #090C1A 0%, #0B0F26 55%, #0C1130 100%);
+        }
+        .fx-blob { position: absolute; border-radius: 50%; filter: blur(70px); }
+        .fx-blob.b1 { width: 520px; height: 520px; background: #22D3EE; opacity: .26; top: -170px; left: -120px; animation: fxDrift1 26s ease-in-out infinite; }
+        .fx-blob.b2 { width: 560px; height: 560px; background: #A78BFA; opacity: .26; top: -200px; right: -150px; animation: fxDrift2 30s ease-in-out infinite; }
+        .fx-blob.b3 { width: 480px; height: 480px; background: #F472B6; opacity: .16; bottom: -240px; right: 12%; animation: fxDrift3 34s ease-in-out infinite; }
+        .fx-mesh { position: absolute; inset: 0; opacity: .55; }
+        @keyframes fxDrift1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(70px,50px) scale(1.08); } }
+        @keyframes fxDrift2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-60px,40px) scale(1.1); } }
+        @keyframes fxDrift3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-40px,-50px) scale(1.06); } }
+        @media (prefers-reduced-motion: reduce) { .fx-blob { animation: none !important; } }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -1901,9 +1937,361 @@
             .annual-card-value { font-size: 16px; }
         }
 
+        /* ============================================================
+           REDESIGN GELAP-GLASS — override mode gelap saja (terang tetap).
+           ===== TAHAP 2: SHELL (Topbar + Sidebar + Switcher) =====
+           ============================================================ */
+        /* Topbar */
+        body.dark .sticky-header {
+            background: rgba(11,15,38,.55);
+            -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--stroke);
+            box-shadow: 0 4px 24px rgba(0,0,0,.30);
+            color: var(--ink);
+        }
+        body.dark .sticky-header h1 { color: #fff; font-family: var(--font-display); letter-spacing: .2px; }
+        body.dark .hamburger-btn,
+        body.dark .header-search-btn {
+            background: var(--glass-2);
+            border: 1px solid var(--stroke);
+            color: var(--ink-2);
+        }
+        body.dark .hamburger-btn:hover,
+        body.dark .header-search-btn:hover { background: rgba(255,255,255,.12); color: #fff; }
+
+        /* Sidebar */
+        body.dark .sidebar {
+            background: rgba(11,15,38,.62);
+            -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+            border-right: 1px solid var(--stroke);
+            box-shadow: 8px 0 32px rgba(0,0,0,.42);
+        }
+        body.dark .sidebar-header { background: transparent; border-bottom: 1px solid var(--stroke); }
+        body.dark .sidebar-title { color: var(--ink-3); }
+        body.dark .sidebar-close { background: var(--glass-2); color: var(--ink-2); }
+        body.dark .sidebar-close:hover { background: rgba(255,255,255,.12); color: #fff; }
+
+        /* Switcher BKCM / IFC */
+        body.dark .biz-switcher { background: transparent; border-bottom: 1px solid var(--stroke); }
+        body.dark .biz-btn {
+            background: rgba(255,255,255,.05);
+            border: 1px solid var(--stroke);
+            color: var(--ink-2);
+        }
+        body.dark .biz-btn.active {
+            background: linear-gradient(135deg, rgba(34,211,238,.26), rgba(167,139,250,.26));
+            color: #fff;
+            border-color: var(--stroke-2);
+            box-shadow: 0 0 14px rgba(34,211,238,.20);
+        }
+
+        /* Item sidebar + aktif (neon bar kiri) */
+        body.dark .sidebar-item { color: var(--ink-2); }
+        body.dark .sidebar-item:hover { background: rgba(255,255,255,.05); color: #fff; }
+        body.dark .sidebar-item.active {
+            background: linear-gradient(100deg, rgba(34,211,238,.18), rgba(167,139,250,.10));
+            color: #fff;
+            box-shadow: inset 0 0 0 1px var(--stroke), inset 0 0 18px rgba(34,211,238,.10);
+            position: relative;
+        }
+        body.dark .sidebar-item.active::before {
+            content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px;
+            border-radius: 3px; background: linear-gradient(var(--cyan), var(--violet));
+            box-shadow: 0 0 12px var(--cyan);
+        }
+        body.dark .sidebar-item.active svg { color: var(--cyan); filter: drop-shadow(0 0 5px rgba(34,211,238,.6)); }
+        body.dark .sidebar-footer { border-top-color: var(--stroke); }
+
+        /* ============================================================
+           ===== TAHAP 3: KOMPONEN BERSAMA (kartu, judul, input, tombol) =====
+           ============================================================ */
+        /* Kartu .form-section -> glass + tepi gradient menyala */
+        body.dark .form-section {
+            background: var(--glass);
+            border: 1px solid var(--stroke);
+            border-radius: var(--r-glass);
+            box-shadow: 0 12px 36px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.06);
+            -webkit-backdrop-filter: blur(17px) saturate(1.25);
+            backdrop-filter: blur(17px) saturate(1.25);
+            position: relative;
+        }
+        body.dark .form-section::after {
+            content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+            background: linear-gradient(135deg, rgba(34,211,238,.50), rgba(167,139,250,.12) 45%, rgba(244,114,182,.45));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude; opacity: .5;
+        }
+        /* Judul section */
+        body.dark .form-section h2 { color: #fff; font-family: var(--font-display); border-bottom-color: var(--stroke); }
+        body.dark .sec-ic { color: var(--cyan); }
+
+        /* Input & select -> glass */
+        body.dark .form-group input,
+        body.dark .form-group select,
+        body.dark .form-group textarea,
+        body.dark select,
+        body.dark .money-input,
+        body.dark .transfer-input,
+        body.dark .config-group input,
+        body.dark .config-group select {
+            background: var(--glass-2) !important;
+            color: var(--ink) !important;
+            border: 1px solid var(--stroke) !important;
+            border-radius: 11px !important;
+        }
+        body.dark .form-group input:focus,
+        body.dark .form-group select:focus,
+        body.dark .form-group textarea:focus,
+        body.dark .money-input:focus,
+        body.dark .transfer-input:focus,
+        body.dark .config-group input:focus {
+            border-color: rgba(34,211,238,.5) !important;
+            box-shadow: 0 0 0 3px rgba(34,211,238,.12) !important;
+            background: rgba(255,255,255,.09) !important;
+        }
+        body.dark .form-group label,
+        body.dark .config-group label,
+        body.dark .month-selector label { color: var(--ink-2); }
+
+        /* Tombol primary -> cyan->violet + glow (tombol lain tetap warna semantik) */
+        body.dark .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #08111f;
+            box-shadow: 0 6px 18px rgba(34,211,238,.28);
+        }
+        body.dark .btn-primary:hover { filter: brightness(1.05); transform: translateY(-1px); }
+        body.dark .btn { letter-spacing: .2px; }
+
+        /* Export buttons -> kartu aksi glass dengan hover terangkat */
+        body.dark .export-btn {
+            background: var(--glass) !important;
+            color: var(--ink) !important;
+            border: 1px solid var(--stroke) !important;
+            border-radius: 14px;
+            transition: transform .2s, box-shadow .2s, background .2s;
+        }
+        body.dark .export-btn:hover {
+            background: rgba(255,255,255,.08) !important;
+            color: #fff !important;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,0,0,.40);
+        }
+        body.dark .export-desc { color: var(--ink-2); }
+
+        /* ============================================================
+           ===== TAHAP 4: DASHBOARD =====
+           ============================================================ */
+        /* Kartu besar dashboard -> glass + tepi gradient */
+        body.dark .dashboard-section {
+            background: var(--glass);
+            border: 1px solid var(--stroke);
+            border-radius: var(--r-glass);
+            box-shadow: 0 12px 36px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.06);
+            -webkit-backdrop-filter: blur(17px) saturate(1.25);
+            backdrop-filter: blur(17px) saturate(1.25);
+            position: relative;
+        }
+        body.dark .dashboard-section::after {
+            content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+            background: linear-gradient(135deg, rgba(34,211,238,.50), rgba(167,139,250,.12) 45%, rgba(244,114,182,.45));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude; opacity: .5;
+        }
+        body.dark .dashboard-section h2 { color: #fff; font-family: var(--font-display); border-bottom-color: var(--stroke); }
+
+        /* KPI cards */
+        body.dark .kpi-card {
+            background: var(--glass-2) !important;
+            border: 1px solid var(--stroke);
+            border-top: 2px solid var(--cyan);
+            box-shadow: 0 6px 20px rgba(0,0,0,.28);
+            transition: transform .2s;
+        }
+        body.dark .kpi-card:hover { transform: translateY(-3px); }
+        body.dark .kpi-value { color: #fff; font-family: var(--font-display); }
+        body.dark .kpi-label { color: var(--ink-2); }
+        body.dark .kpi-trend { color: var(--ink-2); }
+
+        /* Area chart */
+        body.dark .chart-container { background: rgba(255,255,255,.03); border: 1px solid var(--stroke); border-radius: 14px; }
+        body.dark .chart-toggle { background: rgba(255,255,255,.05); border: 1px solid var(--stroke); }
+        body.dark .chart-toggle-btn { color: var(--ink-2); }
+        body.dark .chart-toggle-btn:hover { color: #fff; }
+        body.dark .chart-toggle-btn.active {
+            background: linear-gradient(135deg, rgba(34,211,238,.22), rgba(167,139,250,.20));
+            color: #fff; box-shadow: 0 0 12px rgba(34,211,238,.18);
+        }
+
+        /* Insight card */
+        body.dark .insight-card {
+            background: rgba(251,191,36,.06);
+            border: 1px solid rgba(251,191,36,.22);
+            border-left: 3px solid var(--amber);
+            border-radius: 14px;
+        }
+        body.dark .insight-title { color: var(--amber); font-family: var(--font-display); }
+        body.dark .insight-list li { color: var(--ink-2); }
+        body.dark .insight-list li span.ic-dot { color: var(--amber); }
+
+        /* Perbandingan bulan */
+        body.dark .month-compare {
+            background: rgba(255,255,255,.04);
+            border: 1px solid var(--stroke);
+            border-radius: 14px;
+        }
+        body.dark .mc-title { color: var(--ink-2); font-family: var(--font-display); }
+        body.dark .mc-label { color: var(--ink-2); }
+        body.dark .mc-change.up   { color: #6EE7B7; }
+        body.dark .mc-change.down { color: #FDA4AF; }
+        body.dark .mc-change.flat { color: var(--ink-3); }
+
+        /* Ringkasan tahunan */
+        body.dark .annual-summary { border-top: 1px solid var(--stroke); }
+        body.dark .annual-title { color: #fff; font-family: var(--font-display); }
+        body.dark .annual-card {
+            background: rgba(255,255,255,.04);
+            border: 1px solid var(--stroke);
+            border-left-width: 3px;
+            border-radius: 13px;
+        }
+        body.dark .annual-card.ac-revenue { border-left-color: #38BDF8; }
+        body.dark .annual-card.ac-expense { border-left-color: var(--pink); }
+        body.dark .annual-card.ac-profit  { border-left-color: #34D399; }
+        body.dark .annual-card.ac-avg     { border-left-color: var(--amber); }
+        body.dark .annual-card.ac-best    { border-left-color: #34D399; }
+        body.dark .annual-card.ac-worst   { border-left-color: #94A3B8; }
+        body.dark .annual-card-label { color: var(--ink-2); }
+        body.dark .annual-card-value { color: #fff; font-family: var(--font-display); }
+        body.dark .annual-table th { background: rgba(34,211,238,.12); color: #b6f3ff; }
+        body.dark .annual-table td { border-bottom-color: var(--stroke); color: var(--ink); }
+        body.dark .annual-table tbody tr:hover { background: rgba(255,255,255,.04); }
+        body.dark .annual-table .annual-row-empty td { color: var(--ink-3); }
+        body.dark .annual-table .annual-total-row td {
+            background: linear-gradient(100deg, rgba(34,211,238,.18), rgba(167,139,250,.14));
+            color: #fff; border-top: 1px solid var(--stroke-2);
+        }
+
+        /* ============================================================
+           ===== TAHAP 4b: INPUT DATA (kalender pop-up + tabel rekap) =====
+           ============================================================ */
+        /* Pemicu tanggal */
+        body.dark .date-trigger { background: var(--glass-2); border: 1px solid var(--stroke); color: var(--ink); }
+        body.dark .date-trigger:hover { border-color: rgba(34,211,238,.5); box-shadow: 0 0 0 3px rgba(34,211,238,.10); }
+        body.dark .date-caret { color: var(--ink-3); }
+
+        /* Kalender pop-up */
+        body.dark .calendar-popup {
+            background: rgba(13,17,36,.97);
+            border: 1px solid var(--stroke-2);
+            -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+            box-shadow: 0 20px 54px rgba(0,0,0,.62);
+        }
+        body.dark .cal-nav-btn { background: var(--glass-2); color: var(--ink); }
+        body.dark .cal-nav-btn:hover { background: rgba(167,139,250,.22); color: #fff; }
+        body.dark .cal-nav-label { color: #fff; font-family: var(--font-display); }
+        body.dark .cal-weekdays span { color: var(--ink-3); }
+        body.dark .cal-day { color: var(--ink); }
+        body.dark .cal-day:hover { background: rgba(255,255,255,.08); }
+        body.dark .cal-day.today { border-color: rgba(34,211,238,.6); color: var(--cyan); }
+        body.dark .cal-day.selected {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #fff; box-shadow: 0 0 14px rgba(34,211,238,.5);
+        }
+        body.dark .cal-day.selected:hover { background: linear-gradient(135deg, var(--cyan), var(--violet)); }
+        body.dark .cal-day.has-data::after { background: var(--cyan); }
+        body.dark .cal-day.selected.has-data::after { background: #fff; }
+        body.dark .cal-day.is-libur { color: #FF8A7A; }
+        body.dark .cal-day.is-libur::after { background: #FF8A7A; }
+        body.dark .cal-day.selected.is-libur { color: #fff; }
+        body.dark .cal-today-btn { background: var(--glass-2); color: #9eeefb; }
+        body.dark .cal-today-btn:hover { background: rgba(34,211,238,.15); }
+
+        /* Tabel rekap (.data-table) */
+        body.dark .data-table thead { background: rgba(34,211,238,.12); }
+        body.dark .data-table th { color: #b6f3ff; }
+        body.dark .data-table td { border-bottom-color: var(--stroke); color: var(--ink); }
+        body.dark .data-table tbody tr:hover { background: rgba(255,255,255,.04); }
+
+        /* ============================================================
+           ===== TAHAP 4c: LAPORAN PAJAK =====
+           ============================================================ */
+        /* Baris JUMLAH PPN (punya inline style dari JS -> perlu !important) */
+        body.dark .ppn-jumlah-row { background: transparent !important; }
+        body.dark .ppn-jumlah-row td {
+            background: linear-gradient(100deg, rgba(34,211,238,.20), rgba(167,139,250,.16)) !important;
+            color: #fff !important;
+        }
+        body.dark .ppn-jumlah-row td .rp { color: #cfeffd !important; }
+
+        /* Tabel Royalti & PPN */
+        body.dark .royalti-label { background: rgba(34,211,238,.10); color: #b6f3ff; }
+        body.dark .royalti-value { color: var(--ink); }
+        body.dark .royalti-total-row { border-top-color: var(--stroke-2); border-bottom-color: var(--stroke-2); }
+        body.dark .royalti-total-label,
+        body.dark .royalti-total-value {
+            background: linear-gradient(100deg, rgba(34,211,238,.18), rgba(167,139,250,.14));
+            color: #fff;
+        }
+
+        /* Kotak Transfer */
+        body.dark .transfer-box { background: var(--glass); border: 1px solid var(--stroke); border-radius: 14px; }
+        body.dark .transfer-box-header { background: rgba(34,211,238,.14); color: #b6f3ff; }
+        body.dark .transfer-input-row { background: transparent; }
+        body.dark .transfer-preview { background: rgba(255,255,255,.04); color: var(--ink-2); border-top-color: var(--stroke); }
+
+        /* Empty state */
+        body.dark .empty-state { color: var(--ink-3); }
+
+        /* ============================================================
+           ===== TAHAP 4d: EXPORT (BKCM) — config + drive status =====
+           ============================================================ */
+        body.dark .config-section { background: var(--glass); border: 1px solid var(--stroke); }
+        body.dark .config-header { background: rgba(34,211,238,.10); border-bottom: 1px solid var(--stroke); }
+        body.dark .config-header h2 { color: #fff; font-family: var(--font-display); }
+        body.dark .config-rates { background: rgba(255,255,255,.04); border: 1px solid var(--stroke); }
+        body.dark .config-rates p { color: var(--ink-2); }
+        body.dark .config-group label { color: var(--ink-2); }
+        body.dark .drive-status { background: rgba(255,255,255,.05); color: var(--ink-2); }
+        body.dark .drive-status.synced { background: rgba(52,211,153,.12); color: #7ef0c6; }
+        body.dark .drive-status.busy { background: rgba(251,191,36,.12); color: #f6dca0; }
+        body.dark .drive-status.error { background: rgba(255,138,122,.12); color: #ff9d8f; }
+
+        /* ============================================================
+           ===== TAHAP 4e: SETTING (BKCM) =====
+           ============================================================ */
+        body.dark .setting-row { background: var(--glass); border: 1px solid var(--stroke); border-radius: 13px; }
+        body.dark .setting-title { color: #fff; }
+        body.dark .setting-desc { color: var(--ink-2); }
+        body.dark .switch-slider { background: rgba(255,255,255,.14); }
+        body.dark .switch input:checked + .switch-slider {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            box-shadow: 0 0 14px rgba(34,211,238,.40);
+        }
+        body.dark .lang-select { background: var(--glass-2); color: var(--ink); border: 1px solid var(--stroke); }
+
+        /* ============================================================
+           ===== TAHAP 4f-h: IFC (Input / Laporan / Export) =====
+           ============================================================ */
+        body.dark .ifc-info-line { background: rgba(255,255,255,.04); border: 1px solid var(--stroke); color: var(--ink-2); }
+        body.dark .ifc-summary { gap: 12px; }
+        body.dark .ifc-sum-card { background: rgba(255,255,255,.04); border: 1px solid var(--stroke); border-radius: 13px; }
+        body.dark .ifc-sum-card span { color: var(--ink-2); }
+        body.dark .ifc-sum-card strong { font-family: var(--font-display); }
+        body.dark #ifcLapTable th { background: rgba(167,139,250,.16); color: #d8c9ff; }
+        body.dark #ifcLapTable td { border-bottom-color: var(--stroke); }
+        body.dark #ifcLapTable tbody tr:hover { background: rgba(255,255,255,.04); }
+
     </style>
 </head>
 <body>
+    <!-- Tahap 1: lapisan latar gelap-glass (hanya tampil di mode gelap) -->
+    <div class="fx-bg" aria-hidden="true">
+        <div class="fx-blob b1"></div>
+        <div class="fx-blob b2"></div>
+        <div class="fx-blob b3"></div>
+        <svg class="fx-mesh" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="fxGrid" width="46" height="46" patternUnits="userSpaceOnUse"><path d="M46 0H0V46" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/><circle cx="0" cy="0" r="1.1" fill="rgba(255,255,255,0.10)"/></pattern></defs><rect width="100%" height="100%" fill="url(#fxGrid)"/></svg>
+    </div>
+
     <!-- Sticky Header -->
     <div class="sticky-header">
         <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Menu"><svg class="hdr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
@@ -2599,7 +2987,7 @@
 
             <div class="form-section" id="ifcSaldoAwalSection" style="display:none; border-left:3px solid var(--accent);">
                 <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/></svg><span>Saldo Awal (Modal)</span></h2>
-                <p style="font-size:13px; color:var(--ink-2); margin:-6px 0 14px;">Ini bulan pertama Anda. Isi <strong>saldo/modal awal</strong> sekali saja — seterusnya saldo terbawa otomatis tiap bulan.</p>
+                <p style="font-size:13px; color:var(--ink-2); margin:-6px 0 14px;">Modal/saldo awal periode. Bisa <strong>diedit kapan saja</strong> — saldo otomatis menempel ke bulan paling awal yang dicatat lalu terbawa tiap bulan.</p>
                 <div class="form-group">
                     <label>Saldo Awal Bulan Ini</label>
                     <input type="text" inputmode="numeric" id="ifcSaldoAwalInput" class="money-input" placeholder="0" autocomplete="off">
@@ -2628,6 +3016,7 @@
                 <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;">
                     <button class="btn btn-success" onclick="saveIfcEntry()"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Simpan</span></button>
                     <button class="btn btn-libur" onclick="ifcSetoran()"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Setoran</span></button>
+                    <button class="btn btn-libur" id="ifcLiburBtn" onclick="ifcToggleLibur()"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="m14 14-4 4"/><path d="m10 14 4 4"/></svg><span>Hari Libur</span></button>
                     <button class="btn btn-secondary" id="ifcResetBtn" onclick="ifcResetForm()" style="display:none;"><svg class="lic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg><span>Reset</span></button>
                 </div>
             </div>
@@ -4371,6 +4760,16 @@
             const ctx = canvas.getContext('2d');
             if (financialChart) financialChart.destroy();
 
+            // ===== TAHAP 5: warna grafik sadar mode gelap (HANYA warna; data/logika/toggle tetap) =====
+            const cdark   = document.body.classList.contains('dark');
+            const cTick   = cdark ? '#9AA6C6' : '#6b7c8c';
+            const cGrid   = cdark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)';
+            const cLegend = cdark ? '#cdd6db' : '#2c3e50';
+            const cTitle  = cdark ? '#9eeefb' : '#1a5f7a';
+            const cRev    = cdark ? 'rgba(34,211,238,1)'  : 'rgba(25,118,210,1)';
+            const cExp    = cdark ? 'rgba(244,114,182,1)' : 'rgba(211,47,47,1)';
+            const cProf   = cdark ? '#A78BFA' : '#2e7d32';
+
             // Helper: gradien vertikal untuk batang
             const h = canvas.height || 360;
             function makeGradient(c1, c2) {
@@ -4380,10 +4779,10 @@
                 return g;
             }
             // Warna lebih tegas (bawah tetap pekat, tidak loyo) tapi tidak terlalu strong
-            const gradRevenue = makeGradient('rgba(25,118,210,1)', 'rgba(33,150,243,0.7)');
-            const gradExpense = makeGradient('rgba(211,47,47,1)',  'rgba(244,67,54,0.7)');
+            const gradRevenue = makeGradient(cdark ? 'rgba(34,211,238,0.95)' : 'rgba(25,118,210,1)', cdark ? 'rgba(34,211,238,0.30)' : 'rgba(33,150,243,0.7)');
+            const gradExpense = makeGradient(cdark ? 'rgba(244,114,182,0.9)' : 'rgba(211,47,47,1)',  cdark ? 'rgba(244,114,182,0.28)' : 'rgba(244,67,54,0.7)');
             // Area profit sedikit lebih tebal opacity-nya (tapi tidak berlebihan)
-            const gradProfit  = makeGradient('rgba(76,175,80,0.45)', 'rgba(76,175,80,0.05)');
+            const gradProfit  = makeGradient(cdark ? 'rgba(167,139,250,0.42)' : 'rgba(76,175,80,0.45)', cdark ? 'rgba(167,139,250,0.04)' : 'rgba(76,175,80,0.05)');
 
             // ===== Susun label & data sesuai mode =====
             let labels, revenueData, expenseData, profitData, chartTitle;
@@ -4415,7 +4814,7 @@
                             label: t('chart_revenue','Revenue'),
                             data: revenueData,
                             backgroundColor: gradRevenue,
-                            borderColor: 'rgba(25,118,210,1)',
+                            borderColor: cRev,
                             type: 'bar',
                             yAxisID: 'y',
                             borderWidth: 0,
@@ -4429,7 +4828,7 @@
                             label: t('chart_expense','Expense'),
                             data: expenseData,
                             backgroundColor: gradExpense,
-                            borderColor: 'rgba(211,47,47,1)',
+                            borderColor: cExp,
                             type: 'bar',
                             yAxisID: 'y',
                             borderWidth: 0,
@@ -4442,7 +4841,7 @@
                         {
                             label: t('chart_profit','Profit'),
                             data: profitData,
-                            borderColor: '#2e7d32',
+                            borderColor: cProf,
                             backgroundColor: gradProfit,
                             type: 'line',
                             yAxisID: 'y',
@@ -4452,7 +4851,7 @@
                             pointRadius: mobile ? 0 : 4,
                             pointHoverRadius: 6,
                             pointBackgroundColor: '#fff',
-                            pointBorderColor: '#2e7d32',
+                            pointBorderColor: cProf,
                             pointBorderWidth: 2,
                             order: 1
                         }
@@ -4475,7 +4874,7 @@
                         x: {
                             ticks: {
                                 font: { size: mobile ? 9 : 11, weight: '600' },
-                                color: '#6b7c8c',
+                                color: cTick,
                                 maxRotation: mobile ? 0 : 45,
                                 autoSkip: true,
                                 maxTicksLimit: mobile ? 10 : 31
@@ -4490,7 +4889,7 @@
                             beginAtZero: true,
                             ticks: {
                                 font: { size: mobile ? 9 : 11 },
-                                color: '#6b7c8c',
+                                color: cTick,
                                 callback: function(val) { return fmtAxis(val); },
                                 maxTicksLimit: mobile ? 5 : 8,
                                 padding: 6
@@ -4499,10 +4898,10 @@
                                 display: !mobile,
                                 text: 'Rupiah (Rp)',
                                 font: { size: 11, weight: 'bold' },
-                                color: '#6b7c8c'
+                                color: cTick
                             },
                             grid: {
-                                color: 'rgba(0,0,0,0.04)',
+                                color: cGrid,
                                 drawTicks: false
                             },
                             border: { display: false }
@@ -4520,14 +4919,14 @@
                                 boxHeight: 10,
                                 usePointStyle: true,
                                 pointStyle: 'circle',
-                                color: '#2c3e50'
+                                color: cLegend
                             }
                         },
                         title: {
                             display: true,
                             text: chartTitle,
                             font: { size: mobile ? 12 : 15, weight: 'bold' },
-                            color: '#1a5f7a',
+                            color: cTitle,
                             padding: { top: 4, bottom: mobile ? 8 : 14 }
                         },
                         tooltip: {
@@ -5396,9 +5795,11 @@
             const key = ifcCalViewYear + '-' + ifcCalViewMonth;
             const md = irfanData[key];
             const filled = new Set();
+            const liburSet = new Set();
             if (md && md.entries) {
                 Object.keys(md.entries).forEach(d => {
                     const e = md.entries[d];
+                    if (e.isLibur) { liburSet.add(+d); return; }
                     if ((e.pemasukan || 0) !== 0 || (e.pengeluaran || 0) !== 0 || (e.keterangan || '').trim() !== '') filled.add(+d);
                 });
             }
@@ -5410,7 +5811,8 @@
                 btn.type = 'button'; btn.className = 'cal-day'; btn.textContent = d;
                 if (d === todayDay && ifcCalViewMonth === todayMonth && ifcCalViewYear === todayYear) btn.classList.add('today');
                 if (d === selDay && ifcCalViewMonth === selMonth && ifcCalViewYear === selYear) btn.classList.add('selected');
-                if (filled.has(d)) btn.classList.add('has-data');
+                if (liburSet.has(d)) btn.classList.add('is-libur');
+                else if (filled.has(d)) btn.classList.add('has-data');
                 btn.onclick = function (e) { e.stopPropagation(); ifcCalSelectDay(d); };
                 grid.appendChild(btn);
             }
@@ -5448,20 +5850,19 @@
             const key = ifcCurrentKey();
             const day = +document.getElementById('ifcDaySelect').value;
             const saSec = document.getElementById('ifcSaldoAwalSection');
-            if (ifcIsFirstMonthContext(key)) {
-                saSec.style.display = '';
-                document.getElementById('ifcSaldoAwalInput').value = (key === irfanConfig.firstMonth) ? formatNum(irfanConfig.firstSaldoAwal) : '';
-            } else {
-                saSec.style.display = 'none';
-            }
+            // ===== TAHAP 6 (B): Saldo Awal selalu tampil & bisa diedit kapan saja =====
+            saSec.style.display = '';
+            document.getElementById('ifcSaldoAwalInput').value = formatNum(irfanConfig.firstSaldoAwal || 0);
             document.getElementById('ifcSaldoAwalDisplay').textContent = 'Rp' + formatNum(getIfcSaldoAwal(key));
             const md = irfanData[key];
             const e = (md && md.entries && md.entries[day]) ? md.entries[day] : null;
-            document.getElementById('ifcPemasukan').value = e ? formatNum(e.pemasukan) : '';
-            document.getElementById('ifcPengeluaran').value = e ? formatNum(e.pengeluaran) : '';
-            document.getElementById('ifcKeterangan').value = e ? (e.keterangan || '') : '';
-            document.getElementById('ifcResetBtn').style.display = e ? '' : 'none';
-            document.getElementById('ifcFormTitleText').textContent = e ? ('Edit — Tanggal ' + day) : 'Input Harian — IFC';
+            const isLib = !!(e && e.isLibur);
+            document.getElementById('ifcPemasukan').value = (e && !isLib) ? formatNum(e.pemasukan) : '';
+            document.getElementById('ifcPengeluaran').value = (e && !isLib) ? formatNum(e.pengeluaran) : '';
+            document.getElementById('ifcKeterangan').value = (e && !isLib) ? (e.keterangan || '') : '';
+            document.getElementById('ifcResetBtn').style.display = (e && !isLib) ? '' : 'none';
+            document.getElementById('ifcFormTitleText').textContent = isLib ? ('LIBUR — Tanggal ' + day) : (e ? ('Edit — Tanggal ' + day) : 'Input Harian — IFC');
+            if (typeof ifcUpdateLiburButton === 'function') ifcUpdateLiburButton();
             if (typeof ifcUpdateDateDisplay === 'function') ifcUpdateDateDisplay();
             ifcUpdatePreview();
         }
@@ -5477,7 +5878,10 @@
         function saveIfcSaldoAwal() {
             const key = ifcCurrentKey();
             const val = parseNum(document.getElementById('ifcSaldoAwalInput').value);
-            irfanConfig.firstMonth = key;
+            // TAHAP 6 (B): saldo awal menempel ke bulan PALING AWAL yang tercatat (carry-over tetap utuh)
+            if (!irfanConfig.firstMonth || ifcMonthNum(key) < ifcMonthNum(irfanConfig.firstMonth)) {
+                irfanConfig.firstMonth = key;
+            }
             irfanConfig.firstSaldoAwal = val;
             saveIrfanConfig();
             showSuccessMessage('Saldo awal disimpan: Rp' + formatNum(val));
@@ -5524,6 +5928,45 @@
             document.getElementById('ifcPengeluaran').value = '';
             document.getElementById('ifcKeterangan').value = '';
             ifcUpdatePreview();
+        }
+
+        // ===== TAHAP 6 (Fitur 2): Hari Libur IFC (seperti BKCM) =====
+        function ifcToggleLibur() {
+            const key = ifcCurrentKey();
+            const day = +document.getElementById('ifcDaySelect').value;
+            if (!irfanData[key]) irfanData[key] = { entries: {} };
+            if (!irfanData[key].entries) irfanData[key].entries = {};
+            const e = irfanData[key].entries[day];
+            if (e && e.isLibur) {
+                // Batalkan libur -> hapus entri
+                delete irfanData[key].entries[day];
+                showSuccessMessage('Tanggal ' + day + ' bukan libur lagi.');
+            } else {
+                // Jika sudah ada data, konfirmasi timpa jadi libur
+                if (e && ((e.pemasukan || 0) > 0 || (e.pengeluaran || 0) > 0)) {
+                    if (!confirm('Tanggal ' + day + ' sudah ada data. Jadikan hari libur (data dikosongkan)?')) return;
+                }
+                irfanData[key].entries[day] = { pemasukan: 0, pengeluaran: 0, keterangan: 'LIBUR', isLibur: true };
+                showSuccessMessage('Tanggal ' + day + ' ditandai LIBUR.');
+            }
+            saveIrfanData();
+            ifcRefreshForm();
+        }
+
+        function ifcUpdateLiburButton() {
+            const btn = document.getElementById('ifcLiburBtn');
+            if (!btn) return;
+            const key = ifcCurrentKey();
+            const day = +document.getElementById('ifcDaySelect').value;
+            const e = (irfanData[key] && irfanData[key].entries) ? irfanData[key].entries[day] : null;
+            const lbl = btn.querySelector('span');
+            if (e && e.isLibur) {
+                if (lbl) lbl.textContent = 'Batalkan Libur';
+                btn.classList.add('libur-active');
+            } else {
+                if (lbl) lbl.textContent = 'Hari Libur';
+                btn.classList.remove('libur-active');
+            }
         }
 
         function ifcAttachFormatters() {
