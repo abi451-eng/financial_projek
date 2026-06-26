@@ -2457,6 +2457,26 @@
         .export-desc { margin-top: 2px; }
         body.dark .save-config-btn { background: linear-gradient(135deg, #22D3EE, #A78BFA); color: #08111f; box-shadow: 0 6px 18px rgba(34,211,238,.28); }
 
+        /* ============================================================
+           ===== TAHAP 8f: IFC — aksen violet→pink + kartu ringkasan =====
+           ============================================================ */
+        /* Kartu ringkasan Laporan IFC: aksen kiri per kartu (mockup) */
+        #ifcLapSummary .ifc-sum-card::after { display: none; }
+        #ifcLapSummary .ifc-sum-card { border-left: 3px solid var(--stroke); }
+        #ifcLapSummary .ifc-sum-card:nth-child(1) { border-left-color: #A78BFA; }
+        #ifcLapSummary .ifc-sum-card:nth-child(2) { border-left-color: #22D3EE; }
+        #ifcLapSummary .ifc-sum-card:nth-child(3) { border-left-color: #F472B6; }
+        #ifcLapSummary .ifc-sum-card:nth-child(4) { border-left-color: #34D399; }
+
+        /* Saldo Awal IFC: aksen kiri violet */
+        body.dark #ifcSaldoAwalSection { border-left-color: #A78BFA !important; }
+
+        /* Mode IFC: aksen violet→pink */
+        body.ifc-mode .brand-logo { background: linear-gradient(135deg, #A78BFA, #F472B6); box-shadow: 0 0 16px rgba(167,139,250,.45); }
+        body.dark.ifc-mode .biz-btn.active { background: linear-gradient(135deg, #A78BFA, #F472B6); border-color: transparent; color: #fff; }
+        body.dark.ifc-mode .btn-primary { background: linear-gradient(135deg, #A78BFA, #F472B6); }
+        body.dark.ifc-mode #ifcLapTable th { background: rgba(167,139,250,.20); color: #e0d4ff; }
+
     </style>
 </head>
 <body>
@@ -3562,7 +3582,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v6.0.2';
+        const APP_VERSION = 'v6.0.3';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -6186,6 +6206,7 @@
             const _bl = document.getElementById('brandLogo'); if (_bl) _bl.textContent = (activeBusiness === 'ifc') ? 'IF' : 'BK';
             const _av = document.getElementById('profileAv'); if (_av) _av.textContent = (activeBusiness === 'ifc') ? 'IF' : 'BK';
             const _rl = document.querySelector('.topbar-pm span'); if (_rl) _rl.textContent = (activeBusiness === 'ifc') ? 'Pengelola' : 'Pemilik';
+            document.body.classList.toggle('ifc-mode', activeBusiness === 'ifc');
         }
 
         function switchBusiness(biz) {
