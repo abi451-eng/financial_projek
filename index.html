@@ -2477,6 +2477,13 @@
         body.dark.ifc-mode .btn-primary { background: linear-gradient(135deg, #A78BFA, #F472B6); }
         body.dark.ifc-mode #ifcLapTable th { background: rgba(167,139,250,.20); color: #e0d4ff; }
 
+        /* Pemilih Bulan-Tahun IFC (Laporan & Export) */
+        .ifc-my-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 4px 2px; }
+        .ifc-my-m { padding: 10px 0; border-radius: 8px; border: 1px solid transparent; background: transparent; color: inherit; cursor: pointer; font-size: 13px; font-weight: 600; transition: background .15s; }
+        .ifc-my-m:hover { background: rgba(127,127,127,.12); }
+        body.dark .ifc-my-m:hover { background: rgba(255,255,255,.08); }
+        .ifc-my-m.active { background: linear-gradient(135deg, #A78BFA, #F472B6); color: #fff; }
+
     </style>
 </head>
 <body>
@@ -3235,8 +3242,15 @@
         <div class="view-panel" id="view-ifc-laporan">
             <div class="month-selector">
                 <label style="white-space:nowrap;">Bulan:</label>
-                <select id="ifcLapMonth" onchange="ifcRenderLaporan()"></select>
-                <select id="ifcLapYear" onchange="ifcRenderLaporan()"></select>
+                <div class="date-picker-wrap ifc-my-wrap">
+                    <button type="button" class="date-trigger" onclick="ifcMYToggle('lap', event)"><svg class="hdr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span id="ifcMY_lap_label">—</span><span class="date-caret">▾</span></button>
+                    <div class="calendar-popup ifc-my-popup" id="ifcMY_lap_popup">
+                        <div class="cal-nav-row"><button type="button" class="cal-nav-btn" onclick="ifcMYYear('lap',-1)">«</button><span class="cal-nav-label" id="ifcMY_lap_year">2026</span><button type="button" class="cal-nav-btn" onclick="ifcMYYear('lap',1)">»</button></div>
+                        <div class="ifc-my-grid" id="ifcMY_lap_grid"></div>
+                    </div>
+                </div>
+                <select id="ifcLapMonth" onchange="ifcRenderLaporan()" style="display:none;"></select>
+                <select id="ifcLapYear" onchange="ifcRenderLaporan()" style="display:none;"></select>
             </div>
             <div class="data-section">
                 <h2 class="sec-title" style="justify-content:center; text-align:center; font-style:italic; font-size:14.5px;"><span>LAPORAN PEMASUKAN DAN PENGELUARAN UANG KAS IFC</span></h2>
@@ -3251,8 +3265,15 @@
         <div class="view-panel" id="view-ifc-export">
             <div class="month-selector">
                 <label style="white-space:nowrap;">Bulan:</label>
-                <select id="ifcExpMonth"></select>
-                <select id="ifcExpYear"></select>
+                <div class="date-picker-wrap ifc-my-wrap">
+                    <button type="button" class="date-trigger" onclick="ifcMYToggle('exp', event)"><svg class="hdr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span id="ifcMY_exp_label">—</span><span class="date-caret">▾</span></button>
+                    <div class="calendar-popup ifc-my-popup" id="ifcMY_exp_popup">
+                        <div class="cal-nav-row"><button type="button" class="cal-nav-btn" onclick="ifcMYYear('exp',-1)">«</button><span class="cal-nav-label" id="ifcMY_exp_year">2026</span><button type="button" class="cal-nav-btn" onclick="ifcMYYear('exp',1)">»</button></div>
+                        <div class="ifc-my-grid" id="ifcMY_exp_grid"></div>
+                    </div>
+                </div>
+                <select id="ifcExpMonth" style="display:none;"></select>
+                <select id="ifcExpYear" style="display:none;"></select>
             </div>
             <div class="data-section">
                 <h2 class="sec-title"><svg class="sec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Export Laporan IFC</span></h2>
@@ -3582,7 +3603,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v6.0.3';
+        const APP_VERSION = 'v6.1.0';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -5991,6 +6012,50 @@
             pop.classList.add('show');
         }
         function ifcCloseCalendar() { document.getElementById('ifcCalendarPopup').classList.remove('show'); }
+
+        // ===== Pemilih Bulan-Tahun IFC (Laporan & Export) =====
+        const ifcMYView = { lap: null, exp: null };
+        const ifcMYShort = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+        function ifcMYIds(which){ return which === 'lap' ? ['ifcLapMonth','ifcLapYear'] : ['ifcExpMonth','ifcExpYear']; }
+        function ifcMYToggle(which, e){
+            if (e) e.stopPropagation();
+            const pop = document.getElementById('ifcMY_' + which + '_popup');
+            const isOpen = pop.classList.contains('show');
+            document.querySelectorAll('.ifc-my-popup').forEach(p => p.classList.remove('show'));
+            if (!isOpen) { ifcMYRender(which); pop.classList.add('show'); }
+        }
+        function ifcMYRender(which){
+            const ids = ifcMYIds(which);
+            const curM = +document.getElementById(ids[0]).value, curY = +document.getElementById(ids[1]).value;
+            if (ifcMYView[which] == null) ifcMYView[which] = curY || todayYear;
+            const vy = ifcMYView[which];
+            document.getElementById('ifcMY_' + which + '_year').textContent = vy;
+            let html = '';
+            for (let m = 1; m <= 12; m++){
+                const act = (m === curM && vy === curY) ? ' active' : '';
+                html += '<button type="button" class="ifc-my-m' + act + '" onclick="ifcMYPick(\'' + which + '\',' + m + ')">' + ifcMYShort[m-1] + '</button>';
+            }
+            document.getElementById('ifcMY_' + which + '_grid').innerHTML = html;
+        }
+        function ifcMYYear(which, d){ if (ifcMYView[which] == null) ifcMYView[which] = todayYear; ifcMYView[which] += d; ifcMYRender(which); }
+        function ifcMYPick(which, m){
+            const ids = ifcMYIds(which);
+            const mSel = document.getElementById(ids[0]), ySel = document.getElementById(ids[1]);
+            const vy = ifcMYView[which];
+            if (![].some.call(ySel.options, o => +o.value === vy)) { const o = document.createElement('option'); o.value = vy; o.textContent = vy; ySel.appendChild(o); }
+            mSel.value = m; ySel.value = vy;
+            ifcMYLabel(which);
+            document.getElementById('ifcMY_' + which + '_popup').classList.remove('show');
+            if (which === 'lap' && typeof ifcRenderLaporan === 'function') ifcRenderLaporan();
+        }
+        function ifcMYLabel(which){
+            const ids = ifcMYIds(which);
+            const lbl = document.getElementById('ifcMY_' + which + '_label');
+            if (lbl) lbl.textContent = (months[(+document.getElementById(ids[0]).value) - 1] || '') + ' ' + (document.getElementById(ids[1]).value || '');
+        }
+        document.addEventListener('click', function(e){
+            if (!e.target.closest('.ifc-my-wrap')) document.querySelectorAll('.ifc-my-popup').forEach(p => p.classList.remove('show'));
+        });
         function ifcCalChangeMonth(d) { ifcCalViewMonth += d; if (ifcCalViewMonth < 1) { ifcCalViewMonth = 12; ifcCalViewYear--; } if (ifcCalViewMonth > 12) { ifcCalViewMonth = 1; ifcCalViewYear++; } ifcRenderCalendar(); }
         function ifcCalChangeYear(d) { ifcCalViewYear += d; ifcRenderCalendar(); }
         function ifcRenderCalendar() {
@@ -6233,6 +6298,7 @@
             ifcAttachFormatters();
             ifcFillMY('ifcLapMonth', 'ifcLapYear');
             ifcFillMY('ifcExpMonth', 'ifcExpYear');
+            if (typeof ifcMYLabel === 'function') { ifcMYLabel('lap'); ifcMYLabel('exp'); }
             ifcRefreshForm();
         }
 
