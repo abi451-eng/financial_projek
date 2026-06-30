@@ -3603,7 +3603,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v6.1.0';
+        const APP_VERSION = 'v6.1.1';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -6387,12 +6387,16 @@
 
                 function cellX(i) { let x = x0; for (let k = 0; k < i; k++) x += cols[k].w; return x; }
                 function drawHeader() {
-                    doc.setFillColor(225, 225, 225); doc.setDrawColor(0); doc.setLineWidth(0.2);
-                    doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(0, 0, 0);
+                    doc.setDrawColor(0); doc.setLineWidth(0.2);
                     const hH = 7;
+                    // 1) Gambar SEMUA kotak abu dulu (sebelum teks). jsPDF mengubah warna fill
+                    //    jadi warna teks setiap doc.text(), jadi kalau diselang-seling kotak berikutnya jadi hitam.
+                    doc.setFillColor(225, 225, 225);
+                    cols.forEach((c, i) => { doc.rect(cellX(i), y, c.w, hH, 'FD'); });
+                    // 2) Baru gambar semua teks header (hitam)
+                    doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(0, 0, 0);
                     cols.forEach((c, i) => {
                         const x = cellX(i);
-                        doc.rect(x, y, c.w, hH, 'FD');
                         const tx = c.a === 'center' ? x + c.w / 2 : (c.a === 'right' ? x + c.w - 1.5 : x + 1.5);
                         doc.text(c.t, tx, y + hH / 2 + 1.1, { align: c.a === 'left' ? 'left' : c.a });
                     });
