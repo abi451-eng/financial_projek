@@ -2780,9 +2780,7 @@
                         <tr>
                             <th class="col-center" data-i18n="th_hari">Hari</th>
                             <th class="col-right" data-i18n="th_total_sales">Total Penjualan</th>
-                            <th class="col-right" data-i18n="th_cash">Tunai</th>
                             <th class="col-right" data-i18n="th_expense">Total Pengeluaran</th>
-                            <th class="col-right" data-i18n="th_saldo">Saldo</th>
                             <th class="col-right" data-i18n="th_ppn">PPN</th>
                             <th class="col-right" data-i18n="th_noncash">EDC/QRIS</th>
                             <th class="col-right" data-i18n="th_setor">Disetorkan</th>
@@ -3626,7 +3624,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v6.2.0';
+        const APP_VERSION = 'v6.2.1';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -4638,7 +4636,7 @@
             if (!hasData) return;
 
             // v6.2.0: total bulanan untuk baris TOTAL
-            const mt = { jual: 0, tunai: 0, peng: 0, ppn: 0, nonCash: 0, setor: 0, saldoAkhir: 0 };
+            const mt = { jual: 0, peng: 0, ppn: 0, nonCash: 0, setor: 0 };
             const rpCell = (v, bold) => `<td class="currency"><span class="money-cell"><span class="rp">Rp</span><span>${bold ? '<strong>' : ''}${v.toLocaleString('id-ID')}${bold ? '</strong>' : ''}</span></span></td>`;
 
             data.forEach(item => {
@@ -4647,7 +4645,7 @@
                     row.className = 'row-libur';
                     row.innerHTML = `
                         <td class="col-center">${item.day}</td>
-                        <td class="col-center" colspan="7">${t('libur_label', 'LIBUR')}</td>
+                        <td class="col-center" colspan="5">${t('libur_label', 'LIBUR')}</td>
                         <td class="col-left">${item.keterangan || '-'}</td>
                         <td class="col-center">
                             <div class="action-buttons">
@@ -4660,14 +4658,12 @@
                 const rowPPN = item.totalPenjualan * (configSettings.ppnRate / 100);
                 const rowNonCash = (item.qris || 0) + (item.edc || 0) + (item.transfer || 0) + (item.gojek || 0) + (item.grab || 0);
                 const rowSetor = (item.tunai || 0) + rowPPN;
-                mt.jual += item.totalPenjualan; mt.tunai += (item.tunai || 0); mt.peng += item.totalPengeluaran;
-                mt.ppn += rowPPN; mt.nonCash += rowNonCash; mt.setor += rowSetor; mt.saldoAkhir = item.saldo;
+                mt.jual += item.totalPenjualan; mt.peng += item.totalPengeluaran;
+                mt.ppn += rowPPN; mt.nonCash += rowNonCash; mt.setor += rowSetor;
                 row.innerHTML = `
                     <td class="col-center">${item.day}</td>
                     <td class="currency"><span class="money-cell"><span class="rp">Rp</span><span>${item.totalPenjualan.toLocaleString('id-ID')}</span></span></td>
-                    <td class="currency"><span class="money-cell"><span class="rp">Rp</span><span>${item.tunai.toLocaleString('id-ID')}</span></span></td>
                     <td class="currency"><span class="money-cell"><span class="rp">Rp</span><span>${item.totalPengeluaran.toLocaleString('id-ID')}</span></span></td>
-                    <td class="currency"><span class="money-cell"><span class="rp">Rp</span><span><strong>${item.saldo.toLocaleString('id-ID')}</strong></span></span></td>
                     ${rpCell(rowPPN)}
                     ${rpCell(rowNonCash)}
                     ${rpCell(rowSetor, true)}
@@ -4681,15 +4677,13 @@
                 `;
             });
 
-            // v6.2.0: baris TOTAL bulanan (Saldo = saldo akhir bulan)
+            // v6.2.1: baris TOTAL bulanan (kolom Tunai & Saldo dihapus dari tabel ini)
             if (tfoot) {
                 tfoot.innerHTML = `
                     <tr class="row-total">
                         <td class="col-center"><strong>${t('row_total', 'TOTAL')}</strong></td>
                         ${rpCell(mt.jual, true)}
-                        ${rpCell(mt.tunai, true)}
                         ${rpCell(mt.peng, true)}
-                        ${rpCell(mt.saldoAkhir, true)}
                         ${rpCell(mt.ppn, true)}
                         ${rpCell(mt.nonCash, true)}
                         ${rpCell(mt.setor, true)}
