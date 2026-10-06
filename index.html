@@ -2477,6 +2477,13 @@
         body.dark.ifc-mode .btn-primary { background: linear-gradient(135deg, #A78BFA, #F472B6); }
         body.dark.ifc-mode #ifcLapTable th { background: rgba(167,139,250,.20); color: #e0d4ff; }
 
+        /* v6.2.0: baris TOTAL bulanan tabel Input */
+        .data-table tfoot .row-total td { background: #e6f4f1; color: #0F766E; border-top: 2px solid #0F766E; padding-top: 12px; padding-bottom: 12px; }
+        body.dark .data-table tfoot .row-total td {
+            background: linear-gradient(100deg, rgba(34,211,238,.20), rgba(167,139,250,.16));
+            color: #fff; border-top: 1px solid var(--stroke-2);
+        }
+
         /* Pemilih Bulan-Tahun IFC (Laporan & Export) */
         .ifc-my-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 4px 2px; }
         .ifc-my-m { padding: 10px 0; border-radius: 8px; border: 1px solid transparent; background: transparent; color: inherit; cursor: pointer; font-size: 13px; font-weight: 600; transition: background .15s; }
@@ -2741,6 +2748,18 @@
                     <td id="previewSaldo">-</td>
                 </tr>
                 <tr>
+                    <td><strong data-i18n="prev_ppn">PPN</strong></td>
+                    <td id="previewPPN">-</td>
+                </tr>
+                <tr>
+                    <td><strong data-i18n="prev_noncash">Total EDC/QRIS</strong></td>
+                    <td id="previewNonCash">-</td>
+                </tr>
+                <tr>
+                    <td><strong data-i18n="prev_setor">Disetorkan (Cash)</strong></td>
+                    <td id="previewSetor">-</td>
+                </tr>
+                <tr>
                     <td><strong data-i18n="prev_notes">Keterangan</strong></td>
                     <td id="previewKeterangan">-</td>
                 </tr>
@@ -2764,12 +2783,16 @@
                             <th class="col-right" data-i18n="th_cash">Tunai</th>
                             <th class="col-right" data-i18n="th_expense">Total Pengeluaran</th>
                             <th class="col-right" data-i18n="th_saldo">Saldo</th>
+                            <th class="col-right" data-i18n="th_ppn">PPN</th>
+                            <th class="col-right" data-i18n="th_noncash">EDC/QRIS</th>
+                            <th class="col-right" data-i18n="th_setor">Disetorkan</th>
                             <th class="col-left" data-i18n="th_notes">Keterangan</th>
                             <th class="col-center" data-i18n="th_action">Action</th>
                         </tr>
                     </thead>
                     <tbody id="dataTableBody">
                     </tbody>
+                    <tfoot id="dataTableFoot"></tfoot>
                 </table>
             </div>
         </div>
@@ -3603,7 +3626,7 @@
         let currentLang = localStorage.getItem('appLang') || 'default';
 
         // ⚠️ NOMOR VERSI APP — samakan dengan angka di sw.js (CACHE_NAME) tiap update.
-        const APP_VERSION = 'v6.1.1';
+        const APP_VERSION = 'v6.2.0';
 
         // Bulan untuk TAMPILAN (kalender, grafik, tanggal). Dokumen tetap pakai 'months' (Indonesia).
         const monthsEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -3632,7 +3655,7 @@
                 stat_saldo:'Balance (Auto)', btn_preview:'Preview Data', btn_reset:'Reset', copy_none:'No previous data to copy yet.',
                 prev_title:'Preview Data', prev_tanggal:'Date', prev_total_sales:'Total Sales', prev_cash:'Cash',
                 prev_expense:'Total Expense', prev_saldo:'Balance', prev_notes:'Notes', btn_save_data:'Save Data', btn_cancel:'Cancel',
-                th_hari:'Day', th_total_sales:'Total Sales', th_cash:'Cash', th_expense:'Total Expense', th_saldo:'Balance',
+                th_hari:'Day', th_total_sales:'Total Sales', th_cash:'Cash', th_expense:'Total Expense', th_saldo:'Balance', th_ppn:'VAT', th_noncash:'EDC/QRIS', th_setor:'Deposited', prev_ppn:'VAT', prev_noncash:'Total EDC/QRIS', prev_setor:'Deposited (Cash)', row_total:'TOTAL',
                 th_notes:'Notes', th_action:'Action',
                 empty_input_1:'No data for this month yet', empty_input_2:'Fill the form above to start recording',
                 empty_dash_1:'Dashboard is empty', empty_hint:'Enter data first in the Data Entry menu',
@@ -3698,7 +3721,7 @@
                 stat_saldo:'Saldo (Auto)', btn_preview:'Pratinjau Data', btn_reset:'Atur Ulang', copy_none:'Belum ada data sebelumnya untuk disalin.',
                 prev_title:'Pratinjau Data', prev_tanggal:'Tanggal', prev_total_sales:'Total Penjualan', prev_cash:'Tunai',
                 prev_expense:'Total Pengeluaran', prev_saldo:'Saldo', prev_notes:'Keterangan', btn_save_data:'Simpan Data', btn_cancel:'Batal',
-                th_hari:'Hari', th_total_sales:'Total Penjualan', th_cash:'Tunai', th_expense:'Total Pengeluaran', th_saldo:'Saldo',
+                th_hari:'Hari', th_total_sales:'Total Penjualan', th_cash:'Tunai', th_expense:'Total Pengeluaran', th_saldo:'Saldo', th_ppn:'PPN', th_noncash:'EDC/QRIS', th_setor:'Disetorkan', prev_ppn:'PPN', prev_noncash:'Total EDC/QRIS', prev_setor:'Disetorkan (Cash)', row_total:'TOTAL',
                 th_notes:'Keterangan', th_action:'Aksi',
                 empty_input_1:'Belum ada data bulan ini', empty_input_2:'Isi formulir di atas untuk mulai mencatat',
                 empty_dash_1:'Dasbor masih kosong', empty_hint:'Input data dulu di menu Input Data',
@@ -4026,6 +4049,14 @@
             document.getElementById('previewTotalPengeluaran').textContent = `Rp ${totalPengeluaran.toLocaleString('id-ID')}`;
             document.getElementById('previewSaldo').textContent = document.getElementById('saldoDisplay').textContent;
             document.getElementById('previewKeterangan').textContent = keterangan || '-';
+
+            // v6.2.0: PPN, total non-tunai (EDC/QRIS), dan Disetorkan = Tunai + PPN (tampilan saja)
+            const pvPPN = totalPenjualan * (configSettings.ppnRate / 100);
+            const pvNonCash = ['qris', 'edc', 'transfer', 'gojek', 'grab']
+                .reduce((s, id) => s + parseNum(document.getElementById(id).value), 0);
+            document.getElementById('previewPPN').textContent = `Rp ${pvPPN.toLocaleString('id-ID')}`;
+            document.getElementById('previewNonCash').textContent = `Rp ${pvNonCash.toLocaleString('id-ID')}`;
+            document.getElementById('previewSetor').textContent = `Rp ${(tunai + pvPPN).toLocaleString('id-ID')}`;
 
             document.getElementById('previewSection').classList.add('show');
         }
@@ -4586,6 +4617,8 @@
             const data = appData[key] || [];
             const tbody = document.getElementById('dataTableBody');
             tbody.innerHTML = '';
+            const tfoot = document.getElementById('dataTableFoot');
+            if (tfoot) tfoot.innerHTML = '';
 
             const hasData = data.length > 0;
 
@@ -4604,13 +4637,17 @@
 
             if (!hasData) return;
 
+            // v6.2.0: total bulanan untuk baris TOTAL
+            const mt = { jual: 0, tunai: 0, peng: 0, ppn: 0, nonCash: 0, setor: 0, saldoAkhir: 0 };
+            const rpCell = (v, bold) => `<td class="currency"><span class="money-cell"><span class="rp">Rp</span><span>${bold ? '<strong>' : ''}${v.toLocaleString('id-ID')}${bold ? '</strong>' : ''}</span></span></td>`;
+
             data.forEach(item => {
                 const row = tbody.insertRow();
                 if (item.isLibur) {
                     row.className = 'row-libur';
                     row.innerHTML = `
                         <td class="col-center">${item.day}</td>
-                        <td class="col-center" colspan="4">${t('libur_label', 'LIBUR')}</td>
+                        <td class="col-center" colspan="7">${t('libur_label', 'LIBUR')}</td>
                         <td class="col-left">${item.keterangan || '-'}</td>
                         <td class="col-center">
                             <div class="action-buttons">
@@ -4620,12 +4657,20 @@
                     `;
                     return;
                 }
+                const rowPPN = item.totalPenjualan * (configSettings.ppnRate / 100);
+                const rowNonCash = (item.qris || 0) + (item.edc || 0) + (item.transfer || 0) + (item.gojek || 0) + (item.grab || 0);
+                const rowSetor = (item.tunai || 0) + rowPPN;
+                mt.jual += item.totalPenjualan; mt.tunai += (item.tunai || 0); mt.peng += item.totalPengeluaran;
+                mt.ppn += rowPPN; mt.nonCash += rowNonCash; mt.setor += rowSetor; mt.saldoAkhir = item.saldo;
                 row.innerHTML = `
                     <td class="col-center">${item.day}</td>
                     <td class="currency"><span class="money-cell"><span class="rp">Rp</span><span>${item.totalPenjualan.toLocaleString('id-ID')}</span></span></td>
                     <td class="currency"><span class="money-cell"><span class="rp">Rp</span><span>${item.tunai.toLocaleString('id-ID')}</span></span></td>
                     <td class="currency"><span class="money-cell"><span class="rp">Rp</span><span>${item.totalPengeluaran.toLocaleString('id-ID')}</span></span></td>
                     <td class="currency"><span class="money-cell"><span class="rp">Rp</span><span><strong>${item.saldo.toLocaleString('id-ID')}</strong></span></span></td>
+                    ${rpCell(rowPPN)}
+                    ${rpCell(rowNonCash)}
+                    ${rpCell(rowSetor, true)}
                     <td class="col-left">${item.keterangan || '-'}</td>
                     <td class="col-center">
                         <div class="action-buttons">
@@ -4635,6 +4680,22 @@
                     </td>
                 `;
             });
+
+            // v6.2.0: baris TOTAL bulanan (Saldo = saldo akhir bulan)
+            if (tfoot) {
+                tfoot.innerHTML = `
+                    <tr class="row-total">
+                        <td class="col-center"><strong>${t('row_total', 'TOTAL')}</strong></td>
+                        ${rpCell(mt.jual, true)}
+                        ${rpCell(mt.tunai, true)}
+                        ${rpCell(mt.peng, true)}
+                        ${rpCell(mt.saldoAkhir, true)}
+                        ${rpCell(mt.ppn, true)}
+                        ${rpCell(mt.nonCash, true)}
+                        ${rpCell(mt.setor, true)}
+                        <td colspan="2"></td>
+                    </tr>`;
+            }
         }
 
         function calculateMetrics() {
